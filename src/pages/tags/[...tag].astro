@@ -1,0 +1,30 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+import { SITE } from "@config";
+import getSortedTags from "@/utils/getSortedTags";
+import getPostsByTag from "@/utils/getPostsbyTag";
+import Tags from "@/layouts/Tags.astro";
+
+export interface Props {
+    post: CollectionEntry<"blog">;
+    tag: string;
+}
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog");
+    const tags = getSortedTags(posts);
+
+    return tags.map((tag) => {
+        return {
+            params: { tag },
+            props: { tag }
+        };
+    });
+}
+
+const { tag } = Astro.props;
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+const tagPosts = getPostsByTag(posts, tag);
+---
+
+<Tags posts={tagPosts} title="Tags" tag={tag} />

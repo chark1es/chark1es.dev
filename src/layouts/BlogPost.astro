@@ -1,0 +1,102 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "../components/FormattedDate.astro";
+import Layout from "./Layout.astro";
+import SectionContainer from "@/components/SectionContainer.astro";
+import { Icon } from "astro-icon";
+import { SITE } from "@config";
+
+export interface Props {
+    post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+
+const { title, description, pubDate, updatedDate, heroImage } = post.data;
+
+const ogUrl = new URL(
+    heroImage ? heroImage : `${title.replace(/\s+/g, "-").toLowerCase()}.png`,
+    Astro.url.origin
+).href;
+
+const { Content } = await post.render();
+---
+
+<Layout
+    title={`${title} - ${SITE.title}`}
+    description={description}
+    image={ogUrl}
+>
+    <SectionContainer class="wrap wrap-px grid gap-8 px-4 sm:gap-16 sm:px-8">
+        <div class="flex mt-32">
+            <div class="content--container flex-1 md:pr-6">
+                <article
+                    class="mx-auto prose prose-neutral prose-headings:font-medium prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-h2:scroll-mt-4 prose-h3:scroll-mt-4 prose-h4:scroll-mt-4 prose-h5:scroll-mt-4 prose-h6:scroll-mt-4 prose-headings:my-8"
+                >
+                    <a
+                        class="blog-back-button cursor-pointer text-neutral-500 flex no-underline mb-16"
+                        href="/blog/"
+                    >
+                        <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" />
+                        Back
+                    </a>
+                    <div class="post--title">
+                        <h1 class="text-3xl md:text-4xl">
+                            {title}
+                        </h1>
+                    </div>
+                    <span
+                        class="mb-4 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex"
+                    >
+                        <span class="px-2">
+                            <FormattedDate date={pubDate} />
+                        </span>
+                    </span>
+                    {
+                        updatedDate && (
+                            <div class="last-updated-on">
+                                Last updated on{" "}
+                                <FormattedDate date={updatedDate} />
+                            </div>
+                        )
+                    }
+                    {
+                        heroImage && (
+                            <img
+                                width={720}
+                                height={360}
+                                src={heroImage}
+                                alt={title}
+                            />
+                        )
+                    }
+                    <div
+                        class="prose-code:whitespace-pre-wrap prose-code:break-words prose-code:overflow-x-auto"
+                    >
+                        <Content />
+                    </div>
+                </article>
+            </div>
+        </div>
+    </SectionContainer>
+</Layout>
+
+<script>
+    // Function to create a Back to history button.
+    const buttons = document.querySelectorAll(".blog-back-button");
+    if (buttons) {
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                handleClick();
+            });
+        });
+    }
+
+    function handleClick() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = "/blog/";
+        }
+    }
+</script>

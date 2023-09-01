@@ -1,0 +1,137 @@
+---
+import FormattedDate from "@/components/FormattedDate.astro";
+import Layout from "@/layouts/Layout.astro";
+import SectionContainer from "@/components/SectionContainer.astro";
+import { Icon } from "astro-icon";
+import { SITE } from "@config";
+import { CollectionEntry } from "astro:content";
+
+export interface Props {
+    pageNum: number;
+    totalPages: number;
+    posts: CollectionEntry<"blog">[];
+    title: string;
+}
+
+const { pageNum, totalPages, posts, title } = Astro.props;
+
+const prev = pageNum > 1 ? "" : "disabled";
+const next = pageNum < totalPages ? "" : "disabled";
+
+// Remove current url path and remove trailing slash if exists
+const currentUrlPath = Astro.url.pathname.replace(/\/+$/, "");
+
+// Get url array from path
+// eg: /tags/tailwindcss => ['tags', 'tailwindcss']
+const breadcrumbList = currentUrlPath.split("/").slice(1);
+---
+
+<Layout
+    title={`${title} - ${SITE.title}`}
+    description={`A list of posts from ${SITE.author} in ${SITE.title}`}
+>
+    <div
+        class="main-wrapper wrap-sm grid gap-16 px-8 md:gap-24 lg:gap-32 mx-auto"
+    >
+        <SectionContainer class="blogs--container mt-32">
+            <a
+                href="/"
+                class="font-medium flex no-underline text-neutral-500 mb-8"
+            >
+                <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" />
+                Back to home
+            </a>
+            {
+                breadcrumbList.map((breadcrumb, index) =>
+                    index + 1 === breadcrumbList.length ? (
+                        <h2 class="font-medium text-h4 text-neutral-500 my-4 leading-8 tracking-tighter">
+                            {breadcrumbList[0] === "blog" && "Blogs"}
+                            <span class="ml-2 opacity-70 text-xl">
+                                {breadcrumbList[0] === "blog" &&
+                                    `(Page ${breadcrumbList[0 + 1] || 1})`}
+                            </span>
+                        </h2>
+                    ) : (
+                        ""
+                    )
+                )
+            }
+
+            <ul class="list-none space-y-5">
+                {
+                    posts.map((post) => (
+                        <li class="flex flex-col gap-1">
+                            <a
+                                href={`/blog/${post.slug}`}
+                                class="block w-full card-clip p-8 no-underline sm:flex-row sm:gap-8 bg-neutral-50 rounded-[40px] transition-all duration-300"
+                            >
+                                <span class="grid flex-1 gap-1">
+                                    <span class="text-neutral-900 line-clamp-1 md:inline-flex items-center">
+                                        <span class="inline-block font-medium">
+                                            {post.data.title}
+                                        </span>
+                                        <span class="md:mb-0 my-2 md:my-0 md:ml-2 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex">
+                                            <span class="px-2">
+                                                <FormattedDate
+                                                    date={post.data.pubDate}
+                                                />
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="text-neutral-500 line-clamp-2 ">
+                                        {post.data.description}
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+            {
+                totalPages > 1 && (
+                    <nav
+                        class="pagination--container flex flex-wrap mx-auto justify-center mt-8 text-neutral-500"
+                        aria-label="Pagination"
+                    >
+                        <a
+                            tabindex={prev === "disabled" ? "-1" : "0"}
+                            href={`/blog${
+                                pageNum - 1 !== 1 ? "/" + (pageNum - 1) : "/"
+                            }`}
+                            class={`mr-4 select-none flex flex-wrap ${
+                                prev === "disabled"
+                                    ? "disabled select-none pointer-events-none opacity-70"
+                                    : ""
+                            }`}
+                            aria-label="Previous"
+                            aria-disabled={prev === "disabled"}
+                        >
+                            <Icon
+                                name="ph:arrow-left-light"
+                                class="w-6 h-6 mr-4"
+                            />
+                            Prev
+                        </a>
+                        <a
+                            tabindex={next === "disabled" ? "-1" : "0"}
+                            href={`/blog/${pageNum + 1}`}
+                            class={`ml-4 select-none flex flex-wrap ${
+                                next === "disabled"
+                                    ? "disabled select-none pointer-events-none opacity-70"
+                                    : ""
+                            }`}
+                            aria-label="Next"
+                            aria-disabled={next === "disabled"}
+                        >
+                            Next
+                            <Icon
+                                name="ph:arrow-right-light"
+                                class="w-6 h-6 ml-4"
+                            />
+                        </a>
+                    </nav>
+                )
+            }
+        </SectionContainer>
+    </div>
+</Layout>

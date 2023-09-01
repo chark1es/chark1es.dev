@@ -1,0 +1,28 @@
+/*
+
+=========================================================
+* Avenue CSS Kit v0.1
+=========================================================
+
+* Demo Page: 'https://astro-lane.avenuelabs.co/'
+* Copyright 2023 Christian Luntok - Avenue Labs
+* Coded by Christian Luntok - Avenu Labs
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+// Core CSS Reset/MISCS
+@import "core/misc";
+
+// Core Declarations
+@import "core/variables";
+
+// Core Layouts and Style Definitions
+@import "core/general";
+@import "core/typography";
+@import "core/utilities";
+
+// Core Plugins
+// @import "plugins/plugin-tailwind";

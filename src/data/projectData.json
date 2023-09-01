@@ -1,0 +1,30 @@
+[
+    {
+        "id": "1",
+        "title": "Avenue Labs",
+        "logo": "/icons/avenue-icon.png",
+        "link": "https://www.avenuelabs.co/",
+        "shortExcerpt": "After-hours digital playground."
+    },
+    {
+        "id": "2",
+        "title": "Pathway",
+        "link": "https://pathway.avenuelabs.co/",
+        "logo": "/icons/pathway-icon.png",
+        "shortExcerpt": "A NextJS Tailwind CSS SAAS Landing Page."
+    },
+    {
+        "id": "3",
+        "title": "Lane",
+        "link": "https://www.lane.avenuelabs.co/",
+        "logo": "/icons/avenue-icon-alt.png",
+        "shortExcerpt": "Portfolio template for developers and designers."
+    },
+    {
+        "id": "3",
+        "title": "Articoole",
+        "logo": "/icons/articoole-icon.png",
+        "shortExcerpt": "Making content creation a breeze.",
+        "badgeContent": "On Going"
+    }
+]
