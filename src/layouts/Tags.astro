@@ -4,7 +4,7 @@ import Layout from "@/layouts/Layout.astro";
 import SectionContainer from "@/components/SectionContainer.astro";
 import { SITE } from "@config";
 import { CollectionEntry } from "astro:content";
-import { Icon } from "astro-icon";
+
 export interface Props {
     posts: CollectionEntry<"blog">[];
     title: string;
@@ -27,7 +27,6 @@ const { posts, title, tag } = Astro.props;
                 class="font-medium flex no-underline text-neutral-500 mb-8"
             >
                 Back to home
-                <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" />
             </a>
             <h2
                 class="font-medium text-h4 text-neutral-500 my-4 leading-8 tracking-tighter"
