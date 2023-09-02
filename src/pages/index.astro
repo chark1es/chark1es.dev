@@ -11,9 +11,9 @@ import CardImage from "@/components/card/CardImage.astro";
 import CardHeader from "@/components/card/CardHeader.astro";
 import FormattedDate from "../../src/components/FormattedDate.astro";
 import { getCollection } from "astro:content";
-// import { Icon } from "astro-icon";
-import getSortedTags from "@/utils/getSortedTags";
 
+import getSortedTags from "@/utils/getSortedTags";
+import Icon from "astro-icon";
 const posts = await getCollection("blog");
 
 const tags = getSortedTags(posts).slice(0, 6);

@@ -8,8 +8,6 @@ import remarkToc from "remark-toc";
 import image from "@astrojs/image";
 import prefetch from "@astrojs/prefetch";
 
-import compress from "astro-compress";
-
 // https://astro.build/config
 export default defineConfig({
     site: "https://chark1es.dev",
