@@ -16,13 +16,13 @@ export const SITE: Site = {
 // The site uses iconify - you can find icons on https://iconify.design/.
 
 export const SOCIALS: SocialMediaObjects = [
-    {
-        name: "Github",
-        href: "https://github.com/chark1es/charl1es.dev",
-        icon: "ph:github-logo-duotone",
-        title: `Follow ${SITE.author} on Github`,
-        active: true
-    },
+    // {
+    //     name: "Github",
+    //     href: "https://github.com/chark1es/chark1es.dev",
+    //     icon: "ph:github-logo-duotone",
+    //     title: `Follow ${SITE.author} on Github`,
+    //     active: true
+    // }
     // {
     //     name: "Facebook",
     //     href: "https://github.com/christian-luntok/astro-lane/",
@@ -37,20 +37,20 @@ export const SOCIALS: SocialMediaObjects = [
     //     title: `Follow ${SITE.author} on Instagram`,
     //     active: true
     // },
-    {
-        name: "LinkedIn",
-        href: "https://github.com/christian-luntok/astro-lane/",
-        icon: "ph:linkedin-logo-duotone",
-        title: `Follow ${SITE.title} on LinkedIn`,
-        active: true
-    },
-    {
-        name: "Mail",
-        href: "mailto:contact@chark1es.org",
-        title: `Send an email to ${SITE.title}`,
-        icon: "",
-        active: false
-    }
+    // {
+    //     name: "LinkedIn",
+    //     href: "https://github.com/christian-luntok/astro-lane/",
+    //     icon: "ph:linkedin-logo-duotone",
+    //     title: `Follow ${SITE.title} on LinkedIn`,
+    //     active: true
+    // },
+    // {
+    //     name: "Mail",
+    //     href: "mailto:contact@chark1es.org",
+    //     title: `Send an email to ${SITE.title}`,
+    //     icon: "",
+    //     active: false
+    // }
     // {
     //     name: "Twitter",
     //     href: "https://github.com/christian-luntok/astro-lane/",
