@@ -13,7 +13,7 @@ import FormattedDate from "../../src/components/FormattedDate.astro";
 import { getCollection } from "astro:content";
 
 import getSortedTags from "@/utils/getSortedTags";
-import Icon from "astro-icon";
+import { Icon } from "astro-icon/components";
 const posts = await getCollection("blog");
 
 const tags = getSortedTags(posts).slice(0, 6);

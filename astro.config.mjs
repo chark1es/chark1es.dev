@@ -7,6 +7,7 @@ import react from "@astrojs/react";
 import remarkToc from "remark-toc";
 import image from "@astrojs/image";
 import prefetch from "@astrojs/prefetch";
+
 import icon from "astro-icon";
 
 // https://astro.build/config
@@ -25,19 +26,19 @@ export default defineConfig({
         }
     },
     integrations: [
+        icon({
+            iconDir: "src/assets/icons",
+            include: {
+                ri: ["*"]
+            }
+        }),
+        mdx(),
         sitemap(),
         tailwind(),
         image({
             serviceEntryPoint: "@astrojs/image/sharp"
         }),
         prefetch(),
-        react(),
-        mdx(),
-        icon({
-            iconDir: "src/assets/icons",
-            include: {
-                ri: ["*"]
-            }
-        })
+        react()
     ]
 });
