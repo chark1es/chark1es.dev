@@ -3,7 +3,7 @@ import { SITE } from "@config";
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import SectionContainer from "@/components/SectionContainer.astro";
-import { Icon } from "astro-icon/components";
+// import { Icon } from "astro-icon/components";
 import getSortedTags from "@/utils/getSortedTags";
 
 const posts = await getCollection("blog");
@@ -20,7 +20,7 @@ let tags = getSortedTags(posts);
                 href="/"
                 class="font-medium flex no-underline text-neutral-500 mb-8"
             >
-                <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" />
+                <!-- <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" /> -->
                 Back to home
             </a>
             <h2
@@ -39,7 +39,6 @@ let tags = getSortedTags(posts);
                                 href={`/tags/${tag.toLowerCase()}`}
                                 class={`text-lg pr-2 flex flex-wrap items-center relative underline hover:-top-0.5 hover:text-skin-accent focus-visible:p-1`}
                             >
-                                <Icon name="mdi:hashtag" class="w-6 h-6" />
                                 &nbsp;<span>{tag.toLowerCase()}</span>
                             </a>
                         </li>

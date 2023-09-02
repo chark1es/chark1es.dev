@@ -13,7 +13,7 @@ import FormattedDate from "../../src/components/FormattedDate.astro";
 import { getCollection } from "astro:content";
 
 import getSortedTags from "@/utils/getSortedTags";
-import { Icon } from "astro-icon/components";
+// import { Icon } from "astro-icon/components";
 const posts = await getCollection("blog");
 
 const tags = getSortedTags(posts).slice(0, 6);
@@ -113,7 +113,7 @@ const sortedPosts = posts
                 </h2>
                 <a href="/blog" class="font-medium flex no-underline ml-auto">
                     View all blogs
-                    <Icon name="ph:arrow-right-light" class="w-6 h-6 ml-4" />
+                    <!-- <Icon name="ph:arrow-right-light" class="w-6 h-6 ml-4" /> -->
                 </a>
             </div>
 
@@ -159,7 +159,7 @@ const sortedPosts = posts
 
                 <a href="/tags" class="font-medium flex no-underline ml-auto">
                     View all tags
-                    <Icon name="ph:arrow-right-light" class="w-6 h-6 ml-4" />
+                    <!-- <Icon name="ph:arrow-right-light" class="w-6 h-6 ml-4" /> -->
                 </a>
             </div>
 
@@ -171,7 +171,6 @@ const sortedPosts = posts
                                 href={`/tags/${tag.toLowerCase()}`}
                                 class={`text-lg dark:text-dark_mode_text pr-2 flex flex-wrap items-center relative underline hover:-top-0.5 hover:text-skin-accent focus-visible:p-1`}
                             >
-                                <Icon name="mdi:hashtag" class="w-6 h-6" />
                                 &nbsp;<span>{tag.toLowerCase()}</span>
                             </a>
                         </li>

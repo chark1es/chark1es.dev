@@ -8,8 +8,6 @@ import remarkToc from "remark-toc";
 import image from "@astrojs/image";
 import prefetch from "@astrojs/prefetch";
 
-import icon from "astro-icon";
-
 // https://astro.build/config
 export default defineConfig({
     site: "https://chark1es.dev",
@@ -17,21 +15,8 @@ export default defineConfig({
         syntaxHighlight: "prism",
         remarkPlugins: [remarkToc, remarkReadingTime]
     },
-    vite: {
-        optimizeDeps: {
-            exclude: ["@resvg/resvg-js"]
-        },
-        ssr: {
-            external: ["svgo"]
-        }
-    },
+
     integrations: [
-        icon({
-            iconDir: "src/assets/icons",
-            include: {
-                ri: ["*"]
-            }
-        }),
         mdx(),
         sitemap(),
         tailwind(),

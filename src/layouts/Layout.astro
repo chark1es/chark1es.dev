@@ -4,7 +4,7 @@
 import "../styles/globals.scss";
 import SectionContainer from "@/components/SectionContainer.astro";
 import SEO from "@/components/seo/SEO.astro";
-import { Icon } from "astro-icon/components";
+
 import { SOCIALS } from "@config";
 import Navigation from "../components/Navigation.astro";
 
@@ -65,12 +65,7 @@ const {
                                             class="relative hover:underline hover:-top-0.5 hover:text-skin-accent hover:text-black focus-visible:p-1 flex items-center"
                                             target="_blank"
                                             title={social.title}
-                                        >
-                                            <Icon
-                                                name={social.icon}
-                                                class="w-10 h-10 inline"
-                                            />
-                                        </a>
+                                        />
                                     )
                                 )
                             }

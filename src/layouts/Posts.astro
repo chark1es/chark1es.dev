@@ -2,7 +2,7 @@
 import FormattedDate from "@/components/FormattedDate.astro";
 import Layout from "@/layouts/Layout.astro";
 import SectionContainer from "@/components/SectionContainer.astro";
-import { Icon } from "astro-icon/components";
+// import { Icon } from "astro-icon/components";
 import { SITE } from "@config";
 import { CollectionEntry } from "astro:content";
 
@@ -38,7 +38,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                 href="/"
                 class="font-medium flex no-underline text-neutral-500 mb-8"
             >
-                <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" />
+                <!-- <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" /> -->
                 Back to home
             </a>
             {
@@ -106,10 +106,6 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                             aria-label="Previous"
                             aria-disabled={prev === "disabled"}
                         >
-                            <Icon
-                                name="ph:arrow-left-light"
-                                class="w-6 h-6 mr-4"
-                            />
                             Prev
                         </a>
                         <a
@@ -124,10 +120,6 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                             aria-disabled={next === "disabled"}
                         >
                             Next
-                            <Icon
-                                name="ph:arrow-right-light"
-                                class="w-6 h-6 ml-4"
-                            />
                         </a>
                     </nav>
                 )

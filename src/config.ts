@@ -19,28 +19,28 @@ export const SOCIALS: SocialMediaObjects = [
     // {
     //     name: "Github",
     //     href: "https://github.com/chark1es/chark1es.dev",
-    //     icon: "ph:github-logo-duotone",
+    //     icon: "",
     //     title: `Follow ${SITE.author} on Github`,
     //     active: true
     // }
     // {
     //     name: "Facebook",
     //     href: "https://github.com/christian-luntok/astro-lane/",
-    //     icon: "ph:facebook-logo-duotone",
+    //     icon: "",
     //     title: `Follow ${SITE.title} on Facebook`,
     //     active: false
     // },
     // {
     //     name: "Instagram",
     //     href: "https://github.com/christian-luntok/astro-lane/",
-    //     icon: "ph:instagram-logo-duotone",
+    //     icon: "",
     //     title: `Follow ${SITE.author} on Instagram`,
     //     active: true
     // },
     // {
     //     name: "LinkedIn",
     //     href: "https://github.com/christian-luntok/astro-lane/",
-    //     icon: "ph:linkedin-logo-duotone",
+    //     icon: "",
     //     title: `Follow ${SITE.title} on LinkedIn`,
     //     active: true
     // },
@@ -54,7 +54,7 @@ export const SOCIALS: SocialMediaObjects = [
     // {
     //     name: "Twitter",
     //     href: "https://github.com/christian-luntok/astro-lane/",
-    //     icon: "ph:twitter-logo-duotone",
+    //     icon: "",
     //     title: `Follow ${SITE.author} on Twitter`,
     //     active: true
     // },
