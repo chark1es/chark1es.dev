@@ -18,7 +18,7 @@ export const SITE: Site = {
 export const SOCIALS: SocialMediaObjects = [
     {
         name: "Github",
-        href: "https://github.com/christian-luntok/astro-lane/",
+        href: "https://github.com/chark1es/charl1es.dev",
         icon: "ph:github-logo-duotone",
         title: `Follow ${SITE.author} on Github`,
         active: true
@@ -46,7 +46,7 @@ export const SOCIALS: SocialMediaObjects = [
     },
     {
         name: "Mail",
-        href: "mailto:yourmail@gmail.com",
+        href: "mailto:contact@chark1es.org",
         title: `Send an email to ${SITE.title}`,
         icon: "",
         active: false

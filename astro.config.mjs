@@ -33,6 +33,12 @@ export default defineConfig({
         }),
         prefetch(),
         react(),
-        mdx()
+        mdx(),
+        icon({
+            iconDir: "src/assets/icons",
+            include: {
+                ri: ["*"]
+            }
+        })
     ]
 });
