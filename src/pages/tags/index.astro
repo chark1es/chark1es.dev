@@ -3,7 +3,6 @@ import { SITE } from "@config";
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import SectionContainer from "@/components/SectionContainer.astro";
-// import { Icon } from "astro-icon/components";
 import getSortedTags from "@/utils/getSortedTags";
 
 const posts = await getCollection("blog");
@@ -20,7 +19,6 @@ let tags = getSortedTags(posts);
                 href="/"
                 class="font-medium flex no-underline text-neutral-500 mb-8"
             >
-                <!-- <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" /> -->
                 Back to home
             </a>
             <h2

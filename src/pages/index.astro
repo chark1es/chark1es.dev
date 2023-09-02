@@ -13,7 +13,6 @@ import FormattedDate from "../../src/components/FormattedDate.astro";
 import { getCollection } from "astro:content";
 
 import getSortedTags from "@/utils/getSortedTags";
-// import { Icon } from "astro-icon/components";
 const posts = await getCollection("blog");
 
 const tags = getSortedTags(posts).slice(0, 6);
@@ -113,7 +112,6 @@ const sortedPosts = posts
                 </h2>
                 <a href="/blog" class="font-medium flex no-underline ml-auto">
                     View all blogs
-                    <!-- <Icon name="ph:arrow-right-light" class="w-6 h-6 ml-4" /> -->
                 </a>
             </div>
 
@@ -159,7 +157,6 @@ const sortedPosts = posts
 
                 <a href="/tags" class="font-medium flex no-underline ml-auto">
                     View all tags
-                    <!-- <Icon name="ph:arrow-right-light" class="w-6 h-6 ml-4" /> -->
                 </a>
             </div>
 
