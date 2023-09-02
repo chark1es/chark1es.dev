@@ -26,3 +26,45 @@
 
 // Core Plugins
 // @import "plugins/plugin-tailwind";
+:root {
+    --astro-code-color-text: azure;
+    --astro-code-color-background: rgb(36, 36, 36);
+    --astro-code-token-constant: plum;
+    --astro-code-token-string: orchid;
+    --astro-code-token-comment: salmon;
+    --astro-code-token-keyword: powderblue;
+    --astro-code-token-parameter: seashell;
+    --astro-code-token-function: dodgerblue;
+    --astro-code-token-string-expression: burlywood;
+    --astro-code-token-punctuation: linen;
+    --astro-code-token-link: honeydew;
+}
+
+.underline-animation a.group {
+    color: #ffaa33;
+    transition: transform 1s ease-in-out;
+}
+
+.underline-animation a.group:hover span {
+    transform: scaleX(1);
+}
+
+.underline-animation a.group span.relative {
+    display: inline-block;
+    position: relative;
+}
+
+.underline-animation a.group span.absolute {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    height: 1px;
+    background-color: #ffaa33;
+    transform: translateX(-50%) scaleX(0);
+    transform-origin: center;
+}
+
+.dark {
+    color-scheme: dark;
+}

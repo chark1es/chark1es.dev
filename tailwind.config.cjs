@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+    content: [
+        "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
+        "./node_modules/flowbite/**/*.js"
+    ],
     theme: {
         extend: {
             fontFamily: {
@@ -98,9 +101,14 @@ module.exports = {
                     950: "#1a1a1a"
                 },
                 badge: "#F1F5F9",
-                badgeText: "#475569"
+                badgeText: "#475569",
+                dark_mode_bg: "#111111",
+                dark_mode_post: "#1D1D1D",
+                dark_mode_text: "#CCCCCC",
+                dark_mode_bg_nav: "#131313"
             }
         }
     },
-    plugins: [require("@tailwindcss/typography")]
+    plugins: [require("@tailwindcss/typography"), require("flowbite/plugin")],
+    darkMode: "class"
 };

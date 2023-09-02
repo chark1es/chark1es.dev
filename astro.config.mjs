@@ -8,9 +8,11 @@ import remarkToc from "remark-toc";
 import image from "@astrojs/image";
 import prefetch from "@astrojs/prefetch";
 
+import compress from "astro-compress";
+
 // https://astro.build/config
 export default defineConfig({
-    site: "https://www.astro-lane.avenuelabs.co/",
+    site: "https://chark1es.dev",
     markdown: {
         syntaxHighlight: "prism",
         remarkPlugins: [remarkToc, remarkReadingTime]
@@ -24,13 +26,13 @@ export default defineConfig({
         }
     },
     integrations: [
-        mdx(),
         sitemap(),
         tailwind(),
         image({
             serviceEntryPoint: "@astrojs/image/sharp"
         }),
         prefetch(),
-        react()
+        react(),
+        mdx()
     ]
 });

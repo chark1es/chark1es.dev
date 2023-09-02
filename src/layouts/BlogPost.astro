@@ -41,12 +41,12 @@ const { Content } = await post.render();
                         Back
                     </a>
                     <div class="post--title">
-                        <h1 class="text-3xl md:text-4xl">
+                        <h1 class="text-3xl dark:text-white :text-4xl">
                             {title}
                         </h1>
                     </div>
                     <span
-                        class="mb-4 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex"
+                        class="dark:bg-dark_mode_bg dark:text-dark_mode_text mb-4 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex"
                     >
                         <span class="px-2">
                             <FormattedDate date={pubDate} />
@@ -71,7 +71,7 @@ const { Content } = await post.render();
                         )
                     }
                     <div
-                        class="prose-code:whitespace-pre-wrap prose-code:break-words prose-code:overflow-x-auto"
+                        class="dark:text-dark_mode_text prose-code:whitespace-pre-wrap prose-code:break-words prose-code:overflow-x-auto"
                     >
                         <Content />
                     </div>

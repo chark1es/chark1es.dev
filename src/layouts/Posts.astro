@@ -63,14 +63,14 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                         <li class="flex flex-col gap-1">
                             <a
                                 href={`/blog/${post.slug}`}
-                                class="block w-full card-clip p-8 no-underline sm:flex-row sm:gap-8 bg-neutral-50 rounded-[40px] transition-all duration-300"
+                                class="block w-full card-clip p-8 no-underline sm:flex-row sm:gap-8 dark:bg-dark_mode_post bg-neutral-50 rounded-[40px] transition-all duration-300"
                             >
                                 <span class="grid flex-1 gap-1">
-                                    <span class="text-neutral-900 line-clamp-1 md:inline-flex items-center">
+                                    <span class="text-neutral-900 dark:text-white-500 line-clamp-1 md:inline-flex items-center">
                                         <span class="inline-block font-medium">
                                             {post.data.title}
                                         </span>
-                                        <span class="md:mb-0 my-2 md:my-0 md:ml-2 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex">
+                                        <span class=" dark:bg-dark_mode_post dark:text-dark_mode_text md:mb-0 my-2 md:my-0 md:ml-2 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex">
                                             <span class="px-2">
                                                 <FormattedDate
                                                     date={post.data.pubDate}
@@ -78,7 +78,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                                             </span>
                                         </span>
                                     </span>
-                                    <span class="text-neutral-500 line-clamp-2 ">
+                                    <span class="text-neutral-500 dark:text-dark_mode_text line-clamp-2 ">
                                         {post.data.description}
                                     </span>
                                 </span>
