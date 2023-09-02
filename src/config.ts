@@ -16,13 +16,13 @@ export const SITE: Site = {
 // The site uses iconify - you can find icons on https://iconify.design/.
 
 export const SOCIALS: SocialMediaObjects = [
-    // {
-    //     name: "Github",
-    //     href: "https://github.com/chark1es/chark1es.dev",
-    //     icon: "",
-    //     title: `Follow ${SITE.author} on Github`,
-    //     active: true
-    // }
+    {
+        name: "Github",
+        href: "https://github.com/chark1es/chark1es.dev",
+        icon: "ph:github-logo-duotone",
+        title: `Follow ${SITE.author} on Github`,
+        active: true
+    }
     // {
     //     name: "Facebook",
     //     href: "https://github.com/christian-luntok/astro-lane/",

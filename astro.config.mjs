@@ -15,6 +15,14 @@ export default defineConfig({
         syntaxHighlight: "prism",
         remarkPlugins: [remarkToc, remarkReadingTime]
     },
+    vite: {
+        optimizeDeps: {
+            exclude: ["@resvg/resvg-js"]
+        },
+        ssr: {
+            external: ["svgo"]
+        }
+    },
 
     integrations: [
         mdx(),

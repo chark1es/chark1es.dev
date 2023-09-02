@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
 import Layout from "./Layout.astro";
 import SectionContainer from "@/components/SectionContainer.astro";
-
+import { Icon } from "astro-icon";
 import { SITE } from "@config";
 
 export interface Props {
@@ -38,6 +38,7 @@ const { Content } = await post.render();
                         href="/blog/"
                     >
                         Back
+                        <Icon name="ph:arrow-left-light" class="w-6 h-6 mr-4" />
                     </a>
                     <div class="post--title">
                         <h1 class="text-3xl dark:text-white :text-4xl">
