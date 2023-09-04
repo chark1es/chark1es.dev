@@ -2,7 +2,7 @@
 location: "Chadwick School"
 position: "Subsitute Teacher / Camp Counselor"
 years: "Jun 2022 - Jul 2022"
-logo: "./public/images/chadwick.png"
+logo: "/images/chadwick.png"
 logoWidth: 100
 logoHeight: 100
 skills:

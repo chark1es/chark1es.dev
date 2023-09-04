@@ -2,7 +2,7 @@
 location: "Chadwick School"
 position: "Digital Film Instructor"
 years: "Jun 2023 - July 2023"
-logo: "./public/images/chadwick.png"
+logo: "/images/chadwick.png"
 logoWidth: 100
 logoHeight: 100
 skills:
