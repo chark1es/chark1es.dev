@@ -17,5 +17,12 @@
     "eslint.options": {
         "overrideConfigFile": "eslint.config.mjs"
     },
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "files.associations": {
+        "*.mdx": "markdown"
+    },
+    "prettier.documentSelectors": ["**/*.astro"],
+    "[astro]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
