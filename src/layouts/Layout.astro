@@ -57,28 +57,10 @@ const {
         <SectionContainer class="mt-32">
             <footer class="py-20 bg-neutral-50 dark:bg-dark_mode_bg">
                 <div class="wrap-sm mx-auto px-8 grid gap-8">
-                    <div class="footer-credits text-neutral-500">
-                        <div
-                            class="footer-socials font-medium flex gap-6 md:gap-10 max-w-md text-xl md:text-3xl lg:text-2xl leading-10 tracking-tighter"
-                        >
-                            {
-                                SOCIALS.filter((social) => social.active).map(
-                                    (social) => (
-                                        <a
-                                            href={social.href}
-                                            class="relative hover:underline hover:-top-0.5 hover:text-skin-accent hover:text-black focus-visible:p-1 flex items-center"
-                                            target="_blank"
-                                            title={social.title}
-                                        />
-                                    )
-                                )
-                            }
-                        </div>
-                    </div>
                     <span
-                        class="text-neutral-500 text-sm flex flex-wrap gap-4 md:gap-0 md:justify-between"
+                        class="text-neutral-500 text-sm flex flex-wrap mx-auto gap-4 md:gap-0 md:justify-between"
                     >
-                        <span>Copyright © {currentYear} chark1es</span>
+                        <span class="">Copyright © {currentYear} chark1es</span>
                         <a class="" href="https://www.chark1es.dev/"> </a>
                     </span>
                 </div>
