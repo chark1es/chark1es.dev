@@ -1,7 +1,7 @@
 ---
-import { Image } from "@astrojs/image/components";
 
 const { class: className, imageClass, width, height, alt, src } = Astro.props;
+import { Image } from 'astro:assets'
 ---
 
 <div class={`card--image ${className && className}`}>
@@ -11,7 +11,6 @@ const { class: className, imageClass, width, height, alt, src } = Astro.props;
         height={height}
         alt={alt}
         loading="lazy"
-        aspectRatio={1 / 1}
         format={"webp"}
         class={`object-cover ${imageClass && imageClass}`}
     />

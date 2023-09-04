@@ -1,7 +1,8 @@
 ---
-import { Image } from "@astrojs/image/components";
+
 import profileImage from "./public/images/derp.png";
 import SkillButton from "./SkillCardButtonTemplate.astro";
+import { Image } from 'astro:assets'
 const posts = await Astro.glob("../../content/experience/*.md");
 ---
 
@@ -16,7 +17,6 @@ const posts = await Astro.glob("../../content/experience/*.md");
                             alt={""}
                             width={post.frontmatter.logoWidth}
                             height={post.frontmatter.logoHeight}
-                            aspectRatio={1 / 1}
                             format={"webp"}
                             class=" h-30 w-30 opacity-75 rounded-3xl bg-neutral-50 dark:bg-dark_mode_post object-fit"
                         />
