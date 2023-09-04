@@ -24,5 +24,13 @@ export default defineConfig({
         }
     },
 
-    integrations: [mdx(), sitemap(), tailwind(), prefetch(), react()]
+    integrations: [
+        mdx(),
+        sitemap(),
+        tailwind(),
+        prefetch(),
+        react({
+            include: ["**/react/*"]
+        })
+    ]
 });

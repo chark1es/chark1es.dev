@@ -28,6 +28,7 @@
         "deploy": "wrangler pages deploy dist"
     },
     "dependencies": {
+        "@astrojs/check": "^0.2.0",
         "@astrojs/mdx": "^1.0.0",
         "@astrojs/rss": "^3.0.0",
         "@astrojs/sitemap": "^3.0.0",
