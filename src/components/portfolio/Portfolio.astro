@@ -1,0 +1,48 @@
+---
+// import Layout from "@/layouts/Layout.astro";
+// import SectionContainer from "@/components/SectionContainer.astro";
+// import { getCollection } from "astro:content";
+import MainCard from "@/components/portfolio/MainCard.astro";
+// import CardImage from "@/components/card/CardImage.astro";
+import ExperienceCard from "@/components/portfolio/ExperienceCard.astro";
+import SkillsCard from "@/components/portfolio/SkillsCard.astro";
+---
+
+<div class="pt-5"></div>
+<main
+    class="flex justify-center items-center overflow-x-hidden xl:left-7 mx-auto"
+>
+    <div
+        class="lg:py-5 lg:space-y-8 max-w-5xl px-2 py-3 sm:px-8 sm:py-12 sm:space-y-6 space-y-4 w-full"
+    >
+        <div
+            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
+        >
+            <MainCard />
+        </div>
+    </div>
+</main>
+<!-- </body> -->
+<main class="flex justify-center items-center overflow-x-hidden xl:left-7">
+    <div
+        class="lg:py-5 lg:space-y-8 max-w-5xl px-2 py-3 sm:px-8 sm:py-12 sm:space-y-6 space-y-4 w-full"
+    >
+        <div
+            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
+        >
+            <SkillsCard />
+        </div>
+    </div>
+</main>
+<!-- </body> -->
+<main class="flex justify-center items-center overflow-x-hidden xl:left-7">
+    <div
+        class="lg:py-5 lg:space-y-8 max-w-5xl px-2 py-3 sm:px-8 sm:py-12 sm:space-y-6 space-y-4 w-full"
+    >
+        <div
+            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
+        >
+            <ExperienceCard />
+        </div>
+    </div>
+</main>

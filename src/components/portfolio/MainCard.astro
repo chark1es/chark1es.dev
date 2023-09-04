@@ -1,0 +1,62 @@
+---
+// import CardImage from "@/components/card/CardImage.astro";
+// import Logo from "./public/images/derp.png";
+---
+
+<div class="flex flex-col gap-4">
+    <div class="flex gap-6">
+        <img
+            src="../images/derp.png"
+            alt="A description of my image."
+            width="20%"
+            height="20%"
+            class="object-scale-down"
+        />
+        <div>
+            <!-- Main Info -->
+
+            <div
+                class="text-3xl font-extrabold text-gray-900 dark:text-dark_mode_text"
+            >
+                Charles Nguyen
+            </div>
+            <div
+                class="text-lg font-medium text-gray-700 dark:text-dark_mode_text"
+            >
+                Student @ University of San Diego
+            </div>
+
+            <!-- Contact Page -->
+
+            <div
+                class="flex gap-x-2 gap-y-1 pt-4 font-semibold tracking-wider text-sm dark:text-dark_mode_text"
+            >
+                <span class="text-sm"> Email:</span>
+                <a
+                    href="mailto:contact@chark1es.dev"
+                    class="font-medium relative group underline"
+                >
+                    contact@chark1es.dev
+                </a>
+            </div>
+
+            <div
+                class="flex gap-x-2 gap-y-1 pt-1 font-semibold tracking-wider text-sm dark:text-dark_mode_text"
+            >
+                <span class="text-sm"> From:</span>
+                <a class="font-medium relative group">
+                    Los Angeles, California
+                </a>
+            </div>
+
+            <div
+                class="flex gap-x-2 gap-y-1 pt-1 font-semibold tracking-wider text-sm dark:text-dark_mode_text"
+            >
+                <span class="text-sm"> Major:</span>
+                <a class="font-medium relative group">Computer Science BS</a>
+            </div>
+
+            <!-- Paragraph -->
+        </div>
+    </div>
+</div>

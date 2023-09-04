@@ -16,7 +16,7 @@ const {
     description,
     keywords,
     url,
-    twitterhandle,
+    // twitterhandle,
     image
 } = Astro.props;
 ---
@@ -43,6 +43,10 @@ const {
                 document.documentElement.classList.remove("dark");
             }
         </script>
+
+        <script
+            src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"
+        ></script>
     </head>
     <Navigation />
     <body class="dark:bg-dark_mode_bg">

@@ -105,7 +105,7 @@ module.exports = {
                 dark_mode_bg: "#111111",
                 dark_mode_post: "#1D1D1D",
                 dark_mode_text: "#CCCCCC",
-                dark_mode_bg_nav: "#131313"
+                dark_mode_bg_nav: "#161616"
             }
         }
     },

@@ -1,0 +1,113 @@
+---
+// import CardImage from "@/components/card/CardImage.astro";
+// import Logo from "./public/images/derp.png";
+
+import type { SkillsSection } from "../../types/skills-section.types";
+import Skill from "./SkillCardTemplate.astro";
+import SkillButton from "./SkillCardButtonTemplate.astro";
+// import skillLevel from "@/data/skillLevel.json";
+export interface Props extends SkillsSection {}
+---
+
+<div class="flex flex-col gap-4">
+    <span class="text-gray-700 font-bold dark:text-gray-300 text-3xl">
+        Skills</span
+    >
+    <span class="text-gray-700 font-bold dark:text-gray-300 text-md">
+        I currently know</span
+    >
+    <div class="flex flex-col gap-1">
+        <!-- Skills -->
+        <div class="flex flex-wrap gap-2 gap-x-28 gap-y-6">
+            <Skill
+                skillName="Python"
+                skillIcon="simple-icons:python"
+                skillLevel="3"
+            />
+
+            <Skill
+                skillName="HTML"
+                skillIcon="simple-icons:html5"
+                skillLevel="2"
+            />
+            <Skill
+                skillName="Tailwind CSS"
+                skillIcon="simple-icons:tailwindcss"
+                skillLevel="2"
+            />
+            <Skill
+                skillName="Javascript"
+                skillIcon="simple-icons:javascript"
+                skillLevel="1"
+            />
+            <Skill
+                skillName="Java"
+                skillIcon="devicon-plain:java"
+                skillLevel="1"
+            />
+            <Skill
+                skillName="Hugo"
+                skillIcon="devicon-plain:astro"
+                skillLevel="2"
+            />
+            <Skill
+                skillName="Astro"
+                skillIcon="devicon-plain:astro"
+                skillLevel="2"
+            />
+            <Skill
+                skillName="Adobe After Effects"
+                skillIcon="simple-icons:adobeaftereffects"
+                skillLevel="1"
+            />
+            <Skill
+                skillName="Adobe Premiere Pro"
+                skillIcon="simple-icons:adobeaftereffects"
+                skillLevel="1"
+            />
+            <Skill
+                skillName="Adobe Photoshop"
+                skillIcon="simple-icons:adobeaftereffects"
+                skillLevel="1"
+            />
+            <!-- Knowledge Bar -->
+        </div>
+        <span class="pt-10 text-gray-700 font-bold dark:text-gray-300 text-md">
+            I want to learn
+        </span>
+        <div class="flex flex-wrap gap-3 pt-2">
+            <!-- Knowledge Bar -->
+            <SkillButton skillName="C++" skillIcon="simple-icons:cplusplus" />
+            <SkillButton skillName="C#" skillIcon="teenyicons:c-sharp-solid" />
+            <SkillButton skillName="Unity" skillIcon="simple-icons:unity" />
+            <SkillButton
+                skillName="Unreal Engine"
+                skillIcon="simple-icons:unrealengine"
+            />
+
+            <SkillButton
+                skillName="Next.js"
+                skillIcon="simple-icons:nextdotjs"
+            />
+            <SkillButton
+                skillName="Typescript"
+                skillIcon="simple-icons:typescript"
+            />
+        </div>
+
+        <span class="pt-10 text-gray-700 font-bold dark:text-gray-300 text-md">
+            I speak
+        </span>
+        <div class="flex flex-wrap gap-3 pt-2">
+            <!-- Knowledge Bar -->
+            <SkillButton
+                skillName="English"
+                skillIcon="emojione-v1:flag-for-united-states"
+            />
+            <SkillButton
+                skillName="Vietnamese"
+                skillIcon="twemoji:flag-vietnam"
+            />
+        </div>
+    </div>
+</div>
