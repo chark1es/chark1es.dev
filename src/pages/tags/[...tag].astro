@@ -6,12 +6,12 @@ import getPostsByTag from "@/utils/getPostsbyTag";
 import Tags from "@/layouts/Tags.astro";
 
 export interface Props {
-    post: CollectionEntry<"blog">;
+    post: CollectionEntry<"blogs">;
     tag: string;
 }
 
 export async function getStaticPaths() {
-    const posts = await getCollection("blog");
+    const posts = await getCollection("blogs");
     const tags = getSortedTags(posts);
 
     return tags.map((tag) => {
@@ -23,7 +23,7 @@ export async function getStaticPaths() {
 }
 
 const { tag } = Astro.props;
-const posts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = await getCollection("blogs", ({ data }) => !data.draft);
 const tagPosts = getPostsByTag(posts, tag);
 ---
 

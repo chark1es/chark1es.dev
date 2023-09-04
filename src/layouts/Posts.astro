@@ -9,7 +9,7 @@ import { CollectionEntry } from "astro:content";
 export interface Props {
     pageNum: number;
     totalPages: number;
-    posts: CollectionEntry<"blog">[];
+    posts: CollectionEntry<"blogs">[];
     title: string;
 }
 
@@ -31,7 +31,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
     description={`A list of posts from ${SITE.author} in ${SITE.title}`}
 >
     <div
-        class="main-wrapper wrap-sm grid gap-16 px-8 md:gap-24 lg:gap-32 mx-auto"
+        class="main-wrapper wrap-md grid gap-16 md:gap-24 lg:gap-32 mx-auto"
     >
         <SectionContainer class="blogs--container mt-32">
             <a
@@ -44,9 +44,9 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                 breadcrumbList.map((breadcrumb, index) =>
                     index + 1 === breadcrumbList.length ? (
                         <h2 class="font-medium text-h4 text-neutral-500 my-4 leading-8 tracking-tighter">
-                            {breadcrumbList[0] === "blog" && "Blogs"}
+                            {breadcrumbList[0] === "blogs" && "Blogs"}
                             <span class="ml-2 opacity-70 text-xl">
-                                {breadcrumbList[0] === "blog" &&
+                                {breadcrumbList[0] === "blogs" &&
                                     `(Page ${breadcrumbList[0 + 1] || 1})`}
                             </span>
                         </h2>
@@ -61,7 +61,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                     posts.map((post) => (
                         <li class="flex flex-col gap-1">
                             <a
-                                href={`/blog/${post.slug}`}
+                                href={`/blogs/${post.slug}`}
                                 class="block w-full card-clip p-8 no-underline sm:flex-row sm:gap-8 dark:bg-dark_mode_post bg-neutral-50 rounded-[40px] transition-all duration-300"
                             >
                                 <span class="grid flex-1 gap-1">
@@ -94,7 +94,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                     >
                         <a
                             tabindex={prev === "disabled" ? "-1" : "0"}
-                            href={`/blog${
+                            href={`/blogs${
                                 pageNum - 1 !== 1 ? "/" + (pageNum - 1) : "/"
                             }`}
                             class={`mr-4 select-none flex flex-wrap ${
@@ -109,7 +109,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                         </a>
                         <a
                             tabindex={next === "disabled" ? "-1" : "0"}
-                            href={`/blog/${pageNum + 1}`}
+                            href={`/blogs/${pageNum + 1}`}
                             class={`ml-4 select-none flex flex-wrap ${
                                 next === "disabled"
                                     ? "disabled select-none pointer-events-none opacity-70"

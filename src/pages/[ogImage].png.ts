@@ -9,7 +9,10 @@ export const GET: APIRoute = async ({ params }) => {
     });
 };
 
-const postImportResult = await getCollection("blog", ({ data }) => !data.draft);
+const postImportResult = await getCollection(
+    "blogs",
+    ({ data }) => !data.draft
+);
 const posts = Object.values(postImportResult);
 
 export function getStaticPaths() {

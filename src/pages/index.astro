@@ -13,7 +13,7 @@ import FormattedDate from "../../src/components/FormattedDate.astro";
 import { getCollection } from "astro:content";
 import Portfolio from "@/components/portfolio/Portfolio.astro";
 import getSortedTags from "@/utils/getSortedTags";
-const posts = await getCollection("blog");
+const posts = await getCollection("blogs");
 
 const tags = getSortedTags(posts).slice(0, 6);
 const sortedPosts = posts
@@ -108,7 +108,7 @@ const sortedPosts = posts
                 <h2 class="font-medium text-h4 mb-0 leading-8 tracking-tighter">
                     Blogs
                 </h2>
-                <a href="/blog" class="font-medium flex no-underline ml-auto">
+                <a href="/blogs" class="font-medium flex no-underline ml-auto">
                     View all blogs
                 </a>
             </div>
@@ -118,7 +118,7 @@ const sortedPosts = posts
                     sortedPosts.map((post) => (
                         <li class="flex flex-col gap-1">
                             <a
-                                href={`/blog/${post.slug}`}
+                                href={`/blogs/${post.slug}`}
                                 class="block w-full card-clip p-8 no-underline sm:flex-row sm:gap-8 dark:bg-dark_mode_post bg-neutral-50 rounded-[40px] transition-all duration-300"
                             >
                                 <span class="grid flex-1 gap-1">

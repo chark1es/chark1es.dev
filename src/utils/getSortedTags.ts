@@ -1,6 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 
-const getSortedTags = (posts: CollectionEntry<"blog">[]) => {
+const getSortedTags = (posts: CollectionEntry<"blogs">[]) => {
     let tags: string[] = [];
     const filteredPosts = posts.filter(({ data }) => !data.draft);
     filteredPosts.forEach((post) => {
