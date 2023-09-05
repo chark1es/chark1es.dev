@@ -76,10 +76,8 @@ const {
     <script>
         const setFixedWidth = () => {
             const navBar = document.querySelector("nav");
-
             // Add a class to the navigation bar to set a fixed width
             navBar.classList.add("fixed-width");
-
             // Ensure scrollbar is always visible
             document.body.style.overflowY = "scroll";
         };
@@ -91,7 +89,6 @@ const {
             const themeToggleLightIcon = document.getElementById(
                 "theme-toggle-light-icon"
             );
-            const themeToggleBtn = document.getElementById("theme-toggle");
 
             const isDarkMode =
                 localStorage.getItem("color-theme") === "dark" ||
@@ -134,6 +131,11 @@ const {
             }
         };
 
+        const attachEventListeners = () => {
+            const themeToggleBtn = document.getElementById("theme-toggle");
+            themeToggleBtn.addEventListener("click", handleThemeToggleClick);
+        };
+
         // Runs before each navigation transition starts
         document.addEventListener("astro:transitionstart", () => {
             setFixedWidth();
@@ -143,14 +145,13 @@ const {
         document.addEventListener("astro:after-swap", () => {
             setFixedWidth();
             setDarkMode(); // Update the theme on page transition
+            attachEventListeners(); // Reattach event listeners for theme toggle button
         });
 
         // Runs on initial navigation
         document.addEventListener("DOMContentLoaded", () => {
             setDarkMode();
-
-            const themeToggleBtn = document.getElementById("theme-toggle");
-            themeToggleBtn.addEventListener("click", handleThemeToggleClick);
+            attachEventListeners();
         });
     </script>
 
