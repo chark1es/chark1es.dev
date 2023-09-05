@@ -30,7 +30,7 @@ const { Content } = await post.render();
     <div class="main-wrapper wrap-md grid gap-16 md:gap-24 lg:gap-32 mx-auto">
         <SectionContainer class="blogs--container mt-32">
             <a
-                class="blog-back-button cursor-pointer text-neutral-500 flex no-underline mb-16"
+                class="blog-back-button cursor-pointer text-neutral-500 flex no-underline mb-8"
                 href="/blogs/"
             >
                 Back
@@ -50,19 +50,13 @@ const { Content } = await post.render();
             {
                 updatedDate && (
                     <div class="last-updated-on">
-                        Last updated on{" "}
-                        <FormattedDate date={updatedDate} />
+                        Last updated on <FormattedDate date={updatedDate} />
                     </div>
                 )
             }
             {
                 heroImage && (
-                    <img
-                        width={720}
-                        height={360}
-                        src={heroImage}
-                        alt={title}
-                    />
+                    <img width={720} height={360} src={heroImage} alt={title} />
                 )
             }
             <div
@@ -71,7 +65,6 @@ const { Content } = await post.render();
                 <Content />
             </div>
         </SectionContainer>
-        
     </div>
 </Layout>
 
