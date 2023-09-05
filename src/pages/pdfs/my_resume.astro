@@ -1,0 +1,26 @@
+---
+import SEO from "../../components/seo/SEO.astro";
+---
+
+<!doctype html>
+<html>
+    <head>
+        <SEO
+            title="My Resume"
+            description="A pdf file of my resume"
+            keywords=""
+            url="https://chark1es.dev/pdfs/my-resume"
+            image="/images/derp.png"
+        />
+        <title>My Resume</title>
+        <style>
+            iframe {
+                width: 100%;
+                height: 100vh;
+            }
+        </style>
+    </head>
+    <body>
+        <iframe src="/pdfs/my_resume.pdf"></iframe>
+    </body>
+</html>
