@@ -107,10 +107,12 @@ const {
 
                 if (isDarkMode) {
                     document.documentElement.classList.add("dark");
+                    document.body.classList.add("dark"); // Add the 'dark' class to the body
                     themeToggleDarkIcon.classList.remove("hidden");
                     themeToggleLightIcon.classList.add("hidden");
                 } else {
                     document.documentElement.classList.remove("dark");
+                    document.body.classList.remove("dark"); // Remove the 'dark' class from the body
                     themeToggleDarkIcon.classList.add("hidden");
                     themeToggleLightIcon.classList.remove("hidden");
                 }
@@ -193,19 +195,9 @@ const {
         </script>
 
         <style>
-            .fade-in {
-                opacity: 1;
-                transition: opacity 0.5s ease-in;
-            }
-
-            .fade-out {
-                opacity: 0;
-                transition: opacity 0.5s ease-out;
-            }
             body {
-                overflow-y: scroll;
+                overflow: hidden;
             }
-
             /* Style the scrollbar for WebKit (Chrome, Safari) */
             body::-webkit-scrollbar {
                 width: 12px;
@@ -216,19 +208,37 @@ const {
                 background-color: transparent;
             }
 
-            body::-webkit-scrollbar-thumb {
+            body.dark::-webkit-scrollbar-thumb {
                 border-radius: 8px;
                 background-color: #363636;
             }
 
-            body::-webkit-scrollbar-thumb:hover {
+            body.dark::-webkit-scrollbar-thumb:hover {
                 background-color: #555;
+            }
+
+            body::-webkit-scrollbar-thumb {
+                border-radius: 8px;
+                background-color: #c1c1c1;
+            }
+
+            body::-webkit-scrollbar-thumb:hover {
+                background-color: #a0a0a0;
             }
 
             /* Style the scrollbar for Mozilla Firefox */
             body {
                 scrollbar-width: thin;
                 scrollbar-color: #363636 transparent;
+            }
+
+            body.dark::-moz-scrollbar-thumb {
+                border-radius: 8px;
+                background-color: #363636;
+            }
+
+            body.dark::-moz-scrollbar-thumb:hover {
+                background-color: #555;
             }
 
             body::-moz-scrollbar {
@@ -242,11 +252,25 @@ const {
 
             body::-moz-scrollbar-thumb {
                 border-radius: 8px;
-                background-color: #363636;
+                background-color: #c1c1c1;
             }
 
             body::-moz-scrollbar-thumb:hover {
-                background-color: #555;
+                background-color: #a0a0a0;
+            }
+
+            /* Hide the scrollbar initially */
+            body {
+                scrollbar-width: 0;
+                -ms-overflow-style: none; /* IE and Edge */
+                overflow: -moz-scrollbars-none; /* Firefox */
+            }
+
+            /* Show the scrollbar when dark mode is applied */
+            body.dark {
+                scrollbar-width: thin;
+                -ms-overflow-style: auto; /* IE and Edge */
+                overflow: overlay; /* Firefox */
             }
         </style>
     </body>
