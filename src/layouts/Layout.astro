@@ -53,7 +53,7 @@ const {
         ></script>
     </head>
     <Navigation />
-    <body class="dark:bg-dark_mode_bg">
+    <body class="dark:bg-dark_mode_bg bg-neutral-50">
         <main class={className}>
             <slot />
         </main>
@@ -71,115 +71,156 @@ const {
                 </div>
             </footer>
         </SectionContainer>
+
+        <button
+            id="scrollToTopBtn"
+            class="dark:text-dark_mode_text bg-gray-100 dark:bg-dark_mode_post duration-500 hover:scale-110 items-center justify-center text-gray-400 bottom-5 fixed h-10 inline-flex right-3 rounded-lg shadow-xl transition w-10 z-10 hidden opacity-0"
+        >
+            <iconify-icon
+                icon="fluent:arrow-up-12-filled"
+                height="20"
+                width="20"></iconify-icon>
+        </button>
+
+        <script>
+            const setFixedWidth = () => {
+                const navBar = document.querySelector("nav");
+                // Add a class to the navigation bar to set a fixed width
+                navBar.classList.add("fixed-width");
+                // Ensure scrollbar is always visible
+                document.body.style.overflowY = "scroll";
+            };
+
+            const setDarkMode = () => {
+                const themeToggleDarkIcon = document.getElementById(
+                    "theme-toggle-dark-icon"
+                );
+                const themeToggleLightIcon = document.getElementById(
+                    "theme-toggle-light-icon"
+                );
+
+                const isDarkMode =
+                    localStorage.getItem("color-theme") === "dark" ||
+                    (!localStorage.getItem("color-theme") &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches);
+
+                if (isDarkMode) {
+                    document.documentElement.classList.add("dark");
+                    themeToggleDarkIcon.classList.remove("hidden");
+                    themeToggleLightIcon.classList.add("hidden");
+                } else {
+                    document.documentElement.classList.remove("dark");
+                    themeToggleDarkIcon.classList.add("hidden");
+                    themeToggleLightIcon.classList.remove("hidden");
+                }
+            };
+
+            const handleScroll = () => {
+                const scrollToTopBtn =
+                    document.getElementById("scrollToTopBtn");
+
+                if (window.pageYOffset > 0) {
+                    scrollToTopBtn.classList.remove("hidden");
+                    setTimeout(() => {
+                        scrollToTopBtn.classList.add("fade-in");
+                    }, 10); // Add a small delay before adding the fade-in class
+                    scrollToTopBtn.classList.remove("fade-out");
+                } else {
+                    scrollToTopBtn.classList.remove("fade-in");
+                    scrollToTopBtn.classList.add("fade-out");
+                    setTimeout(() => {
+                        scrollToTopBtn.classList.add("hidden");
+                    }, 500); // Adjust the timeout value as desired
+                }
+            };
+
+            const scrollToTop = () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            };
+
+            document.addEventListener("astro:after-swap", () => {
+                setFixedWidth();
+                setDarkMode();
+                handleScroll();
+
+                const scrollToTopBtn =
+                    document.getElementById("scrollToTopBtn");
+                scrollToTopBtn.removeEventListener("click", scrollToTop);
+                scrollToTopBtn.addEventListener("click", scrollToTop);
+            });
+
+            document.addEventListener("DOMContentLoaded", () => {
+                setDarkMode();
+                setFixedWidth();
+
+                const scrollToTopBtn =
+                    document.getElementById("scrollToTopBtn");
+                scrollToTopBtn.addEventListener("click", scrollToTop);
+            });
+
+            window.addEventListener("scroll", handleScroll);
+        </script>
+
+        <style>
+            .fade-in {
+                opacity: 1;
+                transition: opacity 0.5s ease-in;
+            }
+
+            .fade-out {
+                opacity: 0;
+                transition: opacity 0.5s ease-out;
+            }
+            body {
+                overflow-y: scroll;
+            }
+
+            /* Style the scrollbar for WebKit (Chrome, Safari) */
+            body::-webkit-scrollbar {
+                width: 12px;
+                background-color: transparent;
+            }
+
+            body::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+
+            body::-webkit-scrollbar-thumb {
+                border-radius: 8px;
+                background-color: #363636;
+            }
+
+            body::-webkit-scrollbar-thumb:hover {
+                background-color: #555;
+            }
+
+            /* Style the scrollbar for Mozilla Firefox */
+            body {
+                scrollbar-width: thin;
+                scrollbar-color: #363636 transparent;
+            }
+
+            body::-moz-scrollbar {
+                width: 12px;
+                background-color: transparent;
+            }
+
+            body::-moz-scrollbar-track {
+                background-color: transparent;
+            }
+
+            body::-moz-scrollbar-thumb {
+                border-radius: 8px;
+                background-color: #363636;
+            }
+
+            body::-moz-scrollbar-thumb:hover {
+                background-color: #555;
+            }
+        </style>
     </body>
-
-    <script>
-        const setFixedWidth = () => {
-            const navBar = document.querySelector("nav");
-            // Add a class to the navigation bar to set a fixed width
-            navBar.classList.add("fixed-width");
-            // Ensure scrollbar is always visible
-            document.body.style.overflowY = "scroll";
-        };
-
-        const setDarkMode = () => {
-            const themeToggleDarkIcon = document.getElementById(
-                "theme-toggle-dark-icon"
-            );
-            const themeToggleLightIcon = document.getElementById(
-                "theme-toggle-light-icon"
-            );
-
-            const isDarkMode =
-                localStorage.getItem("color-theme") === "dark" ||
-                (!localStorage.getItem("color-theme") &&
-                    window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-            if (isDarkMode) {
-                document.documentElement.classList.add("dark");
-                themeToggleDarkIcon.classList.remove("hidden");
-                themeToggleLightIcon.classList.add("hidden");
-            } else {
-                document.documentElement.classList.remove("dark");
-                themeToggleDarkIcon.classList.add("hidden");
-                themeToggleLightIcon.classList.remove("hidden");
-            }
-        };
-
-        const handleThemeToggleClick = (e) => {
-            // Prevent the default click behavior of the button
-            e.preventDefault();
-
-            const themeToggleDarkIcon = document.getElementById(
-                "theme-toggle-dark-icon"
-            );
-            const themeToggleLightIcon = document.getElementById(
-                "theme-toggle-light-icon"
-            );
-
-            // Toggle icons inside the button
-            themeToggleDarkIcon.classList.toggle("hidden");
-            themeToggleLightIcon.classList.toggle("hidden");
-
-            // Update the class and local storage based on color theme preference
-            if (document.documentElement.classList.contains("dark")) {
-                document.documentElement.classList.remove("dark");
-                localStorage.setItem("color-theme", "light");
-            } else {
-                document.documentElement.classList.add("dark");
-                localStorage.setItem("color-theme", "dark");
-            }
-        };
-
-        const attachEventListeners = () => {
-            const themeToggleBtn = document.getElementById("theme-toggle");
-            themeToggleBtn.addEventListener("click", handleThemeToggleClick);
-        };
-
-        // Runs before each navigation transition starts
-        document.addEventListener("astro:transitionstart", () => {
-            setFixedWidth();
-        });
-
-        // Runs after each navigation transition completes
-        document.addEventListener("astro:after-swap", () => {
-            setFixedWidth();
-            setDarkMode(); // Update the theme on page transition
-            attachEventListeners(); // Reattach event listeners for theme toggle button
-        });
-
-        // Runs on initial navigation
-        document.addEventListener("DOMContentLoaded", () => {
-            setDarkMode();
-            attachEventListeners();
-        });
-    </script>
-
-    <style>
-        body {
-            overflow-y: scroll;
-        }
-
-        /* Style the scrollbar */
-        body::-webkit-scrollbar {
-            width: 12px;
-            background-color: transparent;
-        }
-
-        /* Style the track of the scrollbar */
-        body::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-
-        /* Style the handle / thumb of the scrollbar */
-        body::-webkit-scrollbar-thumb {
-            border-radius: 8px;
-            background-color: #363636;
-        }
-
-        /* Make the scrollbar appear on hover */
-        body::-webkit-scrollbar-thumb:hover {
-            background-color: #555;
-        }
-    </style>
 </html>
