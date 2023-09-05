@@ -115,6 +115,19 @@ const {
                     themeToggleLightIcon.classList.remove("hidden");
                 }
             };
+            const themeToggleBtn = document.getElementById("theme-toggle");
+            themeToggleBtn.addEventListener("click", () => {
+                const isDarkMode =
+                    document.documentElement.classList.contains("dark");
+                if (isDarkMode) {
+                    document.documentElement.classList.remove("dark");
+                    localStorage.setItem("color-theme", "light");
+                } else {
+                    document.documentElement.classList.add("dark");
+                    localStorage.setItem("color-theme", "dark");
+                }
+                setDarkMode();
+            });
 
             const handleScroll = () => {
                 const scrollToTopBtn =
@@ -122,9 +135,10 @@ const {
 
                 if (window.pageYOffset > 0) {
                     scrollToTopBtn.classList.remove("hidden");
+                    scrollToTopBtn.classList.remove("fade-in"); // Remove fade-in class
                     setTimeout(() => {
                         scrollToTopBtn.classList.add("fade-in");
-                    }, 10); // Add a small delay before adding the fade-in class
+                    }, 100); // Add a small delay before adding the fade-in class
                     scrollToTopBtn.classList.remove("fade-out");
                 } else {
                     scrollToTopBtn.classList.remove("fade-in");
@@ -151,12 +165,25 @@ const {
                     document.getElementById("scrollToTopBtn");
                 scrollToTopBtn.removeEventListener("click", scrollToTop);
                 scrollToTopBtn.addEventListener("click", scrollToTop);
-            });
 
+                const themeToggleBtn = document.getElementById("theme-toggle");
+                themeToggleBtn.addEventListener("click", () => {
+                    const isDarkMode =
+                        document.documentElement.classList.contains("dark");
+                    if (isDarkMode) {
+                        document.documentElement.classList.remove("dark");
+                        localStorage.setItem("color-theme", "light");
+                    } else {
+                        document.documentElement.classList.add("dark");
+                        localStorage.setItem("color-theme", "dark");
+                    }
+                    setDarkMode();
+                });
+            });
             document.addEventListener("DOMContentLoaded", () => {
                 setDarkMode();
                 setFixedWidth();
-
+                handleScroll();
                 const scrollToTopBtn =
                     document.getElementById("scrollToTopBtn");
                 scrollToTopBtn.addEventListener("click", scrollToTop);
