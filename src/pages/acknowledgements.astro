@@ -1,0 +1,104 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout
+    title="Acknowledgements"
+    description="Things that need to be acknowledged"
+>
+    <main
+        class="flex flex-col justify-center mt-5 items-center overflow-x-hidden xl:left-7 mx-auto"
+    >
+        <div
+            class="lg:py-5 lg:space-y-8 max-w-5xl px-2 py-3 sm:px-8 sm:py-12 sm:space-y-6 space-y-4 w-full"
+        >
+            <div
+                class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post font-bold"
+            >
+                Acknowledgements
+                <span class="text-sm font-normal dark:text-dark_mode_text"
+                    >Updated: September 6, 2023</span
+                >
+                <span class="mt-5 text-lg dark:text-dark_mode_text"
+                    >Shoutout to these developers:</span
+                >
+
+                <span
+                    class="text-sm font-normal dark:text-dark_mode_text_light_gray"
+                    >(Click on their names to go to the respective links)</span
+                >
+                <!-- Jason Tran -->
+                <div class="text-sm font-semibold mt-5">
+                    <a
+                        href="https://enscribe.dev"
+                        target="_blank"
+                        class="inline-flex transition duration-500 hover:scale-110"
+                    >
+                        Jason Tran</a
+                    >
+                     -
+                    <span
+                        class="font-normal text-sm dark:text-dark_mode_text_light_gray"
+                    >
+                        For help me debug my website when things go the wrong
+                        way and my brain can't handle it.
+                    </span>
+                </div>
+                <!-- Astro Lane Template -->
+                <div class="text-sm font-semibold mt-3">
+                    <a
+                        href="https://github.com/christian-luntok/"
+                        target="_blank"
+                        class="inline-flex transition duration-500 hover:scale-110"
+                    >
+                        Christian Luntok</a
+                    >
+                     -
+                    <span
+                        class="font-normal text-sm dark:text-dark_mode_text_light_gray"
+                    >
+                        For providing me with the Astro template for me to work
+                        off of!
+                    </span>
+                </div>
+
+                <div class="text-sm font-semibold mt-3">
+                    <a
+                        href="https://github.com/KonradSzwarc/"
+                        target="_blank"
+                        class="inline-flex transition duration-500 hover:scale-110"
+                    >
+                        Konrad Szwarc</a
+                    >
+                     -
+                    <span
+                        class="font-normal text-sm dark:text-dark_mode_text_light_gray"
+                    >
+                        For giving me a huge inspiration as to what the home
+                        page of mine looks like! (Note: Around 95% of my version
+                        is me recreating it, I didn't use his source code unless
+                        it was for a debugging issue)
+                    </span>
+                </div>
+                <div class="text-sm font-semibold mt-3">
+                    <a
+                        href="https://github.com/cosmicjs"
+                        target="_blank"
+                        class="inline-flex transition duration-500 hover:scale-110"
+                    >
+                        CosmicJS</a
+                    >
+                     -
+                    <span
+                        class="font-normal text-sm dark:text-dark_mode_text_light_gray"
+                    >
+                        For giving me inspiration for the navigation bar! I used
+                        it as base, modified it, and added onto it with my own
+                        custom components (underlining the tabs, dark mode /
+                        light mode, etc)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
