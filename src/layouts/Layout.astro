@@ -131,25 +131,36 @@ const {
                 setDarkMode();
             });
 
+            let isScrolledToTop = true; // Track whether the scrollbar is at the top
+
             const handleScroll = () => {
                 const scrollToTopBtn =
                     document.getElementById("scrollToTopBtn");
 
                 if (window.pageYOffset > 0) {
                     scrollToTopBtn.classList.remove("hidden");
-                    scrollToTopBtn.classList.remove("fade-in"); // Remove fade-in class
-                    setTimeout(() => {
-                        scrollToTopBtn.classList.add("fade-in");
-                    }, 100); // Add a small delay before adding the fade-in class
-                    scrollToTopBtn.classList.remove("fade-out");
+                    scrollToTopBtn.classList.remove("fade-out"); // Remove fade-out class
+
+                    if (isScrolledToTop) {
+                        scrollToTopBtn.classList.remove("fade-in"); // Remove fade-in class
+                        setTimeout(() => {
+                            scrollToTopBtn.classList.add("fade-in");
+                        }, 300); // Add a small delay before adding the fade-in class
+                    }
+
+                    isScrolledToTop = false;
                 } else {
                     scrollToTopBtn.classList.remove("fade-in");
                     scrollToTopBtn.classList.add("fade-out");
                     setTimeout(() => {
                         scrollToTopBtn.classList.add("hidden");
-                    }, 500); // Adjust the timeout value as desired
+                    }, 300); // Adjust the timeout value as desired
+
+                    isScrolledToTop = true;
                 }
             };
+
+            window.addEventListener("scroll", handleScroll);
 
             const scrollToTop = () => {
                 window.scrollTo({
@@ -195,6 +206,14 @@ const {
         </script>
 
         <style>
+            .fade-in {
+                opacity: 1;
+                transition: opacity 0.5s ease-in;
+            }
+            .fade-out {
+                opacity: 0;
+                transition: opacity 0.5s ease-out;
+            }
             body {
                 overflow: hidden;
             }
