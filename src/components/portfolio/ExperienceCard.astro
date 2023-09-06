@@ -1,12 +1,10 @@
 ---
 // import CardImage from "@/components/card/CardImage.astro";
 // import Logo from "./public/images/derp.png";
-import ExperienceCard from "./ExperienceTemplate.astro";
 
-import profileImage from "./public/images/derp.png";
 import SkillButton from "./SkillCardButtonTemplate.astro";
-import { Image } from 'astro:assets'
-const posts = await Astro.glob("../../content/experience/*.md");
+import { Image } from "astro:assets";
+const posts = await Astro.glob("../../content/experiences/*.md");
 ---
 
 <div class="flex flex-col gap-4">
@@ -16,61 +14,60 @@ const posts = await Astro.glob("../../content/experience/*.md");
         >
         <!-- Getting all work experience from the content folder -->
         {
-    posts.map((post, index) => (
-        <>
-            <div class="flex flex-col gap-3">
-                <div class="flex gap-2 justify-between w-full">
-                    <div class="flex gap-4">
-                        <Image
-                            src={post.frontmatter.logo}
-                            alt={""}
-                            width={post.frontmatter.logoWidth}
-                            height={post.frontmatter.logoHeight}
-                            format={"webp"}
-                            class=" h-30 w-30 opacity-75 rounded-3xl bg-neutral-50 dark:bg-dark_mode_post object-fit"
-                        />
-                        <div class="flex flex-col pt-3">
-                            <div class="text-gray-900 dark:text-dark_mode_text font-extrabold text-xl">
-                                {post.frontmatter.position}
-                            </div>
-                            <div class="text-gray-900 dark:text-dark_mode_text font-semibold leading-snug mb-0.5 text-base">
-                                {post.frontmatter.location}
-                            </div>
-                            <div class="font-medium text-gray-700 text-sm dark:text-dark_mode_text">
-                                {post.frontmatter.years}
+            posts.map((post, index) => (
+                <>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex gap-2 justify-between w-full">
+                            <div class="flex gap-4">
+                                <Image
+                                    src={post.frontmatter.logo}
+                                    alt={""}
+                                    width={post.frontmatter.logoWidth}
+                                    height={post.frontmatter.logoHeight}
+                                    format={"webp"}
+                                    class=" h-30 w-30 opacity-75 rounded-3xl bg-neutral-50 dark:bg-dark_mode_post object-fit"
+                                />
+                                <div class="flex flex-col pt-3">
+                                    <div class="text-gray-900 dark:text-dark_mode_text font-extrabold text-xl">
+                                        {post.frontmatter.position}
+                                    </div>
+                                    <div class="text-gray-900 dark:text-dark_mode_text font-semibold leading-snug mb-0.5 text-base">
+                                        {post.frontmatter.location}
+                                    </div>
+                                    <div class="font-medium text-gray-700 text-sm dark:text-dark_mode_text">
+                                        {post.frontmatter.years}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <div class="dark:text-dark_mode_text pt-2 text-sm font-normal text-gray-500 leading-relaxed sm:leading-relaxed sm:text-base description mb-3">
+                            <Fragment set:html={post.compiledContent()} />
+                        </div>
+                        {post.frontmatter.skills &&
+                        post.frontmatter.skills.length > 0 ? (
+                            <div class="flex flex-col gap-3">
+                                <span class="dark:text-dark_mode_text text-gray-500 font-bold">
+                                    Technologies:
+                                </span>
+                                <span class="flex flex-wrap gap-3">
+                                    {post.frontmatter.skills &&
+                                        post.frontmatter.skills.map((skill) => (
+                                            <SkillButton
+                                                skillName={skill.skill}
+                                                skillIcon={skill.skillLogo}
+                                            />
+                                        ))}
+                                </span>
+                            </div>
+                        ) : null}
                     </div>
-                </div>
-                <div class="dark:text-dark_mode_text pt-2 text-sm font-normal text-gray-500 leading-relaxed sm:leading-relaxed sm:text-base description mb-3">
-                    <Fragment set:html={post.compiledContent()} />
-                </div>
-                {post.frontmatter.skills &&
-                post.frontmatter.skills.length > 0 ? (
-                    <div class="flex flex-col gap-3">
-                        <span class="dark:text-dark_mode_text text-gray-500 font-bold">
-                            Technologies:
-                        </span>
-                        <span class="flex flex-wrap gap-3">
-                            {post.frontmatter.skills &&
-                                post.frontmatter.skills.map((skill) => (
-                                    <SkillButton
-                                        skillName={skill.skill}
-                                        skillIcon={skill.skillLogo}
-                                    />
-                                ))}
-                        </span>
-                    </div>
-                ) : null}
-            </div>
-            <div
-                class={`bg-gray-200 dark:bg-black-400 h-px ${
-                    index === posts.length - 1 ? "hidden" : "block"
-                }`}
-            />
-        </>
-    ))
-}
-
+                    <div
+                        class={`bg-gray-200 dark:bg-black-400 h-px ${
+                            index === posts.length - 1 ? "hidden" : "block"
+                        }`}
+                    />
+                </>
+            ))
+        }
     </div>
 </div>
