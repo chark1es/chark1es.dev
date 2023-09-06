@@ -4,7 +4,7 @@
 import "../styles/globals.scss";
 import SectionContainer from "@/components/SectionContainer.astro";
 import SEO from "@/components/seo/SEO.astro";
-
+import "../components/copy-code/styles.css";
 import { SOCIALS } from "@config";
 import Navigation from "../components/Navigation.astro";
 import { ViewTransitions } from "astro:transitions";
@@ -47,7 +47,10 @@ const {
                 document.documentElement.classList.remove("dark");
             }
         </script>
-
+        <script>
+            import "@/components/copy-code/copy-code-button.js";
+            import "@/components/copy-code/create-copy-buttons.js";
+        </script>
         <script
             src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"
         ></script>
@@ -215,6 +218,13 @@ const {
                         localStorage.setItem("color-theme", "dark");
                     }
                     setDarkMode();
+                });
+
+                const blocks = document.querySelectorAll("pre");
+
+                blocks.forEach((block) => {
+                    const button = document.createElement("copy-code-button");
+                    block.appendChild(button);
                 });
             });
             document.addEventListener("DOMContentLoaded", () => {

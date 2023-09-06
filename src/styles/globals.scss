@@ -68,3 +68,7 @@
 .dark {
     color-scheme: dark;
 }
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background-color: #313131;
+}

@@ -12,14 +12,14 @@ export interface Props {
 
 const { post } = Astro.props;
 
-const { title, description, pubDate, updatedDate, heroImage } = post.data;
+const { title, description, pubDate, updatedDate, heroImage, tags } = post.data;
 
 const ogUrl = new URL(
     heroImage ? heroImage : `${title.replace(/\s+/g, "-").toLowerCase()}.png`,
     Astro.url.origin
 ).href;
 
-const { Content } = await post.render();
+const { Content, remarkPluginFrontmatter } = await post.render();
 ---
 
 <Layout
@@ -27,63 +27,113 @@ const { Content } = await post.render();
     description={description}
     image={ogUrl}
 >
-    <div class="main-wrapper wrap-md grid gap-16 md:gap-24 lg:gap-32 mx-auto">
-        <SectionContainer class="blogs--container mt-32">
-            <a
-                class="blog-back-button cursor-pointer text-neutral-500 flex no-underline mb-8"
-                href="/blogs/"
-            >
-                Back
-            </a>
-            <div class="post--title">
-                <h1 class="text-3xl dark:text-white :text-4xl">
-                    {title}
-                </h1>
-            </div>
-            <span
-                class="dark:bg-dark_mode_bg dark:text-dark_mode_text mb-4 text-sm w-max md:w-auto items-center rounded-full border border-neutral-300 bg-white px-1 py-[2px] font-medium text-primary-500 block md:inline-flex"
-            >
-                <span class="px-2">
-                    <FormattedDate date={pubDate} />
-                </span>
-            </span>
-            {
-                updatedDate && (
-                    <div class="last-updated-on">
-                        Last updated on <FormattedDate date={updatedDate} />
-                    </div>
-                )
-            }
-            {
-                heroImage && (
-                    <img width={720} height={360} src={heroImage} alt={title} />
-                )
-            }
+    <main
+        class="flex flex-col justify-center mt-5 items-center overflow-x-hidden xl:left-7 mx-auto"
+    >
+        <div
+            class="lg:py-5 lg:space-y-8 max-w-5xl px-2 py-3 sm:px-8 sm:py-12 sm:space-y-6 space-y-4 w-full"
+        >
             <div
-                class="dark:text-dark_mode_text prose-code:whitespace-pre-wrap prose-code:break-words prose-code:overflow-x-auto"
+                class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post"
             >
-                <Content />
+                <a
+                    class="blog-back-button cursor-pointer font-bold text-neutral-500 flex no-underline mb-2"
+                    href="/blogs/"
+                >
+                    Back
+                </a>
+                <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
+                    {title}
+                </div>
+                <div class="text-sm mb-2">
+                    {description}
+                </div>
+                <div class="text-md font-normal flex flex-wrap">
+                    <div class="inline-flex">
+                        <iconify-icon
+                            icon="uil:calender"
+                            height="16"
+                            width="16"
+                            style=""
+                            class="mr-1.5 mt-1.5 inline-flex max-w-fit"
+                        ></iconify-icon>
+                        <div class="flex-wrap mt-1 text-sm">
+                            <FormattedDate date={pubDate} />
+                        </div>
+                    </div>
+
+                    <div class="flex-wrap mx-2">•</div>
+
+                    <div class="inline-flex">
+                        <iconify-icon
+                            icon="ant-design:read-outlined"
+                            height="18"
+                            width="18"
+                            style=""
+                            class="mr-1.5 mt-1.5 inline-flex max-w-fit"
+                        ></iconify-icon>
+                        <div class="flex-wrap text-sm mt-1">
+                            {remarkPluginFrontmatter.readingTime}
+                        </div>
+                    </div>
+
+                    <div class="flex-wrap mx-2">•</div>
+
+                    <div class="inline-flex">
+                        <iconify-icon
+                            icon="mdi:tag-outline"
+                            height="18"
+                            width="18"
+                            style=""
+                            class="mr-1.5 mt-1.5 inline-flex max-w-fit scale-[0.95]"
+                        ></iconify-icon>
+                        {
+                            tags.map((tag) => (
+                                <a class="flex items-center bg-gray-100 rounded dark:bg-black-400 dark:text-gray-100 gap-x-1.5 h-6 mt-0.5 px-2.5 text-gray-700 text-sm tracking-wide w-fit transition duration-500  hover:scale-[0.95] select-none scale-[0.85]">
+                                    {tag}
+                                </a>
+                            ))
+                        }
+                    </div>
+                </div>
             </div>
-        </SectionContainer>
-    </div>
-</Layout>
+        </div>
 
-<script>
-    // Function to create a Back to history button.
-    const buttons = document.querySelectorAll(".blog-back-button");
-    if (buttons) {
-        buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-                handleClick();
+        <div
+            class="py-1 lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full"
+        >
+            <div
+                class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post"
+            >
+                <div
+                    class="dark:text-dark_mode_text prose-code:whitespace-pre-wrap prose-code:break-words prose-code:overflow-x-auto text-base"
+                >
+                    <Content />
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const { remarkPluginFrontmatter } = Astro.props.post;
+        const readingTime = remarkPluginFrontmatter.minutesRead;
+
+        // Function to create a Back to history button.
+        const buttons = document.querySelectorAll(".blog-back-button");
+        if (buttons) {
+            buttons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    handleClick();
+                });
             });
-        });
-    }
-
-    function handleClick() {
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            window.location.href = "/blogs/";
         }
-    }
-</script>
+
+        function handleClick() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "/blogs/";
+            }
+        }
+    </script>
+</Layout>

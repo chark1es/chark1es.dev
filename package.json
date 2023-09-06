@@ -47,6 +47,7 @@
         "framer-motion": "^10.11.2",
         "iconify-icon": "^1.0.8",
         "iconify-icon-names": "^1.1.0",
+        "lit": "^2.8.0",
         "pdfjs": "^2.5.2",
         "remark-toc": "^8.0.1",
         "sass": "^1.66.1",
