@@ -201,6 +201,17 @@ const {
                     document.getElementById("scrollToTopBtn");
                 scrollToTopBtn.addEventListener("click", scrollToTop);
             });
+            document.addEventListener(
+                "astro:page-load",
+                () => {
+                    if (document.documentElement.classList.contains("dark")) {
+                        document.documentElement.classList.remove("dark");
+                    }
+                    document.documentElement.classList.add("dark");
+                    localStorage.setItem("color-theme", "dark");
+                },
+                { once: true }
+            );
 
             window.addEventListener("scroll", handleScroll);
         </script>
