@@ -68,18 +68,3 @@
 .dark {
     color-scheme: dark;
 }
-
-// Force dark mode
-@media (prefers-color-scheme: dark) {
-    html {
-        color-scheme: dark;
-    }
-}
-
-/* If the user prefers light mode, 
-we still enforce color-scheme: dark, despite the user preference */
-@media (prefers-color-scheme: light) {
-    html {
-        color-scheme: dark;
-    }
-}
