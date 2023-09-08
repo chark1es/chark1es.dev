@@ -31,7 +31,7 @@ const { Content, remarkPluginFrontmatter } = await post.render();
         class="flex flex-col justify-center mt-5 items-center overflow-x-hidden xl:left-7 mx-auto"
     >
         <div
-            class="lg:py-5 lg:space-y-8 max-w-5xl px-2 py-3 sm:px-8 sm:py-12 sm:space-y-6 space-y-4 w-full"
+            class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full"
         >
             <div
                 class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post"
@@ -40,7 +40,13 @@ const { Content, remarkPluginFrontmatter } = await post.render();
                     class="blog-back-button cursor-pointer font-bold text-neutral-500 flex no-underline mb-2"
                     href="/blogs/"
                 >
-                    Back
+                    <iconify-icon
+                        icon="eva:arrow-back-outline"
+                        height="20"
+                        width="20"
+                        style=""
+                        class="pt-1 mr-1"></iconify-icon>
+                     Back
                 </a>
                 <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
                     {title}
@@ -89,7 +95,10 @@ const { Content, remarkPluginFrontmatter } = await post.render();
                         ></iconify-icon>
                         {
                             tags.map((tag) => (
-                                <a class="flex items-center bg-gray-100 rounded dark:bg-black-400 dark:text-gray-100 gap-x-1.5 h-6 mt-0.5 px-2.5 text-gray-700 text-sm tracking-wide w-fit transition duration-500  hover:scale-[0.95] select-none scale-[0.85]">
+                                <a
+                                    class="flex items-center bg-gray-100 rounded dark:bg-black-400 dark:text-gray-100 gap-x-1.5 h-6 mt-0.5 px-2.5 text-gray-700 text-sm tracking-wide w-fit transition duration-500  hover:scale-[0.95] select-none scale-[0.85]"
+                                    href={`/tags/${tag}`}
+                                >
                                     {tag}
                                 </a>
                             ))
@@ -100,7 +109,7 @@ const { Content, remarkPluginFrontmatter } = await post.render();
         </div>
 
         <div
-            class="py-1 lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full"
+            class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
         >
             <div
                 class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post"
