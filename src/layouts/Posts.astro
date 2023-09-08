@@ -5,6 +5,7 @@ import SectionContainer from "@/components/SectionContainer.astro";
 import { SITE } from "@config";
 import { CollectionEntry } from "astro:content";
 import getReadingTime from "reading-time";
+import { getPreEmitDiagnostics } from "typescript";
 export interface Props {
     pageNum: number;
     totalPages: number;
@@ -39,7 +40,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
             >
                 <a
                     class="blog-back-button cursor-pointer font-bold text-neutral-500 flex no-underline mb-2"
-                    href="/blogs/"
+                    href="/"
                 >
                     <iconify-icon
                         icon="eva:arrow-back-outline"
@@ -47,7 +48,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                         width="20"
                         style=""
                         class="pt-1 mr-1"></iconify-icon>
-                     Back
+                     Back to Home
                 </a>
                 <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
                     Blog Posts
@@ -63,7 +64,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
             {
                 posts.map((post) => (
                     <a href={`/blogs/${post.slug}`} class="">
-                        <div class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition duration-500 hover:scale-105 mb-2">
+                        <ul class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition duration-500 hover:scale-105 mb-2">
                             <div class="flex flex-wrap font-bold ">
                                 {post.data.title}
                             </div>
@@ -95,7 +96,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
                             <div class="flex flex-wrap text-sm ">
                                 {post.data.description}
                             </div>
-                        </div>
+                        </ul>
                     </a>
                 ))
             }

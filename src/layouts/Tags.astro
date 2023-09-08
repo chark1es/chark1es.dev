@@ -4,7 +4,7 @@ import Layout from "@/layouts/Layout.astro";
 import SectionContainer from "@/components/SectionContainer.astro";
 import { SITE } from "@config";
 import { CollectionEntry } from "astro:content";
-
+import getReadingTime from "reading-time";
 export interface Props {
     posts: CollectionEntry<"blogs">[];
     title: string;
@@ -18,15 +18,90 @@ const { posts, title, tag } = Astro.props;
     title={`${title} - ${SITE.title}`}
     description={`A list of posts from ${SITE.author} in ${SITE.title}`}
 >
-    <div
-        class="main-wrapper wrap-md grid gap-16  md:gap-24 lg:gap-32 mx-auto"
+    <main
+        class="flex flex-col justify-center mt-5 items-center overflow-x-hidden xl:left-7 mx-auto"
     >
+        <div
+            class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full"
+        >
+            <div
+                class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post"
+            >
+                <a
+                    class="blog-back-button cursor-pointer font-bold text-neutral-500 flex no-underline mb-2"
+                    href="/tags"
+                >
+                    <iconify-icon
+                        icon="eva:arrow-back-outline"
+                        height="20"
+                        width="20"
+                        style=""
+                        class="pt-1 mr-1"></iconify-icon>
+                     Back to Tags
+                </a>
+                <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
+                    Tag: [{tag}]
+                </div>
+                <div class="text-sm mb-2">
+                    A list of all the blog posts containing the tag: [{tag}]
+                </div>
+            </div>
+        </div>
+        <div
+            class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
+        >
+            {
+                posts.map((post) => (
+                    <a href={`/blogs/${post.slug}`} class="">
+                        <ul class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition duration-500 hover:scale-105 mb-2">
+                            <div class="flex flex-wrap font-bold ">
+                                {post.data.title}
+                            </div>
+                            <div class="flex flex-wrap">
+                                <iconify-icon
+                                    icon="uil:calender"
+                                    height="16"
+                                    width="16"
+                                    style=""
+                                    class="mr-1.5 mt-1.5 inline-flex max-w-fit"
+                                />
+                                <div class="flex-wrap mt-1 text-sm">
+                                    <FormattedDate date={post.data.pubDate} />
+                                </div>
+                                <div class="flex-wrap mx-2">•</div>
+
+                                <iconify-icon
+                                    icon="ant-design:read-outlined"
+                                    height="18"
+                                    width="18"
+                                    style=""
+                                    class="mr-1.5 mt-1.5 inline-flex max-w-fit"
+                                />
+                                <div class="flex-wrap mt-1 text-sm">
+                                    {getReadingTime(post.body).text}
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap text-sm ">
+                                {post.data.description}
+                            </div>
+                        </ul>
+                    </a>
+                ))
+            }
+        </div>
+
+        <!-- <Layout
+    title={`${title} - ${SITE.title}`}
+    description={`A list of posts from ${SITE.author} in ${SITE.title}`}
+>
+    <div class="main-wrapper wrap-md grid gap-16 md:gap-24 lg:gap-32 mx-auto">
         <SectionContainer class="blogs--container mt-32">
             <a
                 href="/"
                 class="font-medium flex no-underline text-neutral-500 mb-8"
             >
-                Back to home
+                wwBack to home
             </a>
             <h2
                 class="font-medium text-h4 text-neutral-500 my-4 leading-8 tracking-tighter"
@@ -69,4 +144,6 @@ const { posts, title, tag } = Astro.props;
             </ul>
         </SectionContainer>
     </div>
+</Layout> -->
+    </main>
 </Layout>
