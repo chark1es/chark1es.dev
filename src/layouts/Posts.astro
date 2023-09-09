@@ -64,7 +64,7 @@ const breadcrumbList = currentUrlPath.split("/").slice(1);
             {
                 posts.map((post) => (
                     <a href={`/blogs/${post.slug}`} class="">
-                        <ul class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition duration-500 hover:scale-105 mb-2">
+                        <ul class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition hover:duration-500 hover:scale-105 mb-2">
                             <div class="flex flex-wrap font-bold ">
                                 {post.data.title}
                             </div>
