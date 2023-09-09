@@ -71,4 +71,9 @@
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
     background-color: #313131;
+    @apply mt-0 rounded-t-none rounded-b-lg;
+}
+
+.remark-code-title {
+    @apply rounded-t-lg bg-[#292929] text-center pt-2 pb-2 pl-4 font-semibold;
 }

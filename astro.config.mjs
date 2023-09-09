@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import remarkToc from "remark-toc";
-
+import remarkCodeTitles from "remark-code-titles";
 import prefetch from "@astrojs/prefetch";
 
 // https://astro.build/config
@@ -13,7 +13,7 @@ export default defineConfig({
     site: "https://chark1es.dev/",
     markdown: {
         syntaxHighlight: "prism",
-        remarkPlugins: [remarkToc, remarkReadingTime]
+        remarkPlugins: [remarkToc, remarkReadingTime, remarkCodeTitles]
     },
     vite: {
         optimizeDeps: {
