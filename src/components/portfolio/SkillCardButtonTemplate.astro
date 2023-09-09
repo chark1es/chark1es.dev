@@ -5,7 +5,10 @@ const { skillName, skillIcon = "" } = Astro.props;
 <a
     class="flex items-center bg-gray-100 rounded dark:bg-black-400 dark:text-gray-100 text-gray-700 gap-x-1.5 h-6 px-2.5 text-gray-700 text-sm tracking-wide w-fit transition duration-500 hover:scale-110 select-none"
 >
-    <iconify-icon icon={skillIcon} height="15" width="15" style=""
-    ></iconify-icon>
+    <iconify-icon
+        icon={skillIcon}
+        height="15"
+        width="15"
+        style="h-auto max-w-full"></iconify-icon>
     {skillName}
 </a>
