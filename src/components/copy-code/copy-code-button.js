@@ -47,6 +47,22 @@ export class CopyCodeButton extends LitElement {
                 cursor: pointer;
                 font-weight: 600;
             }
+
+            @keyframes animateScale {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.2);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            button.clicked svg {
+                animation: animateScale 0.5s ease;
+            }
         `
     ];
 
@@ -84,6 +100,13 @@ export class CopyCodeButton extends LitElement {
         window.getSelection().removeAllRanges();
         setTimeout(() => {
             this._isCopied = false;
+        }, 1000);
+
+        const button = this.shadowRoot.querySelector("button");
+        button.classList.add("clicked");
+        setTimeout(() => {
+            this._isCopied = false;
+            button.classList.remove("clicked");
         }, 1000);
     }
     render() {
