@@ -1,13 +1,14 @@
 import { defineConfig } from "astro/config";
 import { remarkReadingTime } from "./remark-reading-time";
-import mdx from "@astrojs/mdx";
+
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import remarkToc from "remark-toc";
 import remarkCodeTitles from "remark-code-titles";
 import prefetch from "@astrojs/prefetch";
-
+import AutoImport from "astro-auto-import";
+import mdx from "@astrojs/mdx";
 // https://astro.build/config
 export default defineConfig({
     site: "https://chark1es.dev/",
@@ -25,6 +26,14 @@ export default defineConfig({
     },
 
     integrations: [
+        AutoImport({
+            imports: [
+                "@/components/blog/Alert.astro",
+                {
+                    "accessible-astro-components": ["Notification"]
+                }
+            ]
+        }),
         mdx(),
         sitemap(),
         tailwind(),

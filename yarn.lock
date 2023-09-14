@@ -1312,6 +1312,11 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-17.0.45.tgz"
   integrity sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==
 
+"@types/node@^18.0.0":
+  version "18.17.15"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.17.15.tgz#31301a273b9ca7d568fe6d1c35ae52e0fb3f8d6a"
+  integrity sha512-2yrWpBk32tvV/JAd3HNHWuZn/VDN1P+72hWirHnvsvTGSqbANi+kSeuQR9yAHnbvaBvHDsoTdXV0Fe+iRtHLKA==
+
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
   resolved "https://registry.npmjs.org/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz"
@@ -1522,6 +1527,11 @@
   version "0.0.16"
   resolved "https://registry.npmjs.org/@vscode/l10n/-/l10n-0.0.16.tgz"
   integrity sha512-JT5CvrIYYCrmB+dCana8sUqJEcGB1ZDXNLMQ2+42bW995WmNoenijWMUdZfwmuQUTQcEVVIa2OecZzTYWUW9Cg==
+
+accessible-astro-components@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/accessible-astro-components/-/accessible-astro-components-2.2.0.tgz#7f8c86369c718ad3487363689e6292f21e9a663c"
+  integrity sha512-UWS28xcxiMBfJ/xcZOKbyr3474xyFq7FigILQeFINEt3WhEMg4r9Vw8DmMXp5pLaeBaPu9lj7GhqJYqNhzAHRA==
 
 acorn-jsx@^5.0.0, acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -1745,6 +1755,14 @@ astring@^1.8.0:
   version "1.8.6"
   resolved "https://registry.npmjs.org/astring/-/astring-1.8.6.tgz"
   integrity sha512-ISvCdHdlTDlH5IpxQJIex7BWBywFWgjJSVdwst+/iQCoEYnyOaQ95+X1JGshuBjGp6nxKUy1jMgE3zPqN7fQdg==
+
+astro-auto-import@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/astro-auto-import/-/astro-auto-import-0.3.1.tgz#0a444be679f8a02623bca95b1f1144550144e9b7"
+  integrity sha512-4kXZMlZFiq3dqT6fcfPbCjHTABQ279eKbIqZAb6qktBhGlmHwpHr1spOUFj/RQFilaWVgfjzOBmuZnoydZb5Vg==
+  dependencies:
+    "@types/node" "^18.0.0"
+    acorn "^8.8.0"
 
 astro-compress@^2.0.15:
   version "2.0.15"

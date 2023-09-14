@@ -1,0 +1,33 @@
+---
+const { title, description, borderColor, icon, textColor, style } = Astro.props;
+---
+
+<!-- Sample:
+<Alert
+    title="Note"
+    description="test"
+    borderColor="border-white"
+    icon="material-symbols:note"
+    textColor="text-[#FFFFFF]"
+    style="color:#FFFFFF"
+></Alert> -->
+<div class={`border-2 ${borderColor} mx-auto rounded-lg`}>
+    <div class="flex relative mx-2 my-3">
+        <div class="items-center justify-center">
+            <iconify-icon
+                icon={icon}
+                height="25"
+                width="20"
+                style={style}
+                class="flex mr-2 justify-center"></iconify-icon>
+        </div>
+        <div>
+            <div class={`${textColor} flex flex-col text-md font-bold`}>
+                {title}
+            </div>
+            <div class={`${textColor} flex flex-col text-sm `}>
+                {description}
+            </div>
+        </div>
+    </div>
+</div>

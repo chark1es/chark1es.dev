@@ -15,5 +15,5 @@ blocks.forEach((block) => {
 
     // Create and append the button
     let button = document.createElement("copy-code-button");
-    block.appendChild(button);
+    containerDiv.appendChild(button); // Append button to the containerDiv, not block
 });

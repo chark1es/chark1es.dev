@@ -117,7 +117,9 @@ const { Content, remarkPluginFrontmatter } = await post.render();
                 <div
                     class="dark:text-dark_mode_text prose-code:whitespace-pre-wrap prose-code:break-words prose-code:overflow-x-auto text-base"
                 >
-                    <Content />
+                    <div class="markdown">
+                        <Content />
+                    </div>
                 </div>
             </div>
         </div>

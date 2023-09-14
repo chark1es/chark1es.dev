@@ -4,14 +4,24 @@ export interface Props {
 }
 
 const { date } = Astro.props;
+
+const year = date.getUTCFullYear();
+const month = date.getUTCMonth() + 1; // Months are 0-indexed
+const day = date.getUTCDate();
+
+const dateString = `${year}-${month.toString().padStart(2, "0")}-${day
+    .toString()
+    .padStart(2, "0")}`;
+const displayDate = new Date(dateString + "T00:00:00-07:00");
 ---
 
-<time datetime={date.toISOString()}>
+<time datetime={dateString}>
     {
-        date.toLocaleDateString("en-us", {
+        displayDate.toLocaleDateString("en-us", {
             year: "numeric",
             month: "short",
-            day: "numeric"
+            day: "numeric",
+            timeZone: "America/Los_Angeles"
         })
     }
 </time>
