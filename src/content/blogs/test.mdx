@@ -60,3 +60,35 @@ def print_hello_world():
 
 print_hello_world()
 ```
+
+```py
+import itertools
+
+def encrypt_string(s):
+    encrypted = []
+    for char in s:
+        encrypted.append(chr(ord(char) + 1))
+    return ''.join(encrypted)
+
+def generate_combinations(n):
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    combinations = []
+    for r in range(n+1):
+        combinations.extend([''.join(p) for p in itertools.product(alphabet, repeat=r)])
+    return combinations
+
+def print_hello_world():
+    encrypted_hello = encrypt_string('Hello')
+    encrypted_world = encrypt_string('World')
+
+    combinations = generate_combinations(10)
+    for combination in combinations:
+        if combination.startswith(encrypted_hello) and combination.endswith(encrypted_world):
+            decrypted_hello = encrypt_string(combination[:len(encrypted_hello)])
+            decrypted_world = encrypt_string(combination[-len(encrypted_world):])
+            if decrypted_hello == 'Hello' and decrypted_world == 'World':
+                print(combination)
+                break
+
+print_hello_world()
+```

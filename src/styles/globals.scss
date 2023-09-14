@@ -74,6 +74,19 @@ pre[class*="language-"] {
     @apply mt-0 rounded-t-none rounded-b-lg;
 }
 
+// .remark-code-title {
+//     @apply rounded-t-lg bg-[#292929] text-center pt-2 pb-2 pl-4 font-semibold;
+// }
+
+.remark-code-title + pre {
+    @apply bg-[#313131] rounded-b-lg;
+}
+
+/* Apply styles when .remark-code-title is not present */
+:not(.remark-code-title) + pre {
+    @apply bg-[#313131] rounded-lg;
+}
+
 .remark-code-title {
-    @apply rounded-t-lg bg-[#292929] text-center pt-2 pb-2 pl-4 font-semibold;
+    @apply bg-[#292929] text-center py-2 px-4 font-semibold rounded-t-lg;
 }

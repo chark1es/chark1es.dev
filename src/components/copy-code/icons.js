@@ -2,24 +2,36 @@ import { html } from "lit";
 
 export const copyIcon = html`<svg
     xmlns="http://www.w3.org/2000/svg"
-    height="18px"
+    class="icon icon-tabler icon-tabler-copy"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
-    width="18px"
-    fill="currentColor"
+    stroke-width="2"
+    stroke="currentColor"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
 >
-    <path d="M0 0h24v24H0z" fill="none" />
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path
-        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
-    />
+        d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"
+    ></path>
+    <path
+        d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"
+    ></path>
 </svg>`;
 
 export const checkIcon = html`<svg
-    xmlns="http://www.w3.org/2000/svg"
-    height="18px"
+    class="icon icon-tabler icon-tabler-check"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
-    width="18px"
-    fill="#00FF00"
+    stroke-width="2"
+    stroke="currentColor"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
 >
-    <path d="M0 0h24v24H0z" fill="none" />
-    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M5 12l5 5l10 -10"></path>
 </svg>`;
