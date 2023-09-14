@@ -29,6 +29,9 @@ export class CopyCodeButton extends LitElement {
         css`
             :host {
                 display: inline-flex;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
             }
             button {
                 display: inline-flex;

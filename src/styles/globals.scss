@@ -70,8 +70,7 @@
 }
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-    background-color: #313131;
-    @apply mt-0 rounded-t-none rounded-b-lg;
+    @apply dark:bg-[#313131] bg-black-300 mt-0 rounded-t-none rounded-b-lg;
 }
 
 // .remark-code-title {
@@ -79,14 +78,31 @@ pre[class*="language-"] {
 // }
 
 .remark-code-title + pre {
-    @apply bg-[#313131] rounded-b-lg;
+    @apply dark:bg-[#313131] bg-black-300 rounded-b-lg;
 }
 
 /* Apply styles when .remark-code-title is not present */
 :not(.remark-code-title) + pre {
-    @apply bg-[#313131] rounded-lg;
+    @apply dark:bg-[#313131] bg-black-300 rounded-lg;
 }
 
 .remark-code-title {
-    @apply bg-[#292929] text-center py-2 px-4 font-semibold rounded-t-lg;
+    @apply dark:bg-[#292929] bg-[#494949] dark:text-dark_mode_text text-white text-center py-2 px-4 font-semibold rounded-t-lg;
+}
+.code-container {
+    overflow-x: auto;
+    max-width: 100%;
+    @apply py-3;
+}
+
+pre {
+    position: relative;
+    overflow-x: visible; /* This will prevent the pre block from scrolling */
+}
+
+:host {
+    display: inline-flex;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
