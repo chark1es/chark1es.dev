@@ -16,7 +16,7 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-    margin-bottom: 1;
+    margin-bottom: 2rem;
     overflow: auto;
 }
 
@@ -30,25 +30,24 @@ pre[class*="language-"] {
 
 pre {
     position: relative;
-    margin-bottom: 20px;
 }
 
 pre code {
-    @apply bg-black-400 p-1 rounded-md;
+    @apply dark:bg-black-400 bg-black-300 p-1 rounded-md;
     max-height: 300px;
     overflow-y: auto; /* Make the code block scrollable */
     display: block; /* Make the code block a block-level element */
 }
 
 :not(pre) > code {
-    @apply bg-black-400 p-1 rounded-md;
+    @apply dark:bg-black-400 bg-black-300 p-1 rounded-md dark:text-dark_mode_text text-white;
     /* Make the code block a block-level element */
 }
 
 copy-code-button {
     position: absolute; /* Absolutely position the copy button */
     top: 5px; /* Adjust as needed */
-    right: 5px; /* Adjust as needed */
+    right: 10px; /* Adjust as needed */
 }
 
 /* Scrollbar */

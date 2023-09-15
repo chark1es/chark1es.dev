@@ -46,6 +46,7 @@
         "eslint-config-next": "13.1.2",
         "flowbite": "^1.8.1",
         "framer-motion": "^10.11.2",
+        "highlight.js": "^11.8.0",
         "iconify-icon": "^1.0.8",
         "iconify-icon-names": "^1.1.0",
         "lit": "^2.8.0",

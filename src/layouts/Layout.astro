@@ -31,8 +31,10 @@ const {
             image={image}
         />
 
-        <ViewTransitions />
-
+        <!-- <ViewTransitions /> -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"
+        ></script>
         <script src="../../node_modules/flowbite/dist/flowbite.min.js"></script>
         <script is:inline>
             // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
@@ -60,7 +62,14 @@ const {
         <main class={className}>
             <slot />
         </main>
-
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const preBlocks = document.querySelectorAll("pre code"); // Targeting 'code' elements inside 'pre'
+                preBlocks.forEach((block) => {
+                    hljs.highlightBlock(block);
+                });
+            });
+        </script>
         <SectionContainer class="sticky top-[100vh]">
             <footer class="pb-8 pt-8 bg-neutral-50 dark:bg-dark_mode_bg">
                 <div class="wrap-sm mx-auto px-8 grid gap-8">
