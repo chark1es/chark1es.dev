@@ -21,7 +21,7 @@ npm i lit
 
 In your components folder, create a new folder named `copy-code` (or whatever name you prefer.) Create these files in the folder you just created and paste the following code:
 
-```js:copy-code-button.js
+```js:copy-code/copy-code-button.js
 import { LitElement, html, css } from "lit";
 
 export const copyIcon = html`<svg
@@ -145,7 +145,7 @@ customElements.define("copy-code-button", CopyCodeButton);
 
 ```
 
-```js:create-copy-buttons.js
+```js:copy-code/create-copy-buttons.js
 let blocks = document.querySelectorAll("pre");
 
 blocks.forEach((block) => {
@@ -164,7 +164,7 @@ blocks.forEach((block) => {
 
 ```
 
-```css:styles.css
+```css:copy-code/styles.css
 pre[class*="language-"] {
     overflow: auto;
 }
