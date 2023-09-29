@@ -30,7 +30,89 @@ const {
             url={url}
             image={image}
         />
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const letters =
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789@#$%^&*()_+{}|:<>?/.,';][=-`~";
 
+                // Function to generate a random string of a given length
+                function generateRandomString(length) {
+                    return Array.from({ length })
+                        .map(
+                            () =>
+                                letters[
+                                    Math.floor(Math.random() * letters.length)
+                                ]
+                        )
+                        .join("");
+                }
+
+                // Function to run the shuffling effect
+                function startShuffleEffect(element) {
+                    return setInterval(() => {
+                        element.innerText = element.innerText
+                            .split("")
+                            .map(
+                                () =>
+                                    letters[
+                                        Math.floor(
+                                            Math.random() * letters.length
+                                        )
+                                    ]
+                            )
+                            .join("");
+                    }, 30);
+                }
+
+                // Function to reveal the original text character by character
+                function startRevealEffect(element, callback) {
+                    const targetText = element.dataset.value;
+                    let iteration = 0;
+                    return setInterval(() => {
+                        element.innerText = element.innerText
+                            .split("")
+                            .map((letter, index) => {
+                                if (index < iteration) {
+                                    return targetText[index];
+                                }
+                                return letters[
+                                    Math.floor(Math.random() * letters.length)
+                                ];
+                            })
+                            .join("");
+                        iteration++;
+
+                        if (iteration >= targetText.length) {
+                            clearInterval(callback);
+                            element.innerText = targetText; // Ensure the final text is correct
+                        }
+                    }, 30);
+                }
+
+                // Select all elements with the `.hack-effect` class
+                const elements = document.querySelectorAll(".hack-effect");
+
+                elements.forEach((element) => {
+                    let interval;
+
+                    // Initialize by revealing the original text
+                    interval = startRevealEffect(element, interval);
+
+                    // If it has the .hack-hover-effect class, attach the hover and mouseout events
+                    if (element.classList.contains("hack-hover-effect")) {
+                        element.onmouseover = () => {
+                            clearInterval(interval); // Clear any existing interval
+                            interval = startShuffleEffect(element);
+                        };
+
+                        element.onmouseout = () => {
+                            clearInterval(interval);
+                            interval = startRevealEffect(element, interval);
+                        };
+                    }
+                });
+            });
+        </script>
         <!-- <ViewTransitions /> -->
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"
