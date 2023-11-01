@@ -33,7 +33,7 @@ git clone https://github.com/yourusername/personal-website.git
 3. Install the dependencies:
 ```
 cd personal-website
-yarn install
+npm install
 ```
 
 

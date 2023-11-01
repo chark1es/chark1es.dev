@@ -31,7 +31,8 @@ export default defineConfig({
                 "@/components/blog/Alert.astro",
                 {
                     "accessible-astro-components": ["Notification"]
-                }
+                },
+                "@/components/blog/Codeblock.astro"
             ]
         }),
         mdx(),
