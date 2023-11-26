@@ -9,16 +9,10 @@ import remarkCodeTitles from "remark-code-titles";
 import prefetch from "@astrojs/prefetch";
 import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
+import node from "@astrojs/node";
 // https://astro.build/config
 export default defineConfig({
-    output: "hybrid",
-    adapter: node({
-        mode: "standalone"
-    }),
-
-    server: {
-        host: "0.0.0.0"
-    },
+    site: "https://chark1es.dev/",
     markdown: {
         syntaxHighlight: "prism",
         remarkPlugins: [remarkToc, remarkReadingTime, remarkCodeTitles]
@@ -32,14 +26,22 @@ export default defineConfig({
         }
     },
 
+    output: "hybrid",
+    adapter: node({
+        mode: "standalone"
+    }),
+
+    server: {
+        host: "0.0.0.0"
+    },
+
     integrations: [
         AutoImport({
             imports: [
                 "@/components/blog/Alert.astro",
                 {
                     "accessible-astro-components": ["Notification"]
-                }
-                // "@/components/blog/Codeblock.astro"
+                } // "@/components/blog/Codeblock.astro"
             ]
         }),
         mdx(),
