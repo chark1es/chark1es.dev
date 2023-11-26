@@ -23,6 +23,7 @@
         "dev": "astro dev",
         "start": "astro dev",
         "build": "astro build",
+        "build:railway": "node dist/server/entry.mjs",
         "preview": "astro preview",
         "astro": "astro",
         "deploy": "wrangler pages deploy dist"
