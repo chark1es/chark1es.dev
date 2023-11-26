@@ -11,7 +11,14 @@ import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
 // https://astro.build/config
 export default defineConfig({
-    site: "https://chark1es.dev/",
+    output: "hybrid",
+    adapter: node({
+        mode: "standalone"
+    }),
+
+    server: {
+        host: "0.0.0.0"
+    },
     markdown: {
         syntaxHighlight: "prism",
         remarkPlugins: [remarkToc, remarkReadingTime, remarkCodeTitles]
