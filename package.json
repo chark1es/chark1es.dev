@@ -21,9 +21,8 @@
     "homepage": "https://www.avenuelabs.co/",
     "scripts": {
         "dev": "astro dev",
-        "start": "astro dev",
+        "start": "node dist/server/entry.mjs",
         "build": "astro build",
-        "build:railway": "node dist/server/entry.mjs",
         "preview": "astro preview",
         "astro": "astro",
         "deploy": "wrangler pages deploy dist"
