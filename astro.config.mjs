@@ -6,7 +6,6 @@ import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import remarkToc from "remark-toc";
 import remarkCodeTitles from "remark-code-titles";
-import prefetch from "@astrojs/prefetch";
 import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
 import node from "@astrojs/node";
@@ -48,7 +47,6 @@ export default defineConfig({
         mdx(),
         sitemap(),
         tailwind(),
-        prefetch(),
         react({
             include: ["**/react/*"]
         })
