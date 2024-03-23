@@ -5,6 +5,7 @@ years: "Jun 2022 - Jul 2022"
 logo: "/images/chadwick.png"
 logoWidth: 100
 logoHeight: 100
+skillType: "Technologies:"
 skills:
     [
         { "skill": "Scratch", "skillLogo": "simple-icons:scratch" },

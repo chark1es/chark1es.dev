@@ -5,6 +5,7 @@ years: "Jun 2023 - July 2023"
 logo: "/images/chadwick.png"
 logoWidth: 100
 logoHeight: 100
+skillType: "Technologies:"
 skills: [{ "skill": "Adobe Premiere Pro", "skillLogo": "skill-icons:premiere" }]
 ---
 
