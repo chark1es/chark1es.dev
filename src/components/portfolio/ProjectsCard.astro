@@ -12,7 +12,7 @@ import { Image } from "astro:assets";
     </div>
 </div>
 {
-    posts.map((post, index) => (
+    posts.toReversed().map((post, index) => (
         <div class="flex flex-col gap-3">
             <div class="flex gap-2  w-full">
                 <div class="flex gap-4">
