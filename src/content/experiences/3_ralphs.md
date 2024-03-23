@@ -9,7 +9,7 @@ skillType: "Skills:"
 
 skills:
     [
-        { "skill": "Point of Service", "skillLogo": "iconamoon:scanner" },
+        { "skill": "Point of Sale", "skillLogo": "iconamoon:scanner" },
         { "skill": "Customer Service", "skillLogo": "ion:person-outline" }
     ]
 ---
