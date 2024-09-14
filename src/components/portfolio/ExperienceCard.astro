@@ -14,7 +14,7 @@ const posts = await Astro.glob("../../content/experiences/*.md");
         >
         <!-- Getting all work experience from the content folder -->
         {
-            posts.toReversed().map((post, index) => (
+            posts.reverse().map((post, index) => (
                 <>
                     <div class="flex flex-col gap-3">
                         <div class="flex gap-2 justify-between w-full">
