@@ -26,14 +26,16 @@ export default defineConfig({
         }
     },
 
-    // output: "hybrid",
-    // adapter: node({
-    //     mode: "standalone"
-    // }),
+    output: "hybrid",
+    adapter: node({
+        mode: "standalone"
+    }),
 
     // server: {
     //     host: "0.0.0.0"
     // },
+
+    
 
     integrations: [
         AutoImport({
