@@ -1,21 +1,17 @@
 ---
-import Layout from '../layouts/Layout.astro';
-const { any } = Astro.params;
+import Layout from "../layouts/Layout.astro";
 Astro.response.status = 404;
-
-export function getStaticPaths() {
-  return [
-    ];
-}
 ---
+
 <Layout title="404" description="How did you get here?">
-    <div class='flex h-screen min-h-full flex-col justify-center dark:text-dark_mode_text'>
-        <h1 class="flex justify-center font-semibold">You aren't supposed to be here!
-            
+    <div
+        class="flex h-screen min-h-full flex-col justify-center dark:text-dark_mode_text"
+    >
+        <h1 class="flex justify-center font-semibold">
+            You aren't supposed to be here!
         </h1>
         <h1 class="flex justify-center font-semibold dark:text-dark_mode_text">
             :(
         </h1>
     </div>
-
 </Layout>

@@ -1,9 +1,8 @@
 ---
 import FormattedDate from "@/components/FormattedDate.astro";
 import Layout from "@/layouts/Layout.astro";
-import SectionContainer from "@/components/SectionContainer.astro";
 import { SITE } from "@config";
-import { CollectionEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import getReadingTime from "reading-time";
 export interface Props {
     posts: CollectionEntry<"blogs">[];
@@ -37,7 +36,7 @@ const { posts, title, tag } = Astro.props;
                         width="20"
                         style=""
                         class="pt-1 mr-1"></iconify-icon>
-                     Back to Tags
+                    Back to Tags
                 </a>
                 <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
                     Tag: [{tag}]
@@ -52,7 +51,7 @@ const { posts, title, tag } = Astro.props;
         >
             {
                 posts.map((post) => (
-                    <a href={`/blogs/${post.slug}`} class="">
+                    <a href={`/blogs/${post.id}`} class="">
                         <ul class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition hover:duration-500 hover:scale-105 mb-2">
                             <div class="flex flex-wrap font-bold ">
                                 {post.data.title}
@@ -78,7 +77,9 @@ const { posts, title, tag } = Astro.props;
                                     class="mr-1.5 mt-1.5 inline-flex max-w-fit"
                                 />
                                 <div class="flex-wrap mt-1 text-sm">
-                                    {getReadingTime(post.body).text}
+                                    {post.body
+                                        ? getReadingTime(post.body).text
+                                        : "0 min read"}
                                 </div>
                             </div>
 

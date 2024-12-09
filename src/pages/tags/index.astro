@@ -2,7 +2,6 @@
 import { SITE } from "@config";
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
-import SectionContainer from "@/components/SectionContainer.astro";
 import getSortedTags from "@/utils/getSortedTags";
 
 const posts = await getCollection("blogs");
@@ -30,7 +29,7 @@ let tags = getSortedTags(posts);
                         width="20"
                         style=""
                         class="pt-1 mr-1"></iconify-icon>
-                     Back to Home
+                    Back to Home
                 </a>
                 <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
                     Tags

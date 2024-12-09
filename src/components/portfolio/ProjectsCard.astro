@@ -1,7 +1,29 @@
 ---
-const posts = await Astro.glob("../../content/projects/*.md");
 import SkillButton from "./SkillCardButtonTemplate.astro";
 import { Image } from "astro:assets";
+
+interface Frontmatter {
+    logo: string;
+    logoWidth: number;
+    logoHeight: number;
+    projectName: string;
+    years: string;
+    links?: Array<{ link: string; linkLogo: string }>;
+    projectTeamSize: string;
+    projectRole: string;
+    projectCompany: string;
+    projectCategory: string;
+    technologies?: Array<{ skill: string; skillLogo: string }>;
+}
+
+interface Post {
+    frontmatter: Frontmatter;
+    compiledContent(): string;
+}
+
+const posts = Object.values(
+    import.meta.glob<Post>("../../content/projects/*.md", { eager: true }),
+);
 ---
 
 <div class="flex flex-col gap-4">

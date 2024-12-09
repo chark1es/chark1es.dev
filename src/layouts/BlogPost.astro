@@ -1,25 +1,25 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
 import Layout from "./Layout.astro";
-import SectionContainer from "@/components/SectionContainer.astro";
-
 import { SITE } from "@config";
 
-export interface Props {
+export interface Post {
     post: CollectionEntry<"blogs">;
+    Content: any; // This is the rendered content component
 }
 
-const { post } = Astro.props;
+const { post, Content } = Astro.props;
 
-const { title, description, pubDate, updatedDate, heroImage, tags } = post.data;
+const { title, description, pubDate, heroImage, tags } = post.data;
 
 const ogUrl = new URL(
     heroImage ? heroImage : `${title.replace(/\s+/g, "-").toLowerCase()}.png`,
-    Astro.url.origin
+    Astro.url.origin,
 ).href;
 
-const { Content, remarkPluginFrontmatter } = await post.render();
+const { remarkPluginFrontmatter } = await render(post);
 ---
 
 <Layout
@@ -46,7 +46,7 @@ const { Content, remarkPluginFrontmatter } = await post.render();
                         width="20"
                         style=""
                         class="pt-1 mr-1"></iconify-icon>
-                     Back to Home
+                    Back to Home
                 </a>
                 <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
                     {title}
@@ -94,7 +94,7 @@ const { Content, remarkPluginFrontmatter } = await post.render();
                             class="mr-1.5 mt-1.5 inline-flex max-w-fit scale-[0.95]"
                         ></iconify-icon>
                         {
-                            tags.map((tag) => (
+                            tags.map((tag: string) => (
                                 <a
                                     class="flex items-center bg-gray-100 rounded dark:bg-black-400 dark:text-gray-100 gap-x-1.5 h-6 mt-0.5 px-2.5 text-gray-700 text-sm tracking-wide w-fit transition hover:duration-500  hover:scale-[0.95] select-none scale-[0.85]"
                                     href={`/tags/${tag}`}
@@ -126,9 +126,6 @@ const { Content, remarkPluginFrontmatter } = await post.render();
     </main>
 
     <script>
-        const { remarkPluginFrontmatter } = Astro.props.post;
-        const readingTime = remarkPluginFrontmatter.minutesRead;
-
         // Function to create a Back to history button.
         const buttons = document.querySelectorAll(".blog-back-button");
         if (buttons) {

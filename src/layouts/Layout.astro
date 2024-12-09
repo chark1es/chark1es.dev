@@ -4,10 +4,8 @@
 import "../styles/globals.scss";
 import SectionContainer from "@/components/SectionContainer.astro";
 import SEO from "@/components/seo/SEO.astro";
-import "../components/copy-code/styles.css";
-import { SOCIALS } from "@config";
 import Navigation from "../components/Navigation.astro";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 const currentYear = new Date().getFullYear();
 
 const {
@@ -17,7 +15,7 @@ const {
     keywords,
     url,
     // twitterhandle,
-    image
+    image,
 } = Astro.props;
 ---
 
@@ -35,20 +33,8 @@ const {
                 const letters =
                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789@#$%^&*()_+{}|:<>?/.,';][=-`~";
 
-                // Function to generate a random string of a given length
-                function generateRandomString(length) {
-                    return Array.from({ length })
-                        .map(
-                            () =>
-                                letters[
-                                    Math.floor(Math.random() * letters.length)
-                                ]
-                        )
-                        .join("");
-                }
-
                 // Function to run the shuffling effect
-                function startShuffleEffect(element) {
+                function startShuffleEffect(element: HTMLElement) {
                     return setInterval(() => {
                         element.innerText = element.innerText
                             .split("")
@@ -56,22 +42,25 @@ const {
                                 () =>
                                     letters[
                                         Math.floor(
-                                            Math.random() * letters.length
+                                            Math.random() * letters.length,
                                         )
-                                    ]
+                                    ],
                             )
                             .join("");
                     }, 30);
                 }
 
                 // Function to reveal the original text character by character
-                function startRevealEffect(element, callback) {
-                    const targetText = element.dataset.value;
+                function startRevealEffect(
+                    element: HTMLElement,
+                    callback?: ReturnType<typeof setInterval>,
+                ) {
+                    const targetText = element.dataset.value || "";
                     let iteration = 0;
                     return setInterval(() => {
                         element.innerText = element.innerText
                             .split("")
-                            .map((letter, index) => {
+                            .map((_, index) => {
                                 if (index < iteration) {
                                     return targetText[index];
                                 }
@@ -83,8 +72,8 @@ const {
                         iteration++;
 
                         if (iteration >= targetText.length) {
-                            clearInterval(callback);
-                            element.innerText = targetText; // Ensure the final text is correct
+                            if (callback) clearInterval(callback);
+                            element.innerText = targetText;
                         }
                     }, 30);
                 }
@@ -93,27 +82,29 @@ const {
                 const elements = document.querySelectorAll(".hack-effect");
 
                 elements.forEach((element) => {
-                    let interval;
+                    let interval: ReturnType<typeof setInterval> | undefined;
+                    const htmlElement = element as HTMLElement;
 
                     // Initialize by revealing the original text
-                    interval = startRevealEffect(element, interval);
+                    interval = startRevealEffect(htmlElement, interval);
 
                     // If it has the .hack-hover-effect class, attach the hover and mouseout events
-                    if (element.classList.contains("hack-hover-effect")) {
-                        element.onmouseover = () => {
-                            clearInterval(interval); // Clear any existing interval
-                            interval = startShuffleEffect(element);
+                    if (htmlElement.classList.contains("hack-hover-effect")) {
+                        htmlElement.onmouseover = () => {
+                            clearInterval(interval);
+                            interval = startShuffleEffect(htmlElement);
                         };
 
-                        element.onmouseout = () => {
+                        htmlElement.onmouseout = () => {
                             clearInterval(interval);
-                            interval = startRevealEffect(element, interval);
+                            interval = startRevealEffect(htmlElement, interval);
                         };
                     }
                 });
             });
         </script>
         <!-- <ViewTransitions /> -->
+        <ClientRouter />
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"
         ></script>
@@ -131,10 +122,6 @@ const {
                 document.documentElement.classList.remove("dark");
             }
         </script>
-        <script>
-            import "@/components/copy-code/copy-code-button.js";
-            import "@/components/copy-code/create-copy-buttons.js";
-        </script>
         <script
             src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"
         ></script>
@@ -144,14 +131,7 @@ const {
         <main class={className}>
             <slot />
         </main>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const preBlocks = document.querySelectorAll("pre code"); // Targeting 'code' elements inside 'pre'
-                preBlocks.forEach((block) => {
-                    hljs.highlightBlock(block);
-                });
-            });
-        </script>
+
         <SectionContainer class="sticky top-[100vh]">
             <footer class="pb-8 pt-8 bg-neutral-50 dark:bg-dark_mode_bg">
                 <div class="wrap-sm mx-auto px-8 grid gap-8">
@@ -217,7 +197,7 @@ const {
 
         <button
             id="scrollToTopBtn"
-            class="dark:text-dark_mode_text bg-gray-100 dark:bg-dark_mode_post hover:duration-500 hover:scale-110 items-center justify-center text-gray-400 bottom-5 fixed h-10 inline-flex right-3 rounded-lg shadow-xl transition w-10 z-10 hidden opacity-0"
+            class="dark:text-dark_mode_text bg-gray-100 dark:bg-dark_mode_post hover:duration-500 hover:scale-110 items-center justify-center text-gray-400 bottom-5 fixed h-10 inline-flex right-3 rounded-lg shadow-xl transition w-10 z-10 opacity-0"
         >
             <iconify-icon
                 icon="fluent:arrow-up-12-filled"
@@ -228,19 +208,21 @@ const {
         <script>
             const setFixedWidth = () => {
                 const navBar = document.querySelector("nav");
-                // Add a class to the navigation bar to set a fixed width
-                navBar.classList.add("fixed-width");
-                // Ensure scrollbar is always visible
-                document.body.style.overflowY = "scroll";
+                if (navBar) {
+                    navBar.classList.add("fixed-width");
+                    document.body.style.overflowY = "scroll";
+                }
             };
 
             const setDarkMode = () => {
                 const themeToggleDarkIcon = document.getElementById(
-                    "theme-toggle-dark-icon"
+                    "theme-toggle-dark-icon",
                 );
                 const themeToggleLightIcon = document.getElementById(
-                    "theme-toggle-light-icon"
+                    "theme-toggle-light-icon",
                 );
+
+                if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
 
                 const isDarkMode =
                     localStorage.getItem("color-theme") === "dark" ||
@@ -250,79 +232,18 @@ const {
 
                 if (isDarkMode) {
                     document.documentElement.classList.add("dark");
-                    document.body.classList.add("dark"); // Add the 'dark' class to the body
+                    document.body.classList.add("dark");
                     themeToggleDarkIcon.classList.remove("hidden");
                     themeToggleLightIcon.classList.add("hidden");
                 } else {
                     document.documentElement.classList.remove("dark");
-                    document.body.classList.remove("dark"); // Remove the 'dark' class from the body
+                    document.body.classList.remove("dark");
                     themeToggleDarkIcon.classList.add("hidden");
                     themeToggleLightIcon.classList.remove("hidden");
                 }
             };
             const themeToggleBtn = document.getElementById("theme-toggle");
-            themeToggleBtn.addEventListener("click", () => {
-                const isDarkMode =
-                    document.documentElement.classList.contains("dark");
-                if (isDarkMode) {
-                    document.documentElement.classList.remove("dark");
-                    localStorage.setItem("color-theme", "light");
-                } else {
-                    document.documentElement.classList.add("dark");
-                    localStorage.setItem("color-theme", "dark");
-                }
-                setDarkMode();
-            });
-
-            let isScrolledToTop = true; // Track whether the scrollbar is at the top
-
-            const handleScroll = () => {
-                const scrollToTopBtn =
-                    document.getElementById("scrollToTopBtn");
-
-                if (window.pageYOffset > 0) {
-                    scrollToTopBtn.classList.remove("hidden");
-                    scrollToTopBtn.classList.remove("fade-out"); // Remove fade-out class
-
-                    if (isScrolledToTop) {
-                        scrollToTopBtn.classList.remove("fade-in"); // Remove fade-in class
-                        setTimeout(() => {
-                            scrollToTopBtn.classList.add("fade-in");
-                        }, 300); // Add a small delay before adding the fade-in class
-                    }
-
-                    isScrolledToTop = false;
-                } else {
-                    scrollToTopBtn.classList.remove("fade-in");
-                    scrollToTopBtn.classList.add("fade-out");
-                    setTimeout(() => {
-                        scrollToTopBtn.classList.add("hidden");
-                    }, 300); // Adjust the timeout value as desired
-
-                    isScrolledToTop = true;
-                }
-            };
-
-            window.addEventListener("scroll", handleScroll);
-
-            const scrollToTop = () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-            };
-
-            document.addEventListener("astro:after-swap", () => {
-                setFixedWidth();
-                setDarkMode();
-                handleScroll();
-
-                const scrollToTopBtn =
-                    document.getElementById("scrollToTopBtn");
-                scrollToTopBtn.removeEventListener("click", scrollToTop);
-                scrollToTopBtn.addEventListener("click", scrollToTop);
-
-                const themeToggleBtn = document.getElementById("theme-toggle");
+            if (themeToggleBtn) {
                 themeToggleBtn.addEventListener("click", () => {
                     const isDarkMode =
                         document.documentElement.classList.contains("dark");
@@ -335,13 +256,74 @@ const {
                     }
                     setDarkMode();
                 });
+            }
 
-                const blocks = document.querySelectorAll("pre");
+            let isScrolledToTop = true; // Track whether the scrollbar is at the top
 
-                blocks.forEach((block) => {
-                    const button = document.createElement("copy-code-button");
-                    block.appendChild(button);
+            const handleScroll = () => {
+                const scrollToTopBtn =
+                    document.getElementById("scrollToTopBtn");
+                if (!scrollToTopBtn) return;
+
+                if (window.pageYOffset > 0) {
+                    scrollToTopBtn.classList.remove("hidden");
+                    scrollToTopBtn.classList.remove("fade-out");
+
+                    if (isScrolledToTop) {
+                        scrollToTopBtn.classList.remove("fade-in");
+                        setTimeout(() => {
+                            scrollToTopBtn?.classList.add("fade-in");
+                        }, 300);
+                    }
+
+                    isScrolledToTop = false;
+                } else {
+                    scrollToTopBtn.classList.remove("fade-in");
+                    scrollToTopBtn.classList.add("fade-out");
+                    setTimeout(() => {
+                        scrollToTopBtn?.classList.add("hidden");
+                    }, 300);
+
+                    isScrolledToTop = true;
+                }
+            };
+
+            window.addEventListener("scroll", handleScroll);
+
+            const scrollToTop = () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
                 });
+            };
+
+            document.addEventListener("astro:after-swap", () => {
+                setFixedWidth();
+                setDarkMode();
+                handleScroll();
+
+                const scrollToTopBtn =
+                    document.getElementById("scrollToTopBtn");
+                if (scrollToTopBtn) {
+                    scrollToTopBtn.removeEventListener("click", scrollToTop);
+                    scrollToTopBtn.addEventListener("click", scrollToTop);
+                }
+
+                const themeToggleBtn = document.getElementById("theme-toggle");
+                if (themeToggleBtn) {
+                    themeToggleBtn.addEventListener("click", () => {
+                        const isDarkMode =
+                            document.documentElement.classList.contains("dark");
+                        if (isDarkMode) {
+                            document.documentElement.classList.remove("dark");
+                            localStorage.setItem("color-theme", "light");
+                        } else {
+                            document.documentElement.classList.add("dark");
+                            localStorage.setItem("color-theme", "dark");
+                        }
+                        setDarkMode();
+                    });
+                }
             });
             document.addEventListener("DOMContentLoaded", () => {
                 setDarkMode();
@@ -349,7 +331,9 @@ const {
                 handleScroll();
                 const scrollToTopBtn =
                     document.getElementById("scrollToTopBtn");
-                scrollToTopBtn.addEventListener("click", scrollToTop);
+                if (scrollToTopBtn) {
+                    scrollToTopBtn.addEventListener("click", scrollToTop);
+                }
             });
             document.addEventListener(
                 "astro:page-load",
@@ -360,7 +344,7 @@ const {
                     document.documentElement.classList.add("dark");
                     localStorage.setItem("color-theme", "dark");
                 },
-                { once: true }
+                { once: true },
             );
 
             window.addEventListener("scroll", handleScroll);
