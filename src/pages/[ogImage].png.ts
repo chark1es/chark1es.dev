@@ -15,6 +15,8 @@ const postImportResult = await getCollection(
 );
 const posts = Object.values(postImportResult);
 
+export const prerender = true;
+
 export function getStaticPaths() {
     return posts
         .filter(({ data }) => !data.heroImage)
