@@ -8,7 +8,7 @@ import type {
     Fa6Brands,
     Fa6Solid,
     Ri,
-    SimpleIcons
+    SimpleIcons,
 } from "iconify-icon-names";
 export type IconName = Fa6Brands | Fa6Solid | SimpleIcons | CircleFlags | Ri;
 

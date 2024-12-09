@@ -8,7 +8,7 @@ export const MotionBTTContainer = ({ children, transition }) => {
 
     const elementVariants = {
         hidden: { opacity: 0, y: 40 },
-        visible: { opacity: 1, y: 0 }
+        visible: { opacity: 1, y: 0 },
     };
 
     return (

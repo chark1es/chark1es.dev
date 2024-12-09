@@ -9,7 +9,7 @@ skillType: "Technologies:"
 skills:
     [
         { "skill": "Scratch", "skillLogo": "simple-icons:scratch" },
-        { "skill": "Desmos", "skillLogo": "arcticons:desmos" }
+        { "skill": "Desmos", "skillLogo": "arcticons:desmos" },
     ]
 ---
 

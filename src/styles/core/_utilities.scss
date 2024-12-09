@@ -7,47 +7,47 @@
 **/
 
 @layer utilities {
-  .wrap {
-    @apply container my-0 mx-auto w-full;
-    &-sm {
-      @apply max-w-3xl;
+    .wrap {
+        @apply container my-0 mx-auto w-full;
+        &-sm {
+            @apply max-w-3xl;
+        }
+        &-px {
+            @apply px-8;
+        }
     }
-    &-px {
-      @apply px-8;
+
+    .wrap-lg {
+        @apply max-w-7xl;
     }
-  }
 
-  .wrap-lg {
-    @apply max-w-7xl;
-  }
+    .wrap-md {
+        @apply max-w-4xl;
+    }
 
-  .wrap-md {
-    @apply max-w-4xl;
-  }
+    .block-m {
+        @apply my-24;
+    }
 
-  .block-m {
-    @apply my-24;
-  }
+    .block-p {
+        @apply py-24;
+    }
 
-  .block-p {
-    @apply py-24;
-  }
+    .align--center {
+        @apply m-auto justify-center;
+    }
 
-  .align--center {
-    @apply m-auto justify-center;
-  }
+    .align--left {
+        @apply mr-auto justify-start;
+    }
 
-  .align--left {
-    @apply mr-auto justify-start;
-  }
-
-  .align--right {
-    @apply ml-auto justify-end;
-  }
-  .show {
-    @apply block;
-  }
-  .hide {
-    @apply hidden;
-  }
+    .align--right {
+        @apply ml-auto justify-end;
+    }
+    .show {
+        @apply block;
+    }
+    .hide {
+        @apply hidden;
+    }
 }

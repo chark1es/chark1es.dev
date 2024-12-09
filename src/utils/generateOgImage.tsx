@@ -6,13 +6,13 @@ import { Resvg } from "@resvg/resvg-js";
 const fetchFonts = async () => {
     // Regular Font
     const fontFileRegular = await fetch(
-        "https://api.fontsource.org/v1/fonts/roboto-mono/latin-400-normal.ttf"
+        "https://api.fontsource.org/v1/fonts/roboto-mono/latin-400-normal.ttf",
     );
 
     const fontRegular: ArrayBuffer = await fontFileRegular.arrayBuffer();
 
     const fontFileBold = await fetch(
-        "https://api.fontsource.org/v1/fonts/roboto-mono/latin-700-normal.ttf"
+        "https://api.fontsource.org/v1/fonts/roboto-mono/latin-700-normal.ttf",
     );
     const fontBold: ArrayBuffer = await fontFileBold.arrayBuffer();
 
@@ -30,7 +30,7 @@ const ogImage = (text: string) => {
                 width: "100%",
                 height: "100%",
                 background: "#f5f5f5",
-                color: "#c9acc"
+                color: "#c9acc",
             }}
         >
             <div
@@ -40,14 +40,14 @@ const ogImage = (text: string) => {
                     flexGrow: "1",
                     width: "100%",
                     padding: "40px",
-                    justifyContent: "center"
+                    justifyContent: "center",
                 }}
             >
                 <h1
                     style={{
                         fontSize: "60px",
                         fontWeight: "bold",
-                        color: "black"
+                        color: "black",
                     }}
                 >
                     {text}
@@ -62,19 +62,19 @@ const ogImage = (text: string) => {
                     padding: "40px",
                     borderTop: "1px solid",
                     borderColor: "#737373",
-                    fontSize: "20px"
+                    fontSize: "20px",
                 }}
             >
                 <div
                     style={{
                         display: "flex",
-                        alignItems: "center"
+                        alignItems: "center",
                     }}
                 >
                     <svg
                         style={{
                             width: "60px",
-                            height: "60px"
+                            height: "60px",
                         }}
                         width="260"
                         height="260"
@@ -91,7 +91,7 @@ const ogImage = (text: string) => {
                     <p
                         style={{
                             marginLeft: "12px",
-                            fontWeight: "600"
+                            fontWeight: "600",
                         }}
                     >
                         {SITE.title}
@@ -112,15 +112,15 @@ const options: SatoriOptions = {
             name: "Roboto Mono",
             data: fontRegular,
             weight: 400,
-            style: "normal"
+            style: "normal",
         },
         {
             name: "Roboto Mono",
             data: fontBold,
             weight: 600,
-            style: "normal"
-        }
-    ]
+            style: "normal",
+        },
+    ],
 };
 
 const generateOgImage = async (mytext = SITE.title) => {

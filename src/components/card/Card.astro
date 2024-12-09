@@ -3,14 +3,14 @@ import clsx from "clsx";
 
 const CardType = {
     default: "bg-neutral-50 -mt-1 mb-1 -ml-1 card-clip",
-    bordered: "border-[1px] border-neutral-200 text-primary-500 p-8"
+    bordered: "border-[1px] border-neutral-200 text-primary-500 p-8",
 };
 
 const {
     link = "",
     class: className,
     target = "",
-    type = "default"
+    type = "default",
 } = Astro.props;
 
 const Element = link ? "a" : "div";
@@ -25,9 +25,9 @@ const href =
         "card text-black/60 block aspect-square relative transition-all duration-300 dark:bg-dark_mode_post",
         {
             [CardType.default]: type === "default",
-            [CardType.bordered]: type === "bordered"
+            [CardType.bordered]: type === "bordered",
         },
-        className
+        className,
     )}
 >
     <slot />

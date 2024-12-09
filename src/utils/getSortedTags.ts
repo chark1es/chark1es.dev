@@ -8,7 +8,7 @@ const getSortedTags = (posts: CollectionEntry<"blogs">[]) => {
             .map((tag) => tag)
             .filter(
                 (value: string, index: number, self: string[]) =>
-                    self.indexOf(value) === index
+                    self.indexOf(value) === index,
             );
     });
     return tags;
