@@ -1,28 +1,28 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "emmet.showExpandedAbbreviation": "never",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.esbenp.prettier-vscode": "explicit",
-    "source.fixAll.eslint": "explicit",
-    "source.fixAll.stylelint": "explicit"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "eslint.experimental": {
-    "useFlatConfig": true
-  },
-  "eslint.options": {
-    "overrideConfigFile": "eslint.config.mjs"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "files.associations": {
-    "*.mdx": "markdown"
-  },
-  "prettier.documentSelectors": ["**/*.astro"],
-  "[astro]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "emmet.showExpandedAbbreviation": "never",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.esbenp.prettier-vscode": "explicit",
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.stylelint": "explicit"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "eslint.experimental": {
+        "useFlatConfig": true
+    },
+    "eslint.options": {
+        "overrideConfigFile": "eslint.config.mjs"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "files.associations": {
+        "*.mdx": "markdown"
+    },
+    "prettier.documentSelectors": ["**/*.astro"],
+    "[astro]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
