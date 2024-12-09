@@ -9,19 +9,33 @@ tags:
 description: "How to add code blocks to your current AstroJS project"
 ---
 
-#### **Getting Started**
+import Alert from "@/components/blog/Alert.astro";
+
+### **Getting Started**
+
+<Alert
+    title="Note"
+    description="This post is meant to be a way to create your own code formatter, however, this website does not utilize the codeblocks shown and relies on Expressive Code instead."
+    borderColor="border-yellow-500"
+    icon="material-symbols:note"
+    textColor="text-[#FFFFFF]"
+    style="color:#c27803"
+    iconColor="text-yellow-500"
+></Alert>
 
 You want to first install `Lit` into your current Astro project. You can do this with
 
-```shell:terminal
+```shell title=terminal
 npm i lit
 ```
+
+<br />
 
 #### **Creating JS files**
 
 In your components folder, create a new folder named `copy-code` (or whatever name you prefer.) Create these files in the folder you just created and paste the following code:
 
-```js:copy-code/copy-code-button.js
+```js title=copy-code/copy-code-button.js wrap
 import { LitElement, html, css } from "lit";
 
 export const copyIcon = html`<svg
@@ -87,7 +101,7 @@ export class CopyCodeButton extends LitElement {
             button.clicked svg {
                 animation: animateScale 0.5s ease;
             }
-        `
+        `,
     ];
 
     constructor() {
@@ -97,7 +111,7 @@ export class CopyCodeButton extends LitElement {
 
     static get properties() {
         return {
-            _isCopied: { type: Boolean }
+            _isCopied: { type: Boolean },
         };
     }
 
@@ -142,10 +156,11 @@ export class CopyCodeButton extends LitElement {
     }
 }
 customElements.define("copy-code-button", CopyCodeButton);
-
 ```
 
-```js:copy-code/create-copy-buttons.js
+<br />
+
+```js title=copy-code/create-copy-buttons.js wrap
 let blocks = document.querySelectorAll("pre");
 
 blocks.forEach((block) => {
@@ -161,10 +176,12 @@ blocks.forEach((block) => {
     let button = document.createElement("copy-code-button");
     containerDiv.appendChild(button); // Append button to the containerDiv, not block
 });
-
 ```
 
-```css:copy-code/styles.css
+{" "}
+<br />
+
+```css title=copy-code/styles.css
 pre[class*="language-"] {
     overflow: auto;
 }
@@ -177,7 +194,6 @@ pre {
     position: relative;
     overflow-x: auto;
     max-width: 100%;
-
 }
 
 pre code {
@@ -191,8 +207,6 @@ copy-code-button {
     top: 5px;
     right: 10px;
 }
-
-
 
 pre code::-webkit-scrollbar-corner {
     background-color: transparent;
@@ -264,7 +278,6 @@ pre code {
     overflow: -moz-scrollbars-none;
 }
 
-
 pre code.dark {
     scrollbar-width: thin;
     -ms-overflow-style: auto;
@@ -274,10 +287,11 @@ pre code.dark {
 
 In your layouts folder, go to the main layout and add these lines of code:
 
-```astro:Layout.astro
+```astro title=Layout.astro wrap
 ---
 import "../styles/globals.scss";
 ---
+
 <head>
     <script>
         import "@/components/copy-code/copy-code-button.js";
