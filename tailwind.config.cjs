@@ -2,63 +2,63 @@
 module.exports = {
     content: [
         "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
-        "./node_modules/flowbite/**/*.js"
+        "./node_modules/flowbite/**/*.js",
     ],
     theme: {
         extend: {
             fontFamily: {
                 body: ["Inter", "Sans Serif"],
-                title: ["Inter", "Sans Serif"]
+                title: ["Inter", "Sans Serif"],
             },
             fontSize: {
                 body: [
                     "1rem",
                     {
-                        lineHeight: "1.5rem"
-                    }
+                        lineHeight: "1.5rem",
+                    },
                 ],
                 h1: [
                     "3.5rem",
                     {
-                        lineHeight: "3.75rem"
-                    }
+                        lineHeight: "3.75rem",
+                    },
                 ],
                 h2: [
                     "2.25rem",
                     {
-                        lineHeight: "2.625rem"
-                    }
+                        lineHeight: "2.625rem",
+                    },
                 ],
                 h3: [
                     "1.875rem",
                     {
-                        lineHeight: "2.25rem"
-                    }
+                        lineHeight: "2.25rem",
+                    },
                 ],
                 h4: [
                     "1.5rem",
                     {
-                        lineHeight: "2rem"
-                    }
+                        lineHeight: "2rem",
+                    },
                 ],
                 h5: [
                     "1.25rem",
                     {
-                        lineHeight: "1.75rem"
-                    }
+                        lineHeight: "1.75rem",
+                    },
                 ],
                 h6: [
                     "1.125rem",
                     {
-                        lineHeight: "1.5rem"
-                    }
+                        lineHeight: "1.5rem",
+                    },
                 ],
                 mini: [
                     "0.75rem",
                     {
-                        lineHeight: "1.5rem"
-                    }
-                ]
+                        lineHeight: "1.5rem",
+                    },
+                ],
             },
             colors: {
                 black: {
@@ -72,7 +72,7 @@ module.exports = {
                     600: "#000000",
                     700: "#000000",
                     800: "#000000",
-                    900: "#000000"
+                    900: "#000000",
                 },
                 white: {
                     DEFAULT: "#FFFFFF",
@@ -85,7 +85,7 @@ module.exports = {
                     600: "#C7C7C7",
                     700: "#949494",
                     800: "#636363",
-                    900: "#303030"
+                    900: "#303030",
                 },
                 primary: {
                     50: "#f7f7f7",
@@ -98,7 +98,7 @@ module.exports = {
                     700: "#434343",
                     800: "#383838",
                     900: "#313131",
-                    950: "#1a1a1a"
+                    950: "#1a1a1a",
                 },
                 badge: "#F1F5F9",
                 badgeText: "#475569",
@@ -107,10 +107,10 @@ module.exports = {
                 dark_mode_text: "#CCCCCC",
                 dark_mode_bg_nav: "#161616",
                 dark_mode_text_gray: "#606060",
-                dark_mode_text_light_gray: "#A0A0A0"
-            }
-        }
+                dark_mode_text_light_gray: "#A0A0A0",
+            },
+        },
     },
     plugins: [require("@tailwindcss/typography"), require("flowbite/plugin")],
-    darkMode: "class"
+    darkMode: "class",
 };

@@ -14,15 +14,15 @@
 */
 
 // Core CSS Reset/MISCS
-@import "core/misc";
+@use "core/misc";
 
 // Core Declarations
-@import "core/variables";
+@use "core/variables";
 
 // Core Layouts and Style Definitions
-@import "core/general";
-@import "core/typography";
-@import "core/utilities";
+@use "core/general";
+@use "core/typography";
+@use "core/utilities";
 
 // Core Plugins
 // @import "plugins/plugin-tailwind";
@@ -38,6 +38,15 @@
     --astro-code-token-string-expression: burlywood;
     --astro-code-token-punctuation: linen;
     --astro-code-token-link: honeydew;
+}
+
+.markdown a {
+    color: #3b82f6;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: #2563eb;
+    }
 }
 
 .underline-animation a.group {

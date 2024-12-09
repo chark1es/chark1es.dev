@@ -1,10 +1,10 @@
 {
-    "extends": "astro/tsconfigs/base",
+    "extends": "astro/tsconfigs/strict",
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
         // Enable node-style module resolution, for things like npm package imports.
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         // Enable JSON imports.
         "resolveJsonModule": true,
         // Enable stricter transpilation for better output.
@@ -27,25 +27,17 @@
         "noUncheckedIndexedAccess": true,
         // Force import casing to match file name casing on the disk.
         "forceConsistentCasingInFileNames": true,
-
+        "allowJs": true,
         "strictNullChecks": true,
         "allowImportingTsExtensions": true,
-        "baseUrl": "src",
+        "baseUrl": ".",
         "paths": {
-            "@/assets/*": ["assets/*"],
-            "@config": ["config.ts"],
-            "@/components/*": ["components/*"],
-            "@/content/*": ["content/*"],
-            "@/layouts/*": ["layouts/*"],
-            "@/pages/*": ["pages/*"],
-            "@/styles/*": ["styles/*"],
-            "@/utils/*": ["utils/*"],
-            "@/data/*": ["data/*"]
+            "@/*": ["src/*"],
+            "@config": ["src/config.ts"]
         },
-        "types": ["@astrojs/image/client"],
         "jsx": "react-jsx",
         "jsxImportSource": "react"
     },
-    "exclude": ["node_modules", "**/node_modules/*", ".vscode", "dist"],
-    "typescript.inlayHints.parameterNames.enabled": "all"
+    "include": [".astro/types.d.ts", "src/**/*"],
+    "exclude": ["node_modules", "dist"]
 }

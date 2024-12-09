@@ -9,48 +9,56 @@ import remarkCodeTitles from "remark-code-titles";
 import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
 import node from "@astrojs/node";
+import expressiveCode from "astro-expressive-code";
 // https://astro.build/config
 export default defineConfig({
     site: "https://chark1es.dev/",
     markdown: {
         syntaxHighlight: "prism",
-        remarkPlugins: [remarkToc, remarkReadingTime, remarkCodeTitles]
+        remarkPlugins: [remarkToc, remarkReadingTime],
     },
     vite: {
         optimizeDeps: {
-            exclude: ["@resvg/resvg-js"]
+            exclude: ["@resvg/resvg-js"],
         },
         ssr: {
             noExternal: ["path-to-regexp"],
-            external: ["svgo"]
-        }
+            external: ["svgo"],
+        },
     },
 
-    output: "hybrid",
+    output: "server",
     adapter: node({
-        mode: "standalone"
+        mode: "standalone",
     }),
 
     // server: {
     //     host: "0.0.0.0"
     // },
 
-    
-
     integrations: [
         AutoImport({
             imports: [
                 "@/components/blog/Alert.astro",
                 {
-                    "accessible-astro-components": ["Notification"]
-                } // "@/components/blog/Codeblock.astro"
-            ]
+                    "accessible-astro-components": ["Notification"],
+                }, // "@/components/blog/Codeblock.astro"
+            ],
         }),
+        expressiveCode(),
         mdx(),
         sitemap(),
         tailwind(),
         react({
-            include: ["**/react/*"]
-        })
-    ]
+            include: ["**/react/*"],
+        }),
+    ],
+
+    content: {
+        collections: {
+            blogs: {
+                directory: "src/content/blogs",
+            },
+        },
+    },
 });
