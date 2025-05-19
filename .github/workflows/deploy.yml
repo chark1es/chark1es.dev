@@ -7,12 +7,10 @@ on:
 
 jobs:
     deploy:
-        name: Auto-Deploy
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+            - uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
@@ -24,13 +22,13 @@ jobs:
 
             - name: Configure Coolify instance
               env:
-                  COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }} # defaults to https://api.coolify.io
+                  COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }} # e.g. https://api.coolify.io
                   COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
               run: |
-                  # register your instance (use "default" or any name you like)
-                  coolify instances add -d default "${COOLIFY_API_URL:-https://api.coolify.io}" "${COOLIFY_TOKEN}"
-                  # make it the default so you don't have to pass --instance every time
-                  coolify instances set default default
+                  # Add your instance (name, URL, token)
+                  coolify instances add default "${COOLIFY_API_URL:-https://api.coolify.io}" "${COOLIFY_TOKEN}"
+                  # (Optional) verify it’s set as default
+                  coolify instances list
 
             - name: Deploy to Coolify
               env:
