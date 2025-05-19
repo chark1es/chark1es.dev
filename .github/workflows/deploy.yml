@@ -10,7 +10,8 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
@@ -20,18 +21,26 @@ jobs:
             - name: Install Coolify CLI
               run: npm install -g coolify
 
-            - name: Configure Coolify instance
+            - name: Configure Coolify CLI
               env:
                   COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }} # e.g. https://api.coolify.io
                   COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
               run: |
-                  # Add your instance (name, URL, token)
-                  coolify instances add default "${COOLIFY_API_URL:-https://api.coolify.io}" "${COOLIFY_TOKEN}"
-                  # (Optional) verify it’s set as default
-                  coolify instances list
+                  # (Re)move any existing "default" instance so we start clean
+                  coolify instances remove default || true
+
+                  # 1) Add the instance by name + URL
+                  coolify instances add default "${COOLIFY_API_URL:-https://api.coolify.io}"
+
+                  # 2) Attach your API token to that instance
+                  coolify instances set token default "${COOLIFY_TOKEN}"  # :contentReference[oaicite:0]{index=0}
+
+                  # 3) Make it the default instance
+                  coolify instances set default default
 
             - name: Deploy to Coolify
               env:
                   APP_NAME: ${{ secrets.COOLIFY_APP_NAME }}
               run: |
-                  coolify deploy "${APP_NAME}"
+                  # This will deploy your 'main' branch to the app you named in Coolify
+                  coolify deploy "${APP_NAME}"                         # :contentReference[oaicite:1]{index=1}
