@@ -2,7 +2,8 @@ name: Deploy Website
 
 on:
     push:
-        branches: [main]
+        branches:
+            - main
 
 jobs:
     deploy:
@@ -10,24 +11,29 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-            # 1) Install Bun
-            - name: Install Bun
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "18"
+
+            - name: Install Coolify CLI
+              run: npm install -g coolify
+
+            - name: Configure Coolify instance
+              env:
+                  COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }} # defaults to https://api.coolify.io
+                  COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
               run: |
-                  curl -fsSL https://bun.sh/install | bash
-                  echo "BUN_INSTALL=$HOME/.bun" >> $GITHUB_ENV
-                  echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
-
-            # 2) Now bun is on PATH
-            - name: Install coolctl
-              run: bun add -g @coollabsio/coolctl
+                  # register your instance (use "default" or any name you like)
+                  coolify instances add -d default "${COOLIFY_API_URL:-https://api.coolify.io}" "${COOLIFY_TOKEN}"
+                  # make it the default so you don't have to pass --instance every time
+                  coolify instances set default default
 
             - name: Deploy to Coolify
               env:
-                  COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
-                  COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+                  APP_NAME: ${{ secrets.COOLIFY_APP_NAME }}
               run: |
-                  coolctl deploy \
-                    --app   "${{ secrets.COOLIFY_APP_NAME }}" \
-                    --branch "${{ github.ref_name }}"
+                  coolify deploy "${APP_NAME}"
