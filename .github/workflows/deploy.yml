@@ -13,34 +13,32 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v3
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: "18"
+            - name: Install official Coolify CLI
+              run: |
+                  # install the Go-based CLI (supports the -d flag)
+                  curl -fsSL https://raw.githubusercontent.com/coollabsio/coolify-cli/main/scripts/install.sh | bash
+              # :contentReference[oaicite:0]{index=0}
 
-            - name: Install Coolify CLI
-              run: npm install -g coolify
-
-            - name: Configure Coolify CLI
+            - name: Configure Coolify instance
               env:
                   COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }} # e.g. https://api.coolify.io
                   COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
               run: |
-                  # (Re)move any existing "default" instance so we start clean
+                  # (Re)move the default instance if it exists
                   coolify instances remove default || true
 
-                  # 1) Add the instance by name + URL
-                  coolify instances add default "${COOLIFY_API_URL:-https://api.coolify.io}"
+                  # Add your self-hosted instance with URL + token in one go:
+                  coolify instances add -d default "${COOLIFY_API_URL:-https://api.coolify.io}" "${COOLIFY_TOKEN}"
+                  # :contentReference[oaicite:1]{index=1}
 
-                  # 2) Attach your API token to that instance
-                  coolify instances set token default "${COOLIFY_TOKEN}"  # :contentReference[oaicite:0]{index=0}
-
-                  # 3) Make it the default instance
+                  # Make “default” the active instance
                   coolify instances set default default
+                  # :contentReference[oaicite:2]{index=2}
 
             - name: Deploy to Coolify
               env:
                   APP_NAME: ${{ secrets.COOLIFY_APP_NAME }}
               run: |
-                  # This will deploy your 'main' branch to the app you named in Coolify
-                  coolify deploy "${APP_NAME}"                         # :contentReference[oaicite:1]{index=1}
+                  # Push your main branch up to Coolify
+                  coolify deploy "${APP_NAME}"
+                  # :contentReference[oaicite:3]{index=3}
