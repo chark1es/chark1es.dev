@@ -1,0 +1,34 @@
+name: Deploy Website
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        name: 🚀 Auto-Deploy
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            # If your project needs a build step, uncomment and adapt:
+            # - name: Build project
+            #   run: |
+            #     npm ci
+            #     npm run build
+
+            - name: Install coolctl
+              run: bun add -g @coollabsio/coolctl
+
+            - name: Deploy to Coolify
+              env:
+                  # Only needed if you’re using a self-hosted Coolify
+                  COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+                  COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+              run: |
+                  coolctl deploy \
+                    --app   "${{ secrets.COOLIFY_APP_NAME }}" \
+                    --branch "${{ github.ref_name }}"
