@@ -61,13 +61,20 @@ jobs:
                       "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_ID/status")
                     
                     STATUS=$(echo $STATUS_RESPONSE | jq -r '.status // "pending"')
-                    echo "Deployment status: $STATUS"
+                    echo "Deployment status: $STATUS (attempt $i/30)"
                     
                     if [ "$STATUS" = "success" ] || [ "$STATUS" = "completed" ]; then
                       echo "Deployment completed successfully!"
                       break
                     elif [ "$STATUS" = "failed" ] || [ "$STATUS" = "error" ]; then
                       echo "Deployment failed!"
+                      exit 1
+                    fi
+                    
+                    # If we've reached the maximum attempts, exit with timeout
+                    if [ $i -eq 30 ]; then
+                      echo "❌ Deployment timeout after 5 minutes (30 attempts)"
+                      echo "Last known status: $STATUS"
                       exit 1
                     fi
                     
@@ -157,7 +164,7 @@ jobs:
                       "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_ID/status")
                     
                     STATUS=$(echo $STATUS_RESPONSE | jq -r '.status // "pending"')
-                    echo "Production deployment status: $STATUS"
+                    echo "Production deployment status: $STATUS (attempt $i/60)"
                     
                     if [ "$STATUS" = "success" ] || [ "$STATUS" = "completed" ]; then
                       echo "Production deployment completed successfully!"
@@ -166,6 +173,14 @@ jobs:
                     elif [ "$STATUS" = "failed" ] || [ "$STATUS" = "error" ]; then
                       echo "Production deployment failed!"
                       echo "deployment_status=failed" >> $GITHUB_OUTPUT
+                      exit 1
+                    fi
+                    
+                    # If we've reached the maximum attempts, exit with timeout
+                    if [ $i -eq 60 ]; then
+                      echo "❌ Production deployment timeout after 10 minutes (60 attempts)"
+                      echo "Last known status: $STATUS"
+                      echo "deployment_status=timeout" >> $GITHUB_OUTPUT
                       exit 1
                     fi
                     
