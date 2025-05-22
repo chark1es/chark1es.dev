@@ -1,44 +1,122 @@
-name: Deploy Website
+name: Deploy PR to Coolify
 
 on:
-    push:
-        branches:
-            - main
+    pull_request:
+        types: [opened, synchronize, reopened]
+        branches: [main, master]
 
 jobs:
-    deploy:
+    deploy-preview:
         runs-on: ubuntu-latest
-
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-            - name: Install official Coolify CLI
+            - name: Set up environment variables
               run: |
-                  # install the Go-based CLI (supports the -d flag)
-                  curl -fsSL https://raw.githubusercontent.com/coollabsio/coolify-cli/main/scripts/install.sh | bash
-              # :contentReference[oaicite:0]{index=0}
-
-            - name: Configure Coolify instance
-              env:
-                  COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }} # e.g. https://api.coolify.io
-                  COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
-              run: |
-                  # (Re)move the default instance if it exists
-                  coolify instances remove default || true
-
-                  # Add your self-hosted instance with URL + token in one go:
-                  coolify instances add -d default "${COOLIFY_API_URL:-https://api.coolify.io}" "${COOLIFY_TOKEN}"
-                  # :contentReference[oaicite:1]{index=1}
-
-                  # Make “default” the active instance
-                  coolify instances set default default
-                  # :contentReference[oaicite:2]{index=2}
+                  echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
+                  echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+                  echo "PREVIEW_SUBDOMAIN=pr-${{ github.event.number }}-$(echo ${{ github.head_ref }} | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
             - name: Deploy to Coolify
-              env:
-                  APP_NAME: ${{ secrets.COOLIFY_APP_NAME }}
+              id: deploy
               run: |
-                  # Push your main branch up to Coolify
-                  coolify deploy "${APP_NAME}"
-                  # :contentReference[oaicite:3]{index=3}
+                  # Create deployment payload
+                  DEPLOYMENT_PAYLOAD=$(cat <<EOF
+                  {
+                    "project_uuid": "${{ secrets.COOLIFY_PROJECT_UUID }}",
+                    "environment_name": "preview-pr-${{ github.event.number }}",
+                    "git_repository": "${{ github.repository }}",
+                    "git_branch": "${{ github.head_ref }}",
+                    "domains": ["${{ env.PREVIEW_SUBDOMAIN }}.${{ secrets.COOLIFY_DOMAIN }}"],
+                    "environment_variables": {
+                      "NODE_ENV": "production",
+                      "PR_NUMBER": "${{ github.event.number }}",
+                      "BRANCH_NAME": "${{ github.head_ref }}"
+                    }
+                  }
+                  EOF
+                  )
+
+                  # Deploy to Coolify via API
+                  RESPONSE=$(curl -s -X POST \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                    -H "Content-Type: application/json" \
+                    -d "$DEPLOYMENT_PAYLOAD" \
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy")
+
+                  echo "Coolify API Response: $RESPONSE"
+
+                  # Extract deployment ID or URL from response
+                  DEPLOYMENT_ID=$(echo $RESPONSE | jq -r '.deployment_id // .id // "unknown"')
+                  echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+
+                  # Wait for deployment to complete
+                  echo "Waiting for deployment to complete..."
+                  for i in {1..30}; do
+                    STATUS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                      "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_ID/status")
+                    
+                    STATUS=$(echo $STATUS_RESPONSE | jq -r '.status // "pending"')
+                    echo "Deployment status: $STATUS"
+                    
+                    if [ "$STATUS" = "success" ] || [ "$STATUS" = "completed" ]; then
+                      echo "Deployment completed successfully!"
+                      break
+                    elif [ "$STATUS" = "failed" ] || [ "$STATUS" = "error" ]; then
+                      echo "Deployment failed!"
+                      exit 1
+                    fi
+                    
+                    sleep 10
+                  done
+
+                  # Set the preview URL
+                  PREVIEW_URL="https://${{ env.PREVIEW_SUBDOMAIN }}.${{ secrets.COOLIFY_DOMAIN }}"
+                  echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+
+            - name: Comment PR with preview link
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const previewUrl = '${{ steps.deploy.outputs.preview_url }}';
+                      const deploymentId = '${{ steps.deploy.outputs.deployment_id }}';
+
+                      const comment = `🚀 **Preview Deployment Ready!**
+
+                      Your PR has been deployed to Coolify:
+                      🔗 **Preview URL:** ${previewUrl}
+                      📦 **Deployment ID:** ${deploymentId}
+                      🌟 **Branch:** \`${{ github.head_ref }}\`
+
+                      The preview will be automatically updated when you push new commits to this PR.
+
+                      ---
+                      *Deployed via Coolify • PR #${{ github.event.number }}*`;
+
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: comment
+                      });
+
+            - name: Output deployment info
+              run: |
+                  echo "🎉 PR #${{ github.event.number }} deployed successfully!"
+                  echo "🔗 Preview URL: ${{ steps.deploy.outputs.preview_url }}"
+                  echo "📦 Deployment ID: ${{ steps.deploy.outputs.deployment_id }}"
+                  echo "🌿 Branch: ${{ github.head_ref }}"
+
+    cleanup-on-close:
+        runs-on: ubuntu-latest
+        if: github.event.action == 'closed'
+        steps:
+            - name: Cleanup Coolify deployment
+              run: |
+                  # Clean up the preview environment when PR is closed
+                  curl -X DELETE \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/environments/preview-pr-${{ github.event.number }}"
+
+                  echo "Cleaned up preview environment for PR #${{ github.event.number }}"
