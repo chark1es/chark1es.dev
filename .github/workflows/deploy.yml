@@ -1,13 +1,16 @@
-name: Deploy PR to Coolify
+name: Deploy to Coolify
 
 on:
     pull_request:
         types: [opened, synchronize, reopened]
         branches: [main, master]
+    push:
+        branches: [main, master]
 
 jobs:
     deploy-preview:
         runs-on: ubuntu-latest
+        if: github.event_name == 'pull_request'
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -107,6 +110,102 @@ jobs:
                   echo "🔗 Preview URL: ${{ steps.deploy.outputs.preview_url }}"
                   echo "📦 Deployment ID: ${{ steps.deploy.outputs.deployment_id }}"
                   echo "🌿 Branch: ${{ github.head_ref }}"
+
+    deploy-production:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Deploy to Production
+              id: prod-deploy
+              run: |
+                  # Create production deployment payload
+                  DEPLOYMENT_PAYLOAD=$(cat <<EOF
+                  {
+                    "project_uuid": "${{ secrets.COOLIFY_PROJECT_UUID }}",
+                    "environment_name": "production",
+                    "git_repository": "${{ github.repository }}",
+                    "git_branch": "${{ github.ref_name }}",
+                    "domains": ["${{ secrets.COOLIFY_MAIN_DOMAIN }}"],
+                    "environment_variables": {
+                      "NODE_ENV": "production",
+                      "BRANCH_NAME": "${{ github.ref_name }}"
+                    }
+                  }
+                  EOF
+                  )
+
+                  # Deploy to Coolify via API
+                  RESPONSE=$(curl -s -X POST \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                    -H "Content-Type: application/json" \
+                    -d "$DEPLOYMENT_PAYLOAD" \
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy")
+
+                  echo "Coolify Production API Response: $RESPONSE"
+
+                  # Extract deployment ID from response
+                  DEPLOYMENT_ID=$(echo $RESPONSE | jq -r '.deployment_id // .id // "unknown"')
+                  echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+
+                  # Wait for deployment to complete
+                  echo "Waiting for production deployment to complete..."
+                  for i in {1..60}; do
+                    STATUS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                      "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_ID/status")
+                    
+                    STATUS=$(echo $STATUS_RESPONSE | jq -r '.status // "pending"')
+                    echo "Production deployment status: $STATUS"
+                    
+                    if [ "$STATUS" = "success" ] || [ "$STATUS" = "completed" ]; then
+                      echo "Production deployment completed successfully!"
+                      echo "deployment_status=success" >> $GITHUB_OUTPUT
+                      break
+                    elif [ "$STATUS" = "failed" ] || [ "$STATUS" = "error" ]; then
+                      echo "Production deployment failed!"
+                      echo "deployment_status=failed" >> $GITHUB_OUTPUT
+                      exit 1
+                    fi
+                    
+                    sleep 10
+                  done
+
+                  # Set the production URL
+                  PRODUCTION_URL="https://${{ secrets.COOLIFY_MAIN_DOMAIN }}"
+                  echo "production_url=$PRODUCTION_URL" >> $GITHUB_OUTPUT
+
+            - name: Test Production Deployment
+              id: test-prod
+              run: |
+                  echo "Testing production deployment..."
+                  PRODUCTION_URL="${{ steps.prod-deploy.outputs.production_url }}"
+
+                  # Wait a moment for DNS/CDN propagation
+                  sleep 30
+
+                  # Test if the site is accessible
+                  HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PRODUCTION_URL" || echo "000")
+                  echo "HTTP Status: $HTTP_STATUS"
+
+                  if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+                    echo "✅ Production site is accessible!"
+                    echo "site_status=accessible" >> $GITHUB_OUTPUT
+                  else
+                    echo "❌ Production site is not accessible (HTTP $HTTP_STATUS)"
+                    echo "site_status=inaccessible" >> $GITHUB_OUTPUT
+                    exit 1
+                  fi
+
+            - name: Output Production Deployment Results
+              run: |
+                  echo "🎉 Production deployment completed!"
+                  echo "🌐 Production URL: ${{ steps.prod-deploy.outputs.production_url }}"
+                  echo "📦 Deployment ID: ${{ steps.prod-deploy.outputs.deployment_id }}"
+                  echo "✅ Deployment Status: ${{ steps.prod-deploy.outputs.deployment_status }}"
+                  echo "🔍 Site Status: ${{ steps.test-prod.outputs.site_status }}"
+                  echo "🌿 Branch: ${{ github.ref_name }}"
 
     cleanup-on-close:
         runs-on: ubuntu-latest
