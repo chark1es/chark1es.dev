@@ -19,6 +19,9 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         name: Deploy to Coolify
+        outputs:
+            deployment_url: ${{ steps.get-deployed-url.outputs.deployed_url }}
+            deployment_status: ${{ steps.deployment-result.outputs.status }}
 
         steps:
             - name: Checkout code
@@ -35,6 +38,7 @@ jobs:
                   fi
 
             - name: Deploy to Coolify (Production)
+              id: deploy-production
               if: steps.deployment-type.outputs.type == 'production'
               run: |
                   echo "🚀 Deploying to production..."
@@ -62,14 +66,16 @@ jobs:
                       echo "deployment_uuid=$deployment_uuid" >> $GITHUB_OUTPUT
                     fi
                     
-                    echo "🌐 Application will be available at: $COOLIFY_DOMAIN"
+                    echo "deployment_success=true" >> $GITHUB_OUTPUT
                   else
                     echo "❌ Deployment failed with status: $http_status"
                     echo "Response: $response_body"
+                    echo "deployment_success=false" >> $GITHUB_OUTPUT
                     exit 1
                   fi
 
             - name: Deploy to Coolify (Pull Request Preview)
+              id: deploy-preview
               if: steps.deployment-type.outputs.type == 'preview'
               run: |
                   echo "🚀 Deploying PR #${{ steps.deployment-type.outputs.pr_number }} preview..."
@@ -97,10 +103,11 @@ jobs:
                       echo "deployment_uuid=$deployment_uuid" >> $GITHUB_OUTPUT
                     fi
                     
-                    echo "🌐 Preview will be available at a generated URL"
+                    echo "deployment_success=true" >> $GITHUB_OUTPUT
                   else
                     echo "❌ Preview deployment failed with status: $http_status"
                     echo "Response: $response_body"
+                    echo "deployment_success=false" >> $GITHUB_OUTPUT
                     exit 1
                   fi
 
@@ -134,6 +141,66 @@ jobs:
                     fi
                   done
 
+            - name: Get deployed website URL
+              id: get-deployed-url
+              if: success()
+              run: |
+                  echo "🔍 Fetching deployed website URL from Coolify..."
+
+                  # Get application details to fetch the deployed URL
+                  app_response=$(curl -s -w "HTTP_STATUS:%{http_code}" \
+                    -H "Authorization: Bearer $COOLIFY_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    "$COOLIFY_API_URL/applications/$COOLIFY_APPLICATION_UUID")
+
+                  app_http_status=$(echo $app_response | grep -o 'HTTP_STATUS:[0-9]*' | cut -d: -f2)
+                  app_response_body=$(echo $app_response | sed -E 's/HTTP_STATUS:[0-9]*$//')
+
+                  if [[ $app_http_status -eq 200 ]]; then
+                    # Extract FQDN (Fully Qualified Domain Name) which contains the deployed URL
+                    deployed_url=$(echo $app_response_body | jq -r '.fqdn // empty')
+                    
+                    # If FQDN is empty, try to get from domains field
+                    if [[ -z "$deployed_url" || "$deployed_url" == "null" ]]; then
+                      deployed_url=$(echo $app_response_body | jq -r '.domains // empty')
+                    fi
+                    
+                    # If still empty, use the configured domain
+                    if [[ -z "$deployed_url" || "$deployed_url" == "null" ]]; then
+                      deployed_url="$COOLIFY_DOMAIN"
+                      echo "⚠️ Could not extract URL from Coolify response, using configured domain"
+                    fi
+                    
+                    # Ensure URL has proper protocol
+                    if [[ ! "$deployed_url" =~ ^https?:// ]]; then
+                      deployed_url="https://$deployed_url"
+                    fi
+                    
+                    echo "🌐 Deployed website URL: $deployed_url"
+                    echo "deployed_url=$deployed_url" >> $GITHUB_OUTPUT
+                    
+                    # Also output application status for verification
+                    app_status=$(echo $app_response_body | jq -r '.status // "unknown"')
+                    echo "📊 Application Status: $app_status"
+                    echo "app_status=$app_status" >> $GITHUB_OUTPUT
+                    
+                  else
+                    echo "⚠️ Could not fetch application details (HTTP $app_http_status)"
+                    echo "Using configured domain as fallback: $COOLIFY_DOMAIN"
+                    echo "deployed_url=$COOLIFY_DOMAIN" >> $GITHUB_OUTPUT
+                    echo "app_status=unknown" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Set deployment result
+              id: deployment-result
+              if: always()
+              run: |
+                  if [[ "${{ steps.deploy-production.outputs.deployment_success }}" == "true" || "${{ steps.deploy-preview.outputs.deployment_success }}" == "true" ]]; then
+                    echo "status=success" >> $GITHUB_OUTPUT
+                  else
+                    echo "status=failed" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Add deployment comment (PR only)
               if: steps.deployment-type.outputs.type == 'preview' && github.event_name == 'pull_request'
               uses: actions/github-script@v7
@@ -150,14 +217,19 @@ jobs:
                         comment.body.includes('🚀 Coolify Deployment')
                       );
 
+                      const deployedUrl = '${{ steps.get-deployed-url.outputs.deployed_url }}';
+                      const appStatus = '${{ steps.get-deployed-url.outputs.app_status }}';
+                      const deploymentStatus = '${{ steps.deployment-result.outputs.status }}';
+
                       const deploymentInfo = `🚀 **Coolify Deployment**
 
-                      **Status:** ✅ Deployed
+                      **Status:** ${deploymentStatus === 'success' ? '✅ Deployed' : '❌ Failed'}
                       **Type:** Preview (PR #${{ steps.deployment-type.outputs.pr_number }})
                       **Commit:** \`${{ github.sha }}\`
                       **Branch:** \`${{ github.head_ref }}\`
+                      **App Status:** \`${appStatus}\`
 
-                      The preview deployment is being processed. Check your Coolify dashboard for the preview URL.
+                      ${deploymentStatus === 'success' ? `**🌐 Deployed URL:** ${deployedUrl}` : 'Deployment failed. Check the Actions logs for details.'}
 
                       ---
                       *Deployed via GitHub Actions*`;
@@ -181,13 +253,16 @@ jobs:
     health-check:
         runs-on: ubuntu-latest
         needs: deploy
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && needs.deploy.outputs.deployment_status == 'success'
         name: Health Check
 
         steps:
             - name: Wait for application to be ready
               run: |
                   echo "🏥 Performing health check..."
+                  deployed_url="${{ needs.deploy.outputs.deployment_url }}"
+
+                  echo "🔗 Testing URL: $deployed_url"
                   sleep 30  # Give the application time to start
 
                   max_attempts=12
@@ -196,8 +271,9 @@ jobs:
                   while [[ $attempt -lt $max_attempts ]]; do
                     attempt=$((attempt + 1))
                     
-                    if curl -f -s --max-time 10 "$COOLIFY_DOMAIN" > /dev/null; then
-                      echo "✅ Health check passed! Application is responding at $COOLIFY_DOMAIN"
+                    if curl -f -s --max-time 10 "$deployed_url" > /dev/null; then
+                      echo "✅ Health check passed! Application is responding at $deployed_url"
+                      echo "🎉 Deployment completed successfully!"
                       exit 0
                     fi
                     
@@ -207,4 +283,43 @@ jobs:
 
                   echo "❌ Health check failed - Application did not respond after 2 minutes"
                   echo "🔍 Please check your Coolify dashboard for deployment logs"
+                  echo "🔗 Attempted URL: $deployed_url"
                   exit 1
+
+    deployment-summary:
+        runs-on: ubuntu-latest
+        needs: [deploy, health-check]
+        if: always() && github.event_name != 'pull_request'
+        name: Deployment Summary
+
+        steps:
+            - name: Create deployment summary
+              run: |
+                  echo "# 🚀 Coolify Deployment Summary" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+
+                  if [[ "${{ needs.deploy.outputs.deployment_status }}" == "success" ]]; then
+                    echo "## ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                    echo "**Deployed URL:** ${{ needs.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                    echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+                    echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                    
+                    if [[ "${{ needs.health-check.result }}" == "success" ]]; then
+                      echo "**Health Check:** ✅ Passed" >> $GITHUB_STEP_SUMMARY
+                    elif [[ "${{ needs.health-check.result }}" == "failure" ]]; then
+                      echo "**Health Check:** ❌ Failed" >> $GITHUB_STEP_SUMMARY
+                    else
+                      echo "**Health Check:** ⏭️ Skipped" >> $GITHUB_STEP_SUMMARY
+                    fi
+                  else
+                    echo "## ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                    echo "The deployment to Coolify failed. Please check the logs above for details." >> $GITHUB_STEP_SUMMARY
+                  fi
+
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "---" >> $GITHUB_STEP_SUMMARY
+                  echo "*View your application in [Coolify Dashboard](${COOLIFY_API_URL%/api})*" >> $GITHUB_STEP_SUMMARY
