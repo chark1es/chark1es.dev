@@ -137,17 +137,25 @@ jobs:
 
                   # Check if we got a redirect or HTML response
                   if echo "$TEST_RESPONSE" | grep -q -i "redirect\|html\|<!DOCTYPE"; then
-                    echo "❌ API returned HTML/redirect. Possible issues:"
-                    echo "1. API URL should include protocol: https://your-coolify-domain.com"
-                    echo "2. Check if the API is enabled in Coolify settings"
-                    echo "3. Verify the API token has correct permissions"
+                    echo "❌ API returned HTML/redirect. This means:"
+                    echo "1. API is not enabled in Coolify (Go to Settings → Configuration → Enable API)"
+                    echo "2. Your API URL should be: https://cloud.scrypted.dev (no trailing slash)"
+                    echo "3. Your API token is invalid or expired"
+                    echo "4. For Coolify Cloud: Make sure you're using the right token from Keys & Tokens"
+                    echo ""
+                    echo "To fix this:"
+                    echo "- Log into Coolify dashboard"
+                    echo "- Go to Settings → Configuration"
+                    echo "- Enable the API if it's not enabled"
+                    echo "- Go to Keys & Tokens → API tokens"
+                    echo "- Create a new token and update your COOLIFY_TOKEN secret"
                     exit 1
                   fi
 
                   # Deploy using the correct Coolify API endpoint
                   echo "Deploying to production using Coolify API..."
 
-                  # Use the /deploy endpoint with uuid parameter (this is the correct endpoint)
+                  # Use the /deploy endpoint with uuid parameter (according to official docs)
                   DEPLOY_RESPONSE=$(curl -s -X GET \
                     -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
                     "${{ secrets.COOLIFY_API_URL }}/deploy?uuid=${{ secrets.COOLIFY_APPLICATION_UUID }}&force=true" || echo "DEPLOY_FAILED")
@@ -172,7 +180,8 @@ jobs:
                     
                     # Check if it's a not found error  
                     if echo "$DEPLOY_RESPONSE" | grep -q -i "not found"; then
-                      echo "Resource not found. Please check your APPLICATION_UUID."
+                      echo "Resource not found. Please check your COOLIFY_APPLICATION_UUID."
+                      echo "Make sure you're using the APPLICATION UUID, not the project UUID."
                     fi
                     
                     exit 1
