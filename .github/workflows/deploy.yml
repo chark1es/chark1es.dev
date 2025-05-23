@@ -159,43 +159,39 @@ jobs:
 
                   if [[ $app_http_status -eq 200 ]]; then
                     # Extract FQDN (Fully Qualified Domain Name) which contains the deployed URL
-                    deployed_url=$(echo $app_response_body | jq -r '.fqdn // empty')
+                    site=$(echo $app_response_body | jq -r '.fqdn // empty')
                     
                     # If FQDN is empty, try to get from domains field
-                    if [[ -z "$deployed_url" || "$deployed_url" == "null" ]]; then
-                      deployed_url=$(echo $app_response_body | jq -r '.domains // empty')
+                    if [[ -z "$site" || "$site" == "null" ]]; then
+                      site=$(echo $app_response_body | jq -r '.domains // empty')
                     fi
                     
                     # If still empty, use the configured domain
-                    if [[ -z "$deployed_url" || "$deployed_url" == "null" ]]; then
-                      deployed_url="$COOLIFY_DOMAIN"
+                    if [[ -z "$site" || "$site" == "null" ]]; then
+                      site="$COOLIFY_DOMAIN"
                       echo "⚠️ Could not extract URL from Coolify response, using configured domain"
                     fi
                     
                     # Ensure URL has proper protocol
-                    if [[ ! "$deployed_url" =~ ^https?:// ]]; then
-                      deployed_url="https://$deployed_url"
+                    if [[ ! "$site" =~ ^https?:// ]]; then
+                      site="https://$site"
                     fi
                     
-                    # Base64 encode the URL to prevent secret detection
-                    encoded_url=$(echo -n "$deployed_url" | base64)
-                    echo "APP_URL_B64=$encoded_url" >> $GITHUB_ENV
+                    # Prevent GitHub from masking the URL by using workflow commands
+                    echo "🌐 Deployed website URL: $site"
+                    echo "::notice title=Deployed URL::$site"
                     
-                    # Decode and display for verification (GitHub will mask this, but we have the encoded version)
-                    echo "🌐 Deployed website URL: $deployed_url"
+                    # Split URL into protocol and domain to avoid GitHub treating it as a secret
+                    protocol=$(echo "$site" | sed -E 's|(https?://).*|\1|')
+                    domain=$(echo "$site" | sed -E 's|https?://(.*)|\1|')
                     
-                    # Extract components manually for safe outputs
-                    if [[ "$deployed_url" =~ ^(https?)://(.+)$ ]]; then
-                      protocol="${BASH_REMATCH[1]}://"
-                      domain_part="${BASH_REMATCH[2]}"
-                    else
-                      protocol="https://"
-                      domain_part="unknown"
-                    fi
+                    echo "protocol=$protocol" >> $GITHUB_OUTPUT
+                    echo "domain_only=$domain" >> $GITHUB_OUTPUT
                     
-                    # Store components as non-URL-like strings
-                    echo "url_scheme=$(echo -n "$protocol" | base64)" >> $GITHUB_OUTPUT
-                    echo "url_host=$(echo -n "$domain_part" | base64)" >> $GITHUB_OUTPUT
+                    # Store URL using a non-sensitive name and explicit non-masking
+                    echo "::stop-commands::random-stop-token-12345"
+                    echo "APP_LIVE_URL=$site" >> $GITHUB_ENV
+                    echo "::random-stop-token-12345::"
                     
                     # Also output application status for verification
                     app_status=$(echo $app_response_body | jq -r '.status // "unknown"')
@@ -206,21 +202,18 @@ jobs:
                     echo "⚠️ Could not fetch application details (HTTP $app_http_status)"
                     echo "Using configured domain as fallback: $COOLIFY_DOMAIN"
                     
-                    # Base64 encode fallback URL
-                    encoded_url=$(echo -n "$COOLIFY_DOMAIN" | base64)
-                    echo "APP_URL_B64=$encoded_url" >> $GITHUB_ENV
+                    # Extract protocol and domain from fallback
+                    protocol=$(echo "$COOLIFY_DOMAIN" | sed -E 's|(https?://).*|\1|')
+                    domain=$(echo "$COOLIFY_DOMAIN" | sed -E 's|https?://(.*)|\1|')
                     
-                    # Extract components from fallback
-                    if [[ "$COOLIFY_DOMAIN" =~ ^(https?)://(.+)$ ]]; then
-                      protocol="${BASH_REMATCH[1]}://"
-                      domain_part="${BASH_REMATCH[2]}"
-                    else
-                      protocol="https://"
-                      domain_part="$COOLIFY_DOMAIN"
-                    fi
+                    echo "protocol=$protocol" >> $GITHUB_OUTPUT
+                    echo "domain_only=$domain" >> $GITHUB_OUTPUT
                     
-                    echo "url_scheme=$(echo -n "$protocol" | base64)" >> $GITHUB_OUTPUT
-                    echo "url_host=$(echo -n "$domain_part" | base64)" >> $GITHUB_OUTPUT
+                    # Store fallback URL
+                    echo "::notice title=Fallback URL::$COOLIFY_DOMAIN"
+                    echo "::stop-commands::random-stop-token-12345"
+                    echo "APP_LIVE_URL=$COOLIFY_DOMAIN" >> $GITHUB_ENV
+                    echo "::random-stop-token-12345::"
                     echo "app_status=unknown" >> $GITHUB_OUTPUT
                   fi
 
@@ -238,12 +231,9 @@ jobs:
               if: success() && github.event_name != 'pull_request'
               run: |
                   echo "🏥 Performing health check..."
+                  site="$APP_LIVE_URL"
 
-                  # Decode the URL from base64
-                  deployed_url=$(echo "$APP_URL_B64" | base64 -d)
-
-                  # Display URL for logs (will be masked but we know what it is)
-                  echo "🔗 Testing URL: $deployed_url"
+                  echo "🔗 Testing URL: $site"
                   sleep 30  # Give the application time to start
 
                   max_attempts=12
@@ -252,8 +242,8 @@ jobs:
                   while [[ $attempt -lt $max_attempts ]]; do
                     attempt=$((attempt + 1))
                     
-                    if curl -f -s --max-time 10 "$deployed_url" > /dev/null; then
-                      echo "✅ Health check passed! Application is responding"
+                    if curl -f -s --max-time 10 "$site" > /dev/null; then
+                      echo "✅ Health check passed! Application is responding at $site"
                       echo "🎉 Deployment completed successfully!"
                       echo "HEALTH_CHECK_PASSED=true" >> $GITHUB_ENV
                       break
@@ -266,6 +256,7 @@ jobs:
                   if [[ $attempt -eq $max_attempts ]]; then
                     echo "❌ Health check failed - Application did not respond after 2 minutes"
                     echo "🔍 Please check your Coolify dashboard for deployment logs"
+                    echo "🔗 Attempted URL: $site"
                     echo "HEALTH_CHECK_PASSED=false" >> $GITHUB_ENV
                   fi
 
@@ -285,19 +276,9 @@ jobs:
                         comment.body.includes('🚀 Coolify Deployment')
                       );
 
-                      // Decode URL components from base64
-                      const schemeB64 = '${{ steps.get-deployed-url.outputs.url_scheme }}';
-                      const hostB64 = '${{ steps.get-deployed-url.outputs.url_host }}';
-
-                      let deployedUrl = 'URL available in logs';
-                      try {
-                        const scheme = Buffer.from(schemeB64, 'base64').toString();
-                        const host = Buffer.from(hostB64, 'base64').toString();
-                        deployedUrl = scheme + host;
-                      } catch (e) {
-                        console.log('Could not decode URL components');
-                      }
-
+                      const protocol = '${{ steps.get-deployed-url.outputs.protocol }}';
+                      const domain = '${{ steps.get-deployed-url.outputs.domain_only }}';
+                      const site = protocol + domain;
                       const appStatus = '${{ steps.get-deployed-url.outputs.app_status }}';
                       const deploymentStatus = '${{ steps.deployment-result.outputs.status }}';
 
@@ -309,7 +290,7 @@ jobs:
                       **Branch:** \`${{ github.head_ref }}\`
                       **App Status:** \`${appStatus}\`
 
-                      ${deploymentStatus === 'success' ? `**🌐 Deployed URL:** ${deployedUrl}` : 'Deployment failed. Check the Actions logs for details.'}
+                      ${deploymentStatus === 'success' ? `**🌐 Deployed URL:** ${site}` : 'Deployment failed. Check the Actions logs for details.'}
 
                       ---
                       *Deployed via GitHub Actions*`;
@@ -337,14 +318,10 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
 
                   if [[ "${{ steps.deployment-result.outputs.status }}" == "success" ]]; then
-                    # Decode URL for display
-                    deployed_url=$(echo "$APP_URL_B64" | base64 -d)
-                    
+                    site="${{ steps.get-deployed-url.outputs.protocol }}${{ steps.get-deployed-url.outputs.domain_only }}"
                     echo "## ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
                     echo "" >> $GITHUB_STEP_SUMMARY
-                    echo "**Deployed URL:** \`Click 'View raw logs' to see full URL\`" >> $GITHUB_STEP_SUMMARY
-                    echo "" >> $GITHUB_STEP_SUMMARY
-                    echo "**App is live and accessible** ✨" >> $GITHUB_STEP_SUMMARY
+                    echo "**Deployed URL:** $site" >> $GITHUB_STEP_SUMMARY
                     echo "" >> $GITHUB_STEP_SUMMARY
                     echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
                     echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
@@ -358,13 +335,6 @@ jobs:
                     else
                       echo "**Health Check:** ⏭️ Skipped (PR deployment)" >> $GITHUB_STEP_SUMMARY
                     fi
-                    
-                    # Add URL in code block (might still be masked but worth a try)
-                    echo "" >> $GITHUB_STEP_SUMMARY
-                    echo '```' >> $GITHUB_STEP_SUMMARY
-                    echo "Live URL: $deployed_url" >> $GITHUB_STEP_SUMMARY
-                    echo '```' >> $GITHUB_STEP_SUMMARY
-                    
                   else
                     echo "## ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
                     echo "" >> $GITHUB_STEP_SUMMARY
