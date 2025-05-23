@@ -21,7 +21,7 @@ jobs:
         name: Deploy to Coolify
         outputs:
             deployment_status: ${{ steps.deployment-result.outputs.status }}
-            deployment_domain: ${{ steps.get-deployed-url.outputs.domain_only }}
+            site: ${{ steps.get-deployed-url.outputs.domain_only }}
             deployment_protocol: ${{ steps.get-deployed-url.outputs.protocol }}
 
         steps:
@@ -186,7 +186,7 @@ jobs:
                     domain=$(echo "$site" | sed -E 's|https?://(.*)|\1|')
                     
                     echo "protocol=$protocol" >> $GITHUB_OUTPUT
-                    echo "domain_only=$domain" >> $GITHUB_OUTPUT
+                    echo "site=$domain" >> $GITHUB_OUTPUT
                     
                     # Store URL using a non-sensitive name and explicit non-masking
                     echo "::stop-commands::random-stop-token-12345"
@@ -207,7 +207,7 @@ jobs:
                     domain=$(echo "$COOLIFY_DOMAIN" | sed -E 's|https?://(.*)|\1|')
                     
                     echo "protocol=$protocol" >> $GITHUB_OUTPUT
-                    echo "domain_only=$domain" >> $GITHUB_OUTPUT
+                    echo "site=$domain" >> $GITHUB_OUTPUT
                     
                     # Store fallback URL
                     echo "::notice title=Fallback URL::$COOLIFY_DOMAIN"
@@ -277,7 +277,7 @@ jobs:
                       );
 
                       const protocol = '${{ steps.get-deployed-url.outputs.protocol }}';
-                      const domain = '${{ steps.get-deployed-url.outputs.domain_only }}';
+                      const domain = '${{ steps.get-deployed-url.outputs.site }}';
                       const site = protocol + domain;
                       const appStatus = '${{ steps.get-deployed-url.outputs.app_status }}';
                       const deploymentStatus = '${{ steps.deployment-result.outputs.status }}';
@@ -318,7 +318,7 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
 
                   if [[ "${{ steps.deployment-result.outputs.status }}" == "success" ]]; then
-                    site="${{ steps.get-deployed-url.outputs.protocol }}${{ steps.get-deployed-url.outputs.domain_only }}"
+                    site="${{ steps.get-deployed-url.outputs.protocol }}${{ steps.get-deployed-url.outputs.site }}"
                     echo "## ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
                     echo "" >> $GITHUB_STEP_SUMMARY
                     echo "**Deployed URL:** $site" >> $GITHUB_STEP_SUMMARY
