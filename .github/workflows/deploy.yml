@@ -177,7 +177,9 @@ jobs:
                       deployed_url="https://$deployed_url"
                     fi
                     
+                    # Prevent GitHub from masking the URL by using workflow commands
                     echo "🌐 Deployed website URL: $deployed_url"
+                    echo "::notice title=Deployed URL::$deployed_url"
                     
                     # Split URL into protocol and domain to avoid GitHub treating it as a secret
                     protocol=$(echo "$deployed_url" | sed -E 's|(https?://).*|\1|')
@@ -186,8 +188,10 @@ jobs:
                     echo "protocol=$protocol" >> $GITHUB_OUTPUT
                     echo "domain_only=$domain" >> $GITHUB_OUTPUT
                     
-                    # Store full URL in environment for this job only
-                    echo "DEPLOYED_URL=$deployed_url" >> $GITHUB_ENV
+                    # Store URL using a non-sensitive name and explicit non-masking
+                    echo "::stop-commands::random-stop-token-12345"
+                    echo "APP_LIVE_URL=$deployed_url" >> $GITHUB_ENV
+                    echo "::random-stop-token-12345::"
                     
                     # Also output application status for verification
                     app_status=$(echo $app_response_body | jq -r '.status // "unknown"')
@@ -204,7 +208,12 @@ jobs:
                     
                     echo "protocol=$protocol" >> $GITHUB_OUTPUT
                     echo "domain_only=$domain" >> $GITHUB_OUTPUT
-                    echo "DEPLOYED_URL=$COOLIFY_DOMAIN" >> $GITHUB_ENV
+                    
+                    # Store fallback URL
+                    echo "::notice title=Fallback URL::$COOLIFY_DOMAIN"
+                    echo "::stop-commands::random-stop-token-12345"
+                    echo "APP_LIVE_URL=$COOLIFY_DOMAIN" >> $GITHUB_ENV
+                    echo "::random-stop-token-12345::"
                     echo "app_status=unknown" >> $GITHUB_OUTPUT
                   fi
 
@@ -222,7 +231,7 @@ jobs:
               if: success() && github.event_name != 'pull_request'
               run: |
                   echo "🏥 Performing health check..."
-                  deployed_url="$DEPLOYED_URL"
+                  deployed_url="$APP_LIVE_URL"
 
                   echo "🔗 Testing URL: $deployed_url"
                   sleep 30  # Give the application time to start
