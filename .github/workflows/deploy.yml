@@ -41,6 +41,7 @@ jobs:
                   EOF
                   )
 
+
                   # Deploy to Coolify via API
                   RESPONSE=$(curl -s -X POST \
                     -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
