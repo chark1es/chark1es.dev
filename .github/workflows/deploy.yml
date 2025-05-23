@@ -155,8 +155,14 @@ jobs:
                   echo "App UUID: ${{ secrets.COOLIFY_APPLICATION_UUID }}"
                   echo ""
 
+                  # Show GitHub Actions IP for debugging
+                  echo "2. GitHub Actions environment info..."
+                  echo "Runner IP: $(curl -s https://httpbin.org/ip | jq -r '.origin')"
+                  echo "User-Agent being used: curl/$(curl --version | head -1 | cut -d' ' -f2)"
+                  echo ""
+
                   # Test basic connectivity
-                  echo "2. Testing basic connectivity..."
+                  echo "3. Testing basic connectivity..."
                   if curl -s --connect-timeout 10 "${{ secrets.COOLIFY_API_URL }}" >/dev/null; then
                     echo "✅ Can reach Coolify URL"
                   else
@@ -165,63 +171,91 @@ jobs:
                   fi
                   echo ""
 
-                  # Test if it's actually returning HTML/login redirect
-                  echo "3. Testing raw response from API endpoint..."
-                  RAW_RESPONSE=$(curl -s "${{ secrets.COOLIFY_API_URL }}/api/v1/version" | head -5)
-                  echo "Raw response (first 5 lines):"
-                  echo "$RAW_RESPONSE"
+                  # Test with Postman-like headers
+                  echo "4. Testing with Postman-like headers..."
+                  POSTMAN_RESPONSE=$(curl -s -v \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                    -H "Accept: application/json" \
+                    -H "Content-Type: application/json" \
+                    -H "User-Agent: PostmanRuntime/7.32.3" \
+                    -H "Cache-Control: no-cache" \
+                    -H "Postman-Token: $(uuidgen)" \
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version" 2>&1)
+
+                  echo "Postman-like request response:"
+                  echo "$POSTMAN_RESPONSE" | grep -E "(< HTTP|< [A-Z])" || echo "No HTTP headers found"
+                  echo "Response body:"
+                  echo "$POSTMAN_RESPONSE" | tail -10
                   echo ""
 
-                  # Test with authentication header
-                  echo "4. Testing with authentication header..."
-                  AUTH_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version" | head -5)
-                  echo "Authenticated response (first 5 lines):"
-                  echo "$AUTH_RESPONSE"
+                  # Test with different User-Agent
+                  echo "5. Testing with browser User-Agent..."
+                  BROWSER_RESPONSE=$(curl -s \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                    -H "Accept: application/json, text/plain, */*" \
+                    -H "Content-Type: application/json" \
+                    -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
+                    -H "Accept-Language: en-US,en;q=0.9" \
+                    -H "Accept-Encoding: gzip, deflate, br" \
+                    -H "DNT: 1" \
+                    -H "Connection: keep-alive" \
+                    -H "Sec-Fetch-Dest: empty" \
+                    -H "Sec-Fetch-Mode: cors" \
+                    -H "Sec-Fetch-Site: same-origin" \
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version")
 
-                  # Check if response contains HTML
-                  if echo "$AUTH_RESPONSE" | grep -q -i "<!DOCTYPE\|<html"; then
-                    echo "❌ API is returning HTML instead of JSON"
-                    echo "This typically means:"
-                    echo "  - API is not enabled in Coolify settings"
-                    echo "  - Authentication is redirecting to login page"
-                    echo "  - API endpoint doesn't exist"
+                  echo "Browser-like response:"
+                  echo "$BROWSER_RESPONSE" | head -5
+                  echo ""
+
+                  # Test direct deployment endpoint with verbose output
+                  echo "6. Testing deployment endpoint with verbose output..."
+                  DEPLOY_VERBOSE=$(curl -s -v \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                    -H "Accept: application/json" \
+                    -H "Content-Type: application/json" \
+                    -H "User-Agent: GitHub-Actions-Deploy/1.0" \
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_APPLICATION_UUID }}" 2>&1)
+
+                  echo "Deployment endpoint verbose output:"
+                  echo "$DEPLOY_VERBOSE"
+                  echo ""
+
+                  # Check if any response is JSON
+                  RESPONSES=("$POSTMAN_RESPONSE" "$BROWSER_RESPONSE")
+                  JSON_FOUND=false
+
+                  for response in "${RESPONSES[@]}"; do
+                    # Extract just the response body (after the blank line in curl -v output)
+                    BODY=$(echo "$response" | sed -n '/^$/,$p' | tail -n +2)
+                    if echo "$BODY" | jq . >/dev/null 2>&1; then
+                      echo "✅ Found valid JSON response!"
+                      echo "Response: $BODY"
+                      JSON_FOUND=true
+                      echo "api_working=true" >> $GITHUB_OUTPUT
+                      break
+                    fi
+                  done
+
+                  if [ "$JSON_FOUND" = false ]; then
+                    echo "❌ All API tests failed - still returning HTML"
                     echo ""
-                    echo "🛠️ Troubleshooting steps:"
-                    echo "1. Log into your Coolify dashboard: ${{ secrets.COOLIFY_API_URL }}"
-                    echo "2. Go to Settings → Configuration"
-                    echo "3. Look for 'API' section and ensure it's enabled"
-                    echo "4. Go to Security → API Tokens"
-                    echo "5. Create a new token and update COOLIFY_TOKEN secret"
-                    echo "6. Verify your Coolify version supports API (v4.0+ recommended)"
-                    
-                    # Try alternative endpoints
+                    echo "🔍 Since you said it works in Postman, this suggests:"
+                    echo "1. GitHub Actions IPs might be blocked/filtered"
+                    echo "2. Rate limiting from GitHub Actions"
+                    echo "3. Different request headers needed"
+                    echo "4. Authentication middleware detecting automation"
                     echo ""
-                    echo "5. Testing alternative endpoints..."
-                    
-                    # Test without /v1
-                    ALT_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                      -H "Accept: application/json" \
-                      "${{ secrets.COOLIFY_API_URL }}/api/version" 2>/dev/null | head -3)
-                    echo "Alternative /api/version response: $ALT_RESPONSE"
-                    
-                    # Test applications endpoint
-                    APPS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                      -H "Accept: application/json" \
-                      "${{ secrets.COOLIFY_API_URL }}/api/v1/applications" 2>/dev/null | head -3)
-                    echo "Applications endpoint response: $APPS_RESPONSE"
-                    
+                    echo "📋 Next steps:"
+                    echo "1. Check if your Coolify instance has IP filtering enabled"
+                    echo "2. Check Coolify logs for blocked requests from GitHub IPs"
+                    echo "3. Try adding GitHub Actions IPs to allowlist"
+                    echo "4. Consider using a webhook deployment instead"
                     echo ""
-                    echo "📝 Manual testing command:"
-                    echo "curl -H 'Authorization: Bearer YOUR_TOKEN' \\"
-                    echo "     -H 'Accept: application/json' \\"
-                    echo "     '${{ secrets.COOLIFY_API_URL }}/api/v1/applications'"
-                    
+                    echo "🌐 GitHub Actions IP ranges: https://api.github.com/meta"
+                    curl -s https://api.github.com/meta | jq -r '.actions[]' | head -5
+                    echo "..."
                     exit 1
-                  else
-                    echo "✅ API is returning non-HTML response"
-                    echo "api_working=true" >> $GITHUB_OUTPUT
                   fi
 
             - name: Deploy to Production
