@@ -1,497 +1,210 @@
 name: Deploy to Coolify
 
 on:
-    pull_request:
-        types: [opened, synchronize, reopened]
-        branches: [main, master]
     push:
         branches: [main, master]
+    pull_request:
+        branches: [main, master]
+        types: [opened, synchronize, reopened]
+    workflow_dispatch:
+
+env:
+    COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+    COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+    COOLIFY_APPLICATION_UUID: ${{ secrets.COOLIFY_APPLICATION_UUID }}
+    COOLIFY_PROJECT_UUID: ${{ secrets.COOLIFY_PROJECT_UUID }}
+    COOLIFY_DOMAIN: ${{ secrets.COOLIFY_DOMAIN }}
 
 jobs:
-    deploy-preview:
+    deploy:
         runs-on: ubuntu-latest
-        if: github.event_name == 'pull_request'
+        name: Deploy to Coolify
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Set up environment variables
+            - name: Set deployment type
+              id: deployment-type
               run: |
-                  echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
-                  echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
-                  echo "PREVIEW_SUBDOMAIN=pr-${{ github.event.number }}-$(echo ${{ github.head_ref }} | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+                  if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+                    echo "type=preview" >> $GITHUB_OUTPUT
+                    echo "pr_number=${{ github.event.number }}" >> $GITHUB_OUTPUT
+                  else
+                    echo "type=production" >> $GITHUB_OUTPUT
+                  fi
 
-            - name: Deploy to Coolify
-              id: deploy
+            - name: Deploy to Coolify (Production)
+              if: steps.deployment-type.outputs.type == 'production'
               run: |
-                  # Create deployment payload
-                  DEPLOYMENT_PAYLOAD=$(cat <<EOF
-                  {
-                    "project_uuid": "${{ secrets.COOLIFY_PROJECT_UUID }}",
-                    "environment_name": "preview-pr-${{ github.event.number }}",
-                    "git_repository": "${{ github.repository }}",
-                    "git_branch": "${{ github.head_ref }}",
-                    "domains": ["${{ env.PREVIEW_SUBDOMAIN }}.${{ secrets.COOLIFY_DOMAIN }}"],
-                    "environment_variables": {
-                      "NODE_ENV": "production",
-                      "PR_NUMBER": "${{ github.event.number }}",
-                      "BRANCH_NAME": "${{ github.head_ref }}"
-                    }
-                  }
-                  EOF
-                  )
+                  echo "🚀 Deploying to production..."
 
-
-                  # Deploy to Coolify via API
-                  RESPONSE=$(curl -s -X POST \
-                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+                  # Deploy using the application UUID
+                  response=$(curl -s -w "HTTP_STATUS:%{http_code}" \
+                    -X GET \
+                    -H "Authorization: Bearer $COOLIFY_TOKEN" \
                     -H "Content-Type: application/json" \
-                    -d "$DEPLOYMENT_PAYLOAD" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy")
+                    "$COOLIFY_API_URL/deploy?uuid=$COOLIFY_APPLICATION_UUID&force=false")
 
-                  echo "Coolify API Response: $RESPONSE"
+                  http_status=$(echo $response | grep -o 'HTTP_STATUS:[0-9]*' | cut -d: -f2)
+                  response_body=$(echo $response | sed -E 's/HTTP_STATUS:[0-9]*$//')
 
-                  # Extract deployment ID or URL from response
-                  DEPLOYMENT_ID=$(echo $RESPONSE | jq -r '.deployment_id // .id // "unknown"')
-                  echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+                  echo "HTTP Status: $http_status"
+                  echo "Response: $response_body"
 
-                  # Wait for deployment to complete
-                  echo "Waiting for deployment to complete..."
-                  for i in {1..30}; do
-                    STATUS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                      "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_ID/status")
+                  if [[ $http_status -ge 200 && $http_status -lt 300 ]]; then
+                    echo "✅ Deployment successful!"
                     
-                    STATUS=$(echo $STATUS_RESPONSE | jq -r '.status // "pending"')
-                    echo "Deployment status: $STATUS (attempt $i/30)"
-                    
-                    if [ "$STATUS" = "success" ] || [ "$STATUS" = "completed" ]; then
-                      echo "Deployment completed successfully!"
-                      break
-                    elif [ "$STATUS" = "failed" ] || [ "$STATUS" = "error" ]; then
-                      echo "Deployment failed!"
-                      exit 1
+                    # Extract deployment UUID from response
+                    deployment_uuid=$(echo $response_body | jq -r '.deployments[0].deployment_uuid // empty')
+                    if [[ -n "$deployment_uuid" ]]; then
+                      echo "📝 Deployment UUID: $deployment_uuid"
+                      echo "deployment_uuid=$deployment_uuid" >> $GITHUB_OUTPUT
                     fi
                     
-                    # If we've reached the maximum attempts, exit with timeout
-                    if [ $i -eq 30 ]; then
-                      echo "❌ Deployment timeout after 5 minutes (30 attempts)"
-                      echo "Last known status: $STATUS"
-                      exit 1
+                    echo "🌐 Application will be available at: $COOLIFY_DOMAIN"
+                  else
+                    echo "❌ Deployment failed with status: $http_status"
+                    echo "Response: $response_body"
+                    exit 1
+                  fi
+
+            - name: Deploy to Coolify (Pull Request Preview)
+              if: steps.deployment-type.outputs.type == 'preview'
+              run: |
+                  echo "🚀 Deploying PR #${{ steps.deployment-type.outputs.pr_number }} preview..."
+
+                  # Deploy using the application UUID with PR number
+                  response=$(curl -s -w "HTTP_STATUS:%{http_code}" \
+                    -X GET \
+                    -H "Authorization: Bearer $COOLIFY_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    "$COOLIFY_API_URL/deploy?uuid=$COOLIFY_APPLICATION_UUID&pr=${{ steps.deployment-type.outputs.pr_number }}&force=false")
+
+                  http_status=$(echo $response | grep -o 'HTTP_STATUS:[0-9]*' | cut -d: -f2)
+                  response_body=$(echo $response | sed -E 's/HTTP_STATUS:[0-9]*$//')
+
+                  echo "HTTP Status: $http_status"
+                  echo "Response: $response_body"
+
+                  if [[ $http_status -ge 200 && $http_status -lt 300 ]]; then
+                    echo "✅ Preview deployment successful!"
+                    
+                    # Extract deployment UUID from response
+                    deployment_uuid=$(echo $response_body | jq -r '.deployments[0].deployment_uuid // empty')
+                    if [[ -n "$deployment_uuid" ]]; then
+                      echo "📝 Preview Deployment UUID: $deployment_uuid"
+                      echo "deployment_uuid=$deployment_uuid" >> $GITHUB_OUTPUT
                     fi
                     
+                    echo "🌐 Preview will be available at a generated URL"
+                  else
+                    echo "❌ Preview deployment failed with status: $http_status"
+                    echo "Response: $response_body"
+                    exit 1
+                  fi
+
+            - name: Wait for deployment completion
+              if: success()
+              run: |
+                  echo "⏳ Waiting for deployment to complete..."
+
+                  # Poll deployment status for up to 10 minutes
+                  max_attempts=60
+                  attempt=0
+
+                  while [[ $attempt -lt $max_attempts ]]; do
                     sleep 10
+                    attempt=$((attempt + 1))
+                    
+                    # Check application status
+                    status_response=$(curl -s \
+                      -H "Authorization: Bearer $COOLIFY_TOKEN" \
+                      -H "Content-Type: application/json" \
+                      "$COOLIFY_API_URL/applications/$COOLIFY_APPLICATION_UUID")
+                    
+                    if [[ $? -eq 0 ]]; then
+                      echo "✅ Deployment monitoring completed (attempt $attempt/$max_attempts)"
+                      break
+                    fi
+                    
+                    if [[ $attempt -eq $max_attempts ]]; then
+                      echo "⚠️ Deployment monitoring timed out after 10 minutes"
+                      echo "ℹ️ Check Coolify dashboard for deployment status"
+                    fi
                   done
 
-                  # Set the preview URL
-                  PREVIEW_URL="https://${{ env.PREVIEW_SUBDOMAIN }}.${{ secrets.COOLIFY_DOMAIN }}"
-                  echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
-
-            - name: Comment PR with preview link
+            - name: Add deployment comment (PR only)
+              if: steps.deployment-type.outputs.type == 'preview' && github.event_name == 'pull_request'
               uses: actions/github-script@v7
               with:
                   script: |
-                      const previewUrl = '${{ steps.deploy.outputs.preview_url }}';
-                      const deploymentId = '${{ steps.deploy.outputs.deployment_id }}';
-
-                      const comment = `🚀 **Preview Deployment Ready!**
-
-                      Your PR has been deployed to Coolify:
-                      🔗 **Preview URL:** ${previewUrl}
-                      📦 **Deployment ID:** ${deploymentId}
-                      🌟 **Branch:** \`${{ github.head_ref }}\`
-
-                      The preview will be automatically updated when you push new commits to this PR.
-
-                      ---
-                      *Deployed via Coolify • PR #${{ github.event.number }}*`;
-
-                      github.rest.issues.createComment({
-                        issue_number: context.issue.number,
+                      const { data: comments } = await github.rest.issues.listComments({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        body: comment
+                        issue_number: context.issue.number,
                       });
 
-            - name: Output deployment info
-              run: |
-                  echo "🎉 PR #${{ github.event.number }} deployed successfully!"
-                  echo "🔗 Preview URL: ${{ steps.deploy.outputs.preview_url }}"
-                  echo "📦 Deployment ID: ${{ steps.deploy.outputs.deployment_id }}"
-                  echo "🌿 Branch: ${{ github.head_ref }}"
+                      const botComment = comments.find(comment => 
+                        comment.user.type === 'Bot' && 
+                        comment.body.includes('🚀 Coolify Deployment')
+                      );
 
-    deploy-production:
+                      const deploymentInfo = `🚀 **Coolify Deployment**
+
+                      **Status:** ✅ Deployed
+                      **Type:** Preview (PR #${{ steps.deployment-type.outputs.pr_number }})
+                      **Commit:** \`${{ github.sha }}\`
+                      **Branch:** \`${{ github.head_ref }}\`
+
+                      The preview deployment is being processed. Check your Coolify dashboard for the preview URL.
+
+                      ---
+                      *Deployed via GitHub Actions*`;
+
+                      if (botComment) {
+                        await github.rest.issues.updateComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          comment_id: botComment.id,
+                          body: deploymentInfo
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: context.issue.number,
+                          body: deploymentInfo
+                        });
+                      }
+
+    health-check:
         runs-on: ubuntu-latest
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        needs: deploy
+        if: github.event_name != 'pull_request'
+        name: Health Check
+
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Debug Coolify API Configuration
-              id: debug-api
+            - name: Wait for application to be ready
               run: |
-                  echo "🔍 Comprehensive Coolify API Debugging"
-                  echo "======================================"
+                  echo "🏥 Performing health check..."
+                  sleep 30  # Give the application time to start
 
-                  # Check if required secrets are available
-                  echo "1. Checking if secrets are configured..."
-                  if [ -z "${{ secrets.COOLIFY_API_URL }}" ]; then
-                    echo "❌ COOLIFY_API_URL secret is not set"
-                    exit 1
-                  fi
+                  max_attempts=12
+                  attempt=0
 
-                  if [ -z "${{ secrets.COOLIFY_TOKEN }}" ]; then
-                    echo "❌ COOLIFY_TOKEN secret is not set"
-                    exit 1
-                  fi
-
-                  if [ -z "${{ secrets.COOLIFY_APPLICATION_UUID }}" ]; then
-                    echo "❌ COOLIFY_APPLICATION_UUID secret is not set"
-                    exit 1
-                  fi
-
-                  echo "✅ All required secrets are configured"
-                  echo "API URL: ${{ secrets.COOLIFY_API_URL }}"
-                  echo "Token length: $(echo '${{ secrets.COOLIFY_TOKEN }}' | wc -c) characters"
-                  echo "App UUID: ${{ secrets.COOLIFY_APPLICATION_UUID }}"
-                  echo ""
-
-                  # Show GitHub Actions IP for debugging
-                  echo "2. GitHub Actions environment info..."
-                  echo "Runner IP: $(curl -s https://httpbin.org/ip | jq -r '.origin')"
-                  echo "User-Agent being used: curl/$(curl --version | head -1 | cut -d' ' -f2)"
-                  echo ""
-
-                  # Test basic connectivity
-                  echo "3. Testing basic connectivity..."
-                  if curl -s --connect-timeout 10 "${{ secrets.COOLIFY_API_URL }}" >/dev/null; then
-                    echo "✅ Can reach Coolify URL"
-                  else
-                    echo "❌ Cannot reach Coolify URL - check network/firewall"
-                    exit 1
-                  fi
-                  echo ""
-
-                  # Test with Postman-like headers
-                  echo "4. Testing with Postman-like headers..."
-                  POSTMAN_RESPONSE=$(curl -s -v \
-                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    -H "User-Agent: PostmanRuntime/7.32.3" \
-                    -H "Cache-Control: no-cache" \
-                    -H "Postman-Token: $(uuidgen)" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version" 2>&1)
-
-                  echo "Postman-like request response:"
-                  echo "$POSTMAN_RESPONSE" | grep -E "(< HTTP|< [A-Z])" || echo "No HTTP headers found"
-                  echo "Response body:"
-                  echo "$POSTMAN_RESPONSE" | tail -10
-                  echo ""
-
-                  # Test with different User-Agent
-                  echo "5. Testing with browser User-Agent..."
-                  BROWSER_RESPONSE=$(curl -s \
-                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json, text/plain, */*" \
-                    -H "Content-Type: application/json" \
-                    -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
-                    -H "Accept-Language: en-US,en;q=0.9" \
-                    -H "Accept-Encoding: gzip, deflate, br" \
-                    -H "DNT: 1" \
-                    -H "Connection: keep-alive" \
-                    -H "Sec-Fetch-Dest: empty" \
-                    -H "Sec-Fetch-Mode: cors" \
-                    -H "Sec-Fetch-Site: same-origin" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version")
-
-                  echo "Browser-like response:"
-                  echo "$BROWSER_RESPONSE" | head -5
-                  echo ""
-
-                  # Test direct deployment endpoint with verbose output
-                  echo "6. Testing deployment endpoint with verbose output..."
-                  DEPLOY_VERBOSE=$(curl -s -v \
-                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    -H "User-Agent: GitHub-Actions-Deploy/1.0" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_APPLICATION_UUID }}" 2>&1)
-
-                  echo "Deployment endpoint verbose output:"
-                  echo "$DEPLOY_VERBOSE"
-                  echo ""
-
-                  # Check if any response is JSON
-                  RESPONSES=("$POSTMAN_RESPONSE" "$BROWSER_RESPONSE")
-                  JSON_FOUND=false
-
-                  for response in "${RESPONSES[@]}"; do
-                    # Extract just the response body (after the blank line in curl -v output)
-                    BODY=$(echo "$response" | sed -n '/^$/,$p' | tail -n +2)
-                    if echo "$BODY" | jq . >/dev/null 2>&1; then
-                      echo "✅ Found valid JSON response!"
-                      echo "Response: $BODY"
-                      JSON_FOUND=true
-                      echo "api_working=true" >> $GITHUB_OUTPUT
-                      break
+                  while [[ $attempt -lt $max_attempts ]]; do
+                    attempt=$((attempt + 1))
+                    
+                    if curl -f -s --max-time 10 "$COOLIFY_DOMAIN" > /dev/null; then
+                      echo "✅ Health check passed! Application is responding at $COOLIFY_DOMAIN"
+                      exit 0
                     fi
+                    
+                    echo "⏳ Attempt $attempt/$max_attempts - Application not ready yet, waiting 10 seconds..."
+                    sleep 10
                   done
 
-                  if [ "$JSON_FOUND" = false ]; then
-                    echo "❌ All API tests failed - still returning HTML"
-                    echo ""
-                    echo "🔍 Since you said it works in Postman, this suggests:"
-                    echo "1. GitHub Actions IPs might be blocked/filtered"
-                    echo "2. Rate limiting from GitHub Actions"
-                    echo "3. Different request headers needed"
-                    echo "4. Authentication middleware detecting automation"
-                    echo ""
-                    echo "📋 Next steps:"
-                    echo "1. Check if your Coolify instance has IP filtering enabled"
-                    echo "2. Check Coolify logs for blocked requests from GitHub IPs"
-                    echo "3. Try adding GitHub Actions IPs to allowlist"
-                    echo "4. Consider using a webhook deployment instead"
-                    echo ""
-                    echo "🌐 GitHub Actions IP ranges: https://api.github.com/meta"
-                    curl -s https://api.github.com/meta | jq -r '.actions[]' | head -5
-                    echo "..."
-                    exit 1
-                  fi
-
-            - name: Deploy to Production
-              id: prod-deploy
-              run: |
-                  echo "🔍 Starting Coolify API diagnostics..."
-
-                  # First, let's check if we can reach the base URL
-                  echo "Testing base URL connectivity..."
-                  BASE_RESPONSE=$(curl -s -I "${{ secrets.COOLIFY_API_URL }}" | head -1 || echo "BASE_URL_FAILED")
-                  echo "Base URL response: $BASE_RESPONSE"
-
-                  # Test different API endpoints that might exist
-                  echo "Testing different API endpoints..."
-
-                  # Test /api/version (without v1)
-                  API_V_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/version" || echo "API_VERSION_FAILED")
-                  echo "API /api/version Response: $API_V_RESPONSE"
-
-                  # Test /api/v1/version with better headers
-                  API_V1_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version" || echo "API_V1_VERSION_FAILED")
-                  echo "API /api/v1/version Response: $API_V1_RESPONSE"
-
-                  # Test /api/health or /health
-                  HEALTH_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/health" || echo "HEALTH_FAILED")
-                  echo "API /api/health Response: $HEALTH_RESPONSE"
-
-                  # Test applications endpoint to verify token works
-                  APPS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/applications" || echo "APPS_FAILED")
-                  echo "API /api/v1/applications Response: $APPS_RESPONSE"
-
-                  # Check if any response contains valid JSON
-                  VALID_JSON_FOUND=false
-
-                  for response in "$API_V_RESPONSE" "$API_V1_RESPONSE" "$HEALTH_RESPONSE" "$APPS_RESPONSE"; do
-                    if echo "$response" | jq . >/dev/null 2>&1; then
-                      echo "✅ Found valid JSON response: $response"
-                      VALID_JSON_FOUND=true
-                      break
-                    fi
-                  done
-
-                  if [ "$VALID_JSON_FOUND" = false ]; then
-                    echo "❌ No valid JSON responses found from any API endpoint"
-                    echo "🔍 Detailed diagnostics:"
-                    echo ""
-                    echo "1. Check if Coolify API is enabled:"
-                    echo "   - Log into ${{ secrets.COOLIFY_API_URL }}"
-                    echo "   - Go to Settings → Configuration → API"
-                    echo "   - Ensure 'Enable API' is checked"
-                    echo ""
-                    echo "2. Verify API token:"
-                    echo "   - Go to Keys & Tokens → API Tokens"
-                    echo "   - Create a new token if current one is expired"
-                    echo "   - Update COOLIFY_TOKEN secret in GitHub"
-                    echo ""
-                    echo "3. Test API manually:"
-                    echo "   curl -H 'Authorization: Bearer YOUR_TOKEN' -H 'Accept: application/json' '${{ secrets.COOLIFY_API_URL }}/api/v1/applications'"
-                    echo ""
-                    echo "4. Check Coolify version:"
-                    echo "   - Ensure you're running a recent version that supports API"
-                    echo "   - Some older versions may have different API paths"
-                    echo ""
-                    echo "5. Network/Firewall issues:"
-                    echo "   - Ensure GitHub Actions can reach your Coolify instance"
-                    echo "   - Check if your Coolify instance is behind a VPN or firewall"
-                    echo ""
-                    exit 1
-                  fi
-
-                  # If we found a working endpoint, try deployment
-                  echo "✅ API is responding with JSON, attempting deployment..."
-
-                  # Try the main deployment endpoint
-                  echo "Deploying to production using Coolify API..."
-
-                  # Method 1: Try with query parameters (for newer Coolify versions)
-                  DEPLOY_RESPONSE=$(curl -s -X GET \
-                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_APPLICATION_UUID }}&force=true" || echo "DEPLOY_METHOD_1_FAILED")
-
-                  echo "Deploy Method 1 Response: $DEPLOY_RESPONSE"
-
-                  # Check if Method 1 worked
-                  if echo "$DEPLOY_RESPONSE" | jq . >/dev/null 2>&1; then
-                    echo "✅ Deployment method 1 succeeded"
-                  else
-                    echo "⚠️ Deployment method 1 failed, trying method 2..."
-                    
-                    # Method 2: Try POST with JSON payload (alternative method)
-                    DEPLOY_PAYLOAD='{"applicationUuid":"${{ secrets.COOLIFY_APPLICATION_UUID }}","force":true}'
-                    
-                    DEPLOY_RESPONSE=$(curl -s -X POST \
-                      -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                      -H "Accept: application/json" \
-                      -H "Content-Type: application/json" \
-                      -d "$DEPLOY_PAYLOAD" \
-                      "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APPLICATION_UUID }}/deploy" || echo "DEPLOY_METHOD_2_FAILED")
-                    
-                    echo "Deploy Method 2 Response: $DEPLOY_RESPONSE"
-                    
-                    if ! echo "$DEPLOY_RESPONSE" | jq . >/dev/null 2>&1; then
-                      echo "❌ Both deployment methods failed"
-                      echo "Response was not valid JSON: $DEPLOY_RESPONSE"
-                      exit 1
-                    fi
-                  fi
-
-                  # Extract deployment info from successful response
-                  if echo "$DEPLOY_RESPONSE" | jq -e '.deployments' >/dev/null 2>&1; then
-                    DEPLOYMENT_UUID=$(echo $DEPLOY_RESPONSE | jq -r '.deployments[0].deployment_uuid // .deployments[0].id // "unknown"')
-                  elif echo "$DEPLOY_RESPONSE" | jq -e '.deployment_uuid' >/dev/null 2>&1; then
-                    DEPLOYMENT_UUID=$(echo $DEPLOY_RESPONSE | jq -r '.deployment_uuid')
-                  elif echo "$DEPLOY_RESPONSE" | jq -e '.id' >/dev/null 2>&1; then
-                    DEPLOYMENT_UUID=$(echo $DEPLOY_RESPONSE | jq -r '.id')
-                  else
-                    DEPLOYMENT_UUID="unknown"
-                  fi
-
-                  echo "deployment_id=$DEPLOYMENT_UUID" >> $GITHUB_OUTPUT
-                  echo "✅ Deployment triggered successfully"
-                  echo "📦 Deployment UUID: $DEPLOYMENT_UUID"
-
-                  # Wait for deployment to complete (simplified approach)
-                  echo "Waiting for production deployment to complete..."
-
-                  if [ "$DEPLOYMENT_UUID" != "unknown" ] && [ ! -z "$DEPLOYMENT_UUID" ]; then
-                    echo "Monitoring deployment: $DEPLOYMENT_UUID"
-                    
-                    for i in {1..30}; do
-                      echo "Checking deployment status (attempt $i/30)..."
-                      
-                      # Try multiple status endpoint formats
-                      STATUS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                        -H "Accept: application/json" \
-                        "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_UUID" 2>/dev/null || \
-                        curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                        -H "Accept: application/json" \
-                        "${{ secrets.COOLIFY_API_URL }}/api/v1/applications/${{ secrets.COOLIFY_APPLICATION_UUID }}/deployments/$DEPLOYMENT_UUID" 2>/dev/null || \
-                        echo "STATUS_CHECK_FAILED")
-                      
-                      if [ "$STATUS_RESPONSE" != "STATUS_CHECK_FAILED" ] && echo "$STATUS_RESPONSE" | jq . >/dev/null 2>&1; then
-                        STATUS=$(echo $STATUS_RESPONSE | jq -r '.status // .state // "running"')
-                        echo "Deployment status: $STATUS"
-                        
-                        case "$STATUS" in
-                          "success"|"completed"|"finished"|"deployed")
-                            echo "✅ Production deployment completed successfully!"
-                            echo "deployment_status=success" >> $GITHUB_OUTPUT
-                            break
-                            ;;
-                          "failed"|"error"|"cancelled")
-                            echo "❌ Production deployment failed!"
-                            echo "deployment_status=failed" >> $GITHUB_OUTPUT
-                            exit 1
-                            ;;
-                          *)
-                            echo "Deployment still in progress..."
-                            ;;
-                        esac
-                      else
-                        echo "Unable to check deployment status, deployment likely in progress..."
-                      fi
-                      
-                      # Wait 5 minutes max for deployment
-                      if [ $i -eq 30 ]; then
-                        echo "✅ Deployment has been running for 5 minutes, assuming success"
-                        echo "deployment_status=assumed_success" >> $GITHUB_OUTPUT
-                        break
-                      fi
-                      
-                      sleep 10
-                    done
-                  else
-                    echo "⚠️ No deployment UUID available, waiting 2 minutes for deployment to complete..."
-                    sleep 120
-                    echo "deployment_status=completed" >> $GITHUB_OUTPUT
-                  fi
-
-                  # Set the production URL
-                  PRODUCTION_URL="https://${{ secrets.COOLIFY_MAIN_DOMAIN }}"
-                  echo "production_url=$PRODUCTION_URL" >> $GITHUB_OUTPUT
-
-            - name: Test Production Deployment
-              id: test-prod
-              run: |
-                  echo "Testing production deployment..."
-                  PRODUCTION_URL="${{ steps.prod-deploy.outputs.production_url }}"
-
-                  # Wait a moment for deployment to propagate
-                  sleep 30
-
-                  # Test if the site is accessible
-                  HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PRODUCTION_URL" || echo "000")
-                  echo "HTTP Status: $HTTP_STATUS"
-
-                  if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
-                    echo "✅ Production site is accessible!"
-                    echo "site_status=accessible" >> $GITHUB_OUTPUT
-                  else
-                    echo "❌ Production site is not accessible (HTTP $HTTP_STATUS)"
-                    echo "site_status=inaccessible" >> $GITHUB_OUTPUT
-                    
-                    # Don't fail the deployment for accessibility issues, just warn
-                    echo "⚠️ Site may still be starting up or there could be DNS propagation delays"
-                  fi
-
-            - name: Output Production Deployment Results
-              run: |
-                  echo "🎉 Production deployment completed!"
-                  echo "🌐 Production URL: ${{ steps.prod-deploy.outputs.production_url }}"
-                  echo "📦 Deployment ID: ${{ steps.prod-deploy.outputs.deployment_id }}"
-                  echo "✅ Deployment Status: ${{ steps.prod-deploy.outputs.deployment_status }}"
-                  echo "🔍 Site Status: ${{ steps.test-prod.outputs.site_status }}"
-                  echo "🌿 Branch: ${{ github.ref_name }}"
-
-    cleanup-on-close:
-        runs-on: ubuntu-latest
-        if: github.event.action == 'closed'
-        steps:
-            - name: Cleanup Coolify deployment
-              run: |
-                  echo "PR closed - cleanup would go here"
-                  echo "Note: Automatic cleanup of preview environments may need manual implementation"
-                  echo "depending on your Coolify setup and API capabilities"
+                  echo "❌ Health check failed - Application did not respond after 2 minutes"
+                  echo "🔍 Please check your Coolify dashboard for deployment logs"
+                  exit 1
