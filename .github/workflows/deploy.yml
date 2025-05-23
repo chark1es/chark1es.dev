@@ -131,34 +131,38 @@ jobs:
                   # Test API endpoint first
                   echo "Testing Coolify API connectivity..."
                   TEST_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    "${{ secrets.COOLIFY_API_URL }}/version" || echo "CURL_FAILED")
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/version" || echo "CURL_FAILED")
 
                   echo "API Test Response: $TEST_RESPONSE"
 
                   # Check if we got a redirect or HTML response
                   if echo "$TEST_RESPONSE" | grep -q -i "redirect\|html\|<!DOCTYPE"; then
                     echo "❌ API returned HTML/redirect. This means:"
-                    echo "1. API is not enabled in Coolify (Go to Settings → Configuration → Enable API)"
+                    echo "1. API is not enabled in your self-hosted Coolify (Go to Settings → Configuration → Enable API)"
                     echo "2. Your API URL should be: https://cloud.scrypted.dev (no trailing slash)"
                     echo "3. Your API token is invalid or expired"
-                    echo "4. For Coolify Cloud: Make sure you're using the right token from Keys & Tokens"
+                    echo "4. Authentication is failing and redirecting to login page"
                     echo ""
                     echo "To fix this:"
-                    echo "- Log into Coolify dashboard"
-                    echo "- Go to Settings → Configuration"
+                    echo "- Log into your Coolify dashboard at https://cloud.scrypted.dev"
+                    echo "- Go to Settings → Configuration (or Settings → General)"
                     echo "- Enable the API if it's not enabled"
                     echo "- Go to Keys & Tokens → API tokens"
                     echo "- Create a new token and update your COOLIFY_TOKEN secret"
+                    echo ""
+                    echo "Debug info:"
+                    echo "- API URL being tested: ${{ secrets.COOLIFY_API_URL }}/api/v1/version"
+                    echo "- Response received: $TEST_RESPONSE"
                     exit 1
                   fi
 
-                  # Deploy using the correct Coolify API endpoint
+                  # Deploy using the correct Coolify API endpoint for self-hosted
                   echo "Deploying to production using Coolify API..."
 
-                  # Use the /deploy endpoint with uuid parameter (according to official docs)
+                  # Use the /api/v1/deploy endpoint with uuid parameter (for self-hosted Coolify)
                   DEPLOY_RESPONSE=$(curl -s -X GET \
                     -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                    "${{ secrets.COOLIFY_API_URL }}/deploy?uuid=${{ secrets.COOLIFY_APPLICATION_UUID }}&force=true" || echo "DEPLOY_FAILED")
+                    "${{ secrets.COOLIFY_API_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_APPLICATION_UUID }}&force=true" || echo "DEPLOY_FAILED")
 
                   echo "Deploy Response: $DEPLOY_RESPONSE"
 
@@ -169,6 +173,17 @@ jobs:
                     echo "deployment_id=$DEPLOYMENT_UUID" >> $GITHUB_OUTPUT
                     echo "✅ Deployment triggered successfully"
                     echo "📦 Deployment UUID: $DEPLOYMENT_UUID"
+                  elif echo "$DEPLOY_RESPONSE" | grep -q -i "redirect\|html\|<!DOCTYPE"; then
+                    echo "❌ Deploy endpoint returned HTML instead of JSON"
+                    echo "This means the API authentication failed or the endpoint doesn't exist"
+                    echo "Response: $DEPLOY_RESPONSE"
+                    echo ""
+                    echo "Troubleshooting steps:"
+                    echo "1. Verify your COOLIFY_APPLICATION_UUID is correct"
+                    echo "2. Check that your API token has deployment permissions"
+                    echo "3. Ensure the API is enabled in Coolify settings"
+                    echo "4. Try testing manually: curl -H 'Authorization: Bearer TOKEN' 'https://cloud.scrypted.dev/api/v1/applications'"
+                    exit 1
                   else
                     echo "❌ Deployment failed or returned unexpected response"
                     echo "Response: $DEPLOY_RESPONSE"
@@ -196,9 +211,9 @@ jobs:
                       # Note: Coolify might not have a deployments status endpoint, so we'll wait a reasonable time
                       echo "Waiting for deployment to complete (attempt $i/60)..."
                       
-                      # Try to get deployment status (this endpoint might not exist in all Coolify versions)
+                      # Try to get deployment status (using /api/v1/ prefix for self-hosted)
                       STATUS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
-                        "${{ secrets.COOLIFY_API_URL }}/deployments/$DEPLOYMENT_UUID" || echo "STATUS_CHECK_NOT_AVAILABLE")
+                        "${{ secrets.COOLIFY_API_URL }}/api/v1/deployments/$DEPLOYMENT_UUID" || echo "STATUS_CHECK_NOT_AVAILABLE")
                       
                       if [ "$STATUS_RESPONSE" != "STATUS_CHECK_NOT_AVAILABLE" ]; then
                         echo "Status Response: $STATUS_RESPONSE"
