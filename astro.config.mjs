@@ -11,6 +11,7 @@ import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
 import node from "@astrojs/node";
 // https://astro.build/config
+
 export default defineConfig({
     site: "https://chark1es.dev/",
     markdown: {
