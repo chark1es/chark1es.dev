@@ -32,9 +32,10 @@ export default defineConfig({
         mode: "standalone",
     }),
 
-    // server: {
-    //     host: "0.0.0.0"
-    // },
+    server: {
+        host: true,
+        port: process.env.PORT ? Number(process.env.PORT) : 8080,
+    },
 
     integrations: [
         AutoImport({
