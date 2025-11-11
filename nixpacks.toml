@@ -1,0 +1,13 @@
+[phases.install]
+cmds = ["bun install"]
+
+[phases.build]
+cmds = ["bun run build"]
+
+[phases.start]
+cmd = "bun run start"
+
+[variables]
+NODE_ENV = "production"
+
+startPhase = "start"
