@@ -1,4 +1,4 @@
-FROM oven/bun:1-alpine AS base
+FROM oven/bun:1 AS base
 WORKDIR /app
 
 # Copy package files
@@ -14,12 +14,12 @@ COPY . .
 RUN bun run build
 
 # Production stage
-FROM oven/bun:1-alpine AS runner
+FROM oven/bun:1 AS runner
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup --system --gid 1001 bun
-RUN adduser --system --uid 1001 bun
+RUN groupadd -r bun -g 1001 && \
+    useradd -r -g bun -u 1001 bun
 
 # Copy built application
 COPY --from=base /app/dist ./dist
