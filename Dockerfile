@@ -17,19 +17,12 @@ RUN bun run build
 FROM oven/bun:1 AS runner
 WORKDIR /app
 
-# Create non-root user
-RUN groupadd -r bun -g 1001 && \
-    useradd -r -g bun -u 1001 bun
-
 # Copy built application
 COPY --from=base /app/dist ./dist
 COPY --from=base /app/package.json ./
 
 # Install only production dependencies
 RUN bun install --frozen-lockfile --production
-
-# Set permissions
-USER bun
 
 # Expose port
 EXPOSE 8080
