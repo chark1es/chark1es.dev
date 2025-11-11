@@ -1,0 +1,18 @@
+{
+    "phases": {
+        "install": {
+            "cmds": ["bun install"]
+        },
+        "build": {
+            "cmds": ["bun run build"]
+        },
+        "start": {
+            "cmd": "bun run start"
+        }
+    },
+    "variables": {
+        "NODE_ENV": "production",
+        "NIXPACKS_NODE_VERSION": "22"
+    },
+    "startPhase": "start"
+}
