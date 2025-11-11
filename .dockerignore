@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+.git
+.gitignore
+README.md
+.env
+.env.local
+.env.production
+
+# Build outputs
+dist
+.next
+
+# Development
+.vscode
+.DS_Store
+*.log
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Nixpacks (not needed for Docker)
+nixpacks.json
+nixpacks.toml
