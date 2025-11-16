@@ -34,7 +34,7 @@ export default defineConfig({
 
     server: {
         host: true,
-        port: process.env.PORT ? Number(process.env.PORT) : 8080,
+        port: 1341,
     },
 
     integrations: [
