@@ -9,6 +9,7 @@ services:
             - "1341:1341"
         environment:
             - NODE_ENV=production
+            - PORT=1341
         restart: unless-stopped
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:1341"]
