@@ -1,65 +1,33 @@
 ---
-// import Layout from "@/layouts/Layout.astro";
-// import SectionContainer from "@/components/SectionContainer.astro";
-// import { getCollection } from "astro:content";
-import MainCard from "@/components/portfolio/MainCard.astro";
-// import CardImage from "@/components/card/CardImage.astro";
-import ExperienceCard from "@/components/portfolio/ExperienceCard.astro";
-import SkillsCard from "@/components/portfolio/SkillsCard.astro";
-import ProjectsCard from "@/components/portfolio/ProjectsCard.astro";
-import EducationCard from "@/components/portfolio/EducationCard.astro";
+import PageShell from "@/components/layout/PageShell.astro";
+import Section from "@/components/layout/Section.astro";
+import SiteAside from "@/components/layout/SiteAside.astro";
+import MainCard from "./MainCard.astro";
+import ExperienceList from "./ExperienceList.astro";
+import ProjectList from "./ProjectList.astro";
+import EducationCard from "./EducationCard.astro";
 ---
 
-<div class="pt-5"></div>
-<!-- About Me -->
-<main
-    class="flex flex-col justify-center items-center overflow-x-hidden xl:left-7 mx-auto"
->
-    <div
-        class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full"
-    >
-        <div
-            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
-        >
+<PageShell variant="home">
+    <div slot="rail" class="site-rail" aria-hidden="true">
+        <span class="site-rail-label">chark1es.dev</span>
+        <span class="site-rail-mark"></span>
+    </div>
+
+    <div class="home-sections pb-16">
+        <Section title="About" id="about" index="01">
             <MainCard />
-        </div>
-    </div>
-
-    <div
-        class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
-    >
-        <div
-            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
-        >
-            <SkillsCard />
-        </div>
-    </div>
-    <div
-        class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
-    >
-        <div
-            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
-        >
-            <ProjectsCard />
-        </div>
-    </div>
-    <div
-        class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
-    >
-        <div
-            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
-        >
-            <ExperienceCard />
-        </div>
-    </div>
-
-    <div
-        class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
-    >
-        <div
-            class="flex flex-col gap-6 p-8 rounded-2xl shadow-md bg-white dark:bg-dark_mode_post"
-        >
+        </Section>
+        <Section title="Experience" id="experience" index="02">
+            <ExperienceList />
+        </Section>
+        <Section title="Projects" id="projects" index="03">
+            <ProjectList />
+        </Section>
+        <Section title="Education" id="education" index="04">
             <EducationCard />
-        </div>
+        </Section>
     </div>
-</main>
+
+    <SiteAside slot="aside" />
+</PageShell>

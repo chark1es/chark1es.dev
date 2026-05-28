@@ -1,0 +1,19 @@
+---
+interface Props {
+    title: string;
+    id?: string;
+    index?: string;
+}
+
+const { title, id, index } = Astro.props;
+---
+
+<section id={id} class="scroll-mt-20 border-b border-border py-12 last:border-b-0">
+    <div class="mb-7 flex items-baseline gap-4">
+        {index && <span class="section-index shrink-0">{index}</span>}
+        <h2 class="text-lg font-semibold tracking-tight text-text">
+            {title}
+        </h2>
+    </div>
+    <slot />
+</section>

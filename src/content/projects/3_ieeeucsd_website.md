@@ -1,19 +1,28 @@
 ---
-projectName: "IEEE @ UCSD Website"
+projectName: "IEEE @ UCSD Dashboard & Infrastructure"
 projectRole: "Webmaster"
-projectTeamSize: "1 - 3 people"
+projectTeamSize: "1 – 3 people"
 projectCompany: "IEEE at UCSD"
-projectCategory: "Web Design"
-years: "October 18, 2023 - now"
+projectCategory: "Web Development"
+years: "Oct 2023 – Present"
 logo: "/images/ieeeucsd.png"
 logoWidth: 100
 logoHeight: 100
-technologies: [{ "skill": "AstroJS", "skillLogo": "devicon:astro" },
-{ "skill": "HTML", "skillLogo": "vscode-icons:file-type-html" },
-{ "skill": "Markdown", "skillLogo": "skill-icons:markdown-dark" },
-{ "skill": "Tailwind CSS", "skillLogo": "vscode-icons:file-type-tailwind" }
-]
-links: [{"link": "https://ieeeucsd.org", "linkLogo": "mdi:web"}, {"link": "https://github.com/IEEE-UCSD-Webmaster/ieeeucsd-org", "linkLogo": "mdi:github"}]
+technologies:
+    [
+        { "skill": "Convex", "skillLogo": "simple-icons:convex" },
+        { "skill": "TanStack Start", "skillLogo": "simple-icons:react" },
+        { "skill": "AstroJS", "skillLogo": "devicon:astro" },
+        { "skill": "Logto", "skillLogo": "mdi:shield-key" },
+    ]
+links:
+    [
+        { "link": "https://ieeeucsd.org", "linkLogo": "mdi:web" },
+        {
+            "link": "https://github.com/IEEE-UCSD-Webmaster/ieeeucsd-org",
+            "linkLogo": "mdi:github",
+        },
+    ]
 ---
 
-As the Webmaster for IEEE at UCSD, I maintain the technical and informational aspects of our website. My role involves managing both front-end and back-end operations to ensure functionality and ease of use. I regularly update the site to keep content fresh and relevant, reflecting the latest events and achievements of our members. Additionally, I provide technical support to address any website issues, ensuring continuous accessibility for our community.
+Centralized IEEE UCSD platform for events, reimbursements, sponsorships, resume database access, and analytics—built with Convex and TanStack Start. Self-hosted on a VPS with Dokploy, Logto OIDC auth, Google Calendar sync, a Raspberry Pi presence tracker, and a parts inventory platform with 2D blueprint visualization.

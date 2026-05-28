@@ -2,15 +2,11 @@
 import { getCollection } from "astro:content";
 import Posts from "@/layouts/Posts.astro";
 
-const posts = await getCollection("blogs", ({ data }) => {
-    return data.draft !== true;
-});
+const posts = await getCollection("blogs", ({ data }) => data.draft !== true);
 ---
 
 <Posts
     posts={posts}
-    pageNum={1}
-    totalPages={1}
-    title="Blogs"
-    description="A collection of blog posts"
+    title="Blog"
+    description="Notes and write-ups"
 />

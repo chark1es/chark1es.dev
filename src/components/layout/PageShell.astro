@@ -1,0 +1,23 @@
+---
+interface Props {
+    variant?: "home" | "content";
+}
+
+const { variant = "content" } = Astro.props;
+---
+
+<div
+    class:list={[
+        "site-canvas",
+        variant === "content" && "site-canvas--content",
+        variant === "home" && "site-canvas--home",
+    ]}
+>
+    <div class:list={["site-grid"]}>
+        <slot name="rail" />
+        <div class="site-main">
+            <slot />
+        </div>
+        <slot name="aside" />
+    </div>
+</div>

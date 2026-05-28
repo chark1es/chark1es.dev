@@ -1,18 +1,21 @@
 ---
 import BlogPost from "@/layouts/BlogPost.astro";
-import { getEntry, render } from "astro:content";
+import { getCollection, render } from "astro:content";
 
-const { slug } = Astro.params;
-if (slug === undefined) {
-    return Astro.redirect("/404");
+export async function getStaticPaths() {
+    const posts = await getCollection("blogs", ({ data }) => !data.draft);
+    return Promise.all(
+        posts.map(async (post) => {
+            const { Content } = await render(post);
+            return {
+                params: { slug: post.id },
+                props: { post, Content },
+            };
+        }),
+    );
 }
 
-const post = await getEntry("blogs", slug);
-if (post === undefined) {
-    return Astro.redirect("/404");
-}
-
-const { Content } = await render(post);
+const { post, Content } = Astro.props;
 ---
 
 <BlogPost post={post} Content={Content} />

@@ -1,36 +1,49 @@
 ---
-const { title, description, borderColor, icon, titleColor, textColor, style } =
-    Astro.props;
+interface Props {
+    title?: string;
+    description: string;
+    /** @deprecated use variant instead — kept for existing MDX */
+    borderColor?: string;
+    icon?: string;
+    titleColor?: string;
+    textColor?: string;
+    style?: string;
+    variant?: "note" | "info";
+}
+
+const {
+    title = "Note",
+    description,
+    variant = "note",
+} = Astro.props;
 ---
 
-<!-- Sample:
-<Alert
-    title="Note"
-    description="test"
-    borderColor="border-white"
-    icon="material-symbols:note"
-    textColor="text-[#FFFFFF]"
-    style="color:#FFFFFF"
-    titleColor="text-[#FFFFFF]"
-    iconColor="text-[#FFFFFF]"
-></Alert> -->
-<div class={`border-2 ${borderColor} mx-auto rounded-lg`}>
-    <div class="flex relative mx-2 my-3">
-        <div class="items-center justify-center">
-            <iconify-icon
-                icon={icon}
-                height="25"
-                width="20"
-                style={style}
-                class={`flex mr-2 justify-center`}></iconify-icon>
-        </div>
-        <div>
-            <div class={`${titleColor} flex flex-col text-md font-bold`}>
-                {title}
-            </div>
-            <div class={`${textColor} flex flex-col text-sm `}>
-                {description}
-            </div>
-        </div>
+<aside
+    class="callout not-prose"
+    role="note"
+    data-variant={variant}
+>
+    <div
+        class="mt-0.5 shrink-0 text-note"
+        aria-hidden="true"
+    >
+        <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
     </div>
-</div>
+    <div class="callout-body min-w-0">
+        <p class="callout-title">{title}</p>
+        <p>{description}</p>
+    </div>
+</aside>

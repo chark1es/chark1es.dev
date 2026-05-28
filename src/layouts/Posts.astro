@@ -1,96 +1,75 @@
 ---
 import FormattedDate from "@/components/FormattedDate.astro";
+import PageShell from "@/components/layout/PageShell.astro";
 import Layout from "@/layouts/Layout.astro";
 import { SITE } from "@config";
 import type { CollectionEntry } from "astro:content";
 import getReadingTime from "reading-time";
-export interface Props {
-    pageNum: number;
-    totalPages: number;
+
+interface Props {
     posts: CollectionEntry<"blogs">[];
     title: string;
     description: string;
 }
-const { posts, title } = Astro.props;
+
+const { posts, description } = Astro.props;
+
+const sorted = [...posts].sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 ---
 
 <Layout
-    title={`${title} - ${SITE.title}`}
-    description={`A list of posts from ${SITE.author} in ${SITE.title}`}
+    title={`Blog - ${SITE.title}`}
+    description={description}
 >
-    <main
-        class="flex flex-col justify-center mt-5 items-center overflow-x-hidden xl:left-7 mx-auto"
-    >
-        <div
-            class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full"
-        >
-            <div
-                class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post"
-            >
-                <a
-                    class="blog-back-button cursor-pointer font-bold text-neutral-500 flex no-underline mb-2"
-                    href="/"
-                >
-                    <iconify-icon
-                        icon="eva:arrow-back-outline"
-                        height="20"
-                        width="20"
-                        style=""
-                        class="pt-1 mr-1"></iconify-icon>
-                    Back to Home
-                </a>
-                <div class="text-3xl dark:text-white font-bold :text-4xl mb-2">
-                    Blog Posts
-                </div>
-                <div class="text-sm mb-2">
-                    A list of all the blog posts that I've made
-                </div>
+    <PageShell variant="content">
+        <div class="py-10">
+            <header class="mb-2 border-b border-border pb-8">
+                <p class="text-xs font-semibold uppercase tracking-widest text-text-muted">
+                    Writing
+                </p>
+                <h1 class="mt-2 text-2xl font-semibold tracking-tight text-text">
+                    Blog
+                </h1>
+                <p class="mt-2 max-w-2xl text-sm text-text-muted">
+                    {description}
+                </p>
+            </header>
+
+            <div role="list">
+                {
+                    sorted.map((post) => (
+                        <a
+                            href={`/blogs/${post.id}`}
+                            class="blog-row"
+                            role="listitem"
+                        >
+                            <div>
+                                <h2 class="blog-row-title">{post.data.title}</h2>
+                                <p class="blog-row-desc mt-1">
+                                    {post.data.description}
+                                </p>
+                            </div>
+                            <p class="blog-row-meta text-xs text-text-muted tabular-nums">
+                                <FormattedDate date={post.data.pubDate} />
+                                {post.body && (
+                                    <>
+                                        <br />
+                                        {getReadingTime(post.body).text}
+                                    </>
+                                )}
+                            </p>
+                        </a>
+                    ))
+                }
             </div>
-        </div>
-        <div
-            class="lg:space-y-8 max-w-5xl px-2 sm:px-8 sm:space-y-6 space-y-4 w-full pt-5"
-        >
+
             {
-                posts.map((post) => (
-                    <a href={`/blogs/${post.id}`} class="">
-                        <ul class="flex flex-col p-5 rounded-2xl text-lg shadow-md bg-white dark:text-dark_mode_text dark:bg-dark_mode_post ransition hover:duration-500 hover:scale-105 mb-2">
-                            <div class="flex flex-wrap font-bold ">
-                                {post.data.title}
-                            </div>
-                            <div class="flex flex-wrap">
-                                <iconify-icon
-                                    icon="uil:calender"
-                                    height="16"
-                                    width="16"
-                                    style=""
-                                    class="mr-1.5 mt-1.5 inline-flex max-w-fit"
-                                />
-                                <div class="flex-wrap mt-1 text-sm">
-                                    <FormattedDate date={post.data.pubDate} />
-                                </div>
-                                <div class="flex-wrap mx-2">•</div>
-
-                                <iconify-icon
-                                    icon="ant-design:read-outlined"
-                                    height="18"
-                                    width="18"
-                                    style=""
-                                    class="mr-1.5 mt-1.5 inline-flex max-w-fit"
-                                />
-                                <div class="flex-wrap mt-1 text-sm">
-                                    {post.body
-                                        ? getReadingTime(post.body).text
-                                        : "0 min read"}
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap text-sm ">
-                                {post.data.description}
-                            </div>
-                        </ul>
-                    </a>
-                ))
+                sorted.length === 0 && (
+                    <p class="py-12 text-sm text-text-muted">No posts yet.</p>
+                )
             }
         </div>
-    </main>
+    </PageShell>
 </Layout>

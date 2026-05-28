@@ -1,18 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import PageShell from "@/components/layout/PageShell.astro";
 ---
 
-<Layout title="404" description="How did you get here?">
-    <div
-        class="flex flex-wrap p-5 h-screen min-h-full flex-col justify-center dark:text-dark_mode_text"
-    >
-        <h1 class="flex justify-center font-semibold text-center">
-            You aren't supposed to be here!
-        </h1>
-        <h1
-            class="flex justify-center font-semibold dark:text-dark_mode_text text-center"
-        >
-            :(
-        </h1>
-    </div>
+<Layout title="404" description="Page not found">
+    <PageShell variant="content">
+        <div class="py-24 text-center">
+            <h1 class="text-2xl font-semibold text-text">404</h1>
+            <p class="mt-2 text-sm text-text-muted">This page doesn’t exist.</p>
+            <a href="/" class="mt-6 inline-block text-sm no-underline">
+                Back home
+            </a>
+        </div>
+    </PageShell>
 </Layout>

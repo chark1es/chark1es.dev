@@ -1,74 +1,64 @@
 ---
-
+import TechPill from "./TechPill.astro";
 ---
 
-<div class="flex flex-col gap-4">
-    <div class="flex gap-6">
+<div class="relative">
+    <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10">
         <img
             src="/images/derp.png"
-            alt="A description of my image."
-            width="20%"
-            height="20%"
-            class="object-scale-down"
+            alt="Charles Nguyen"
+            width="112"
+            height="112"
+            class="h-28 w-28 shrink-0 rounded-2xl object-cover ring-1 ring-border shadow-sm"
         />
-        <div>
-            <!-- Main Info -->
-
-            <div
-                data-value="Charles Nguyen"
-                class="hack-effect hack-hover-effect text-3xl font-extrabold text-gray-900 dark:text-dark_mode_text"
+        <div class="min-w-0 flex-1">
+            <h1
+                class="text-3xl font-semibold tracking-tight text-text sm:text-4xl"
             >
                 Charles Nguyen
-            </div>
-            <div
-                class="text-lg font-medium text-gray-600 dark:text-dark_mode_text"
-            >
-                Student @ University of California San Diego
-            </div>
+            </h1>
+            <p class="mt-2 text-sm font-medium text-accent">
+                CS @ UC San Diego · IEEE UCSD · Full-stack developer
+            </p>
 
-            <!-- Contact Page -->
+            <dl class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                    <dt class="text-text-muted">Email</dt>
+                    <dd class="mt-0.5">
+                        <a
+                            href="mailto:contact@chark1es.dev"
+                            class="text-text no-underline hover:text-accent"
+                        >
+                            contact@chark1es.dev
+                        </a>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-text-muted">Based in</dt>
+                    <dd class="mt-0.5 text-text">San Diego, California</dd>
+                </div>
+            </dl>
 
-            <div
-                class="flex gap-x-2 gap-y-1 pt-4 font-semibold tracking-wider text-sm text-gray-600 dark:text-dark_mode_text"
-            >
-                <span class="text-sm"> Email:</span>
-                <a
-                    href="mailto:contact@chark1es.dev"
-                    class="font-medium relative group underline"
-                >
-                    contact@chark1es.dev
-                </a>
-            </div>
-
-            <div
-                class="flex gap-x-2 gap-y-1 pt-1 font-semibold tracking-wider text-sm text-gray-600 dark:text-dark_mode_text"
-            >
-                <span class="text-sm"> From:</span>
-                <a class="font-medium relative group">
-                    Los Angeles, California
-                </a>
-            </div>
-
-            <div
-                class="flex gap-x-2 gap-y-1 pt-1 font-semibold tracking-wider text-sm text-gray-600 dark:text-dark_mode_text"
-            >
-                <span class="text-sm"> Major:</span>
-                <a class="font-medium relative group">Computer Science B.S.</a>
-            </div>
-
-            <div class="pt-4">
-                <a
-                    class="flex items-center bg-gray-100 rounded dark:bg-black-400 dark:text-gray-100 gap-x-1.5 h-6 px-2.5 text-gray-600 text-sm tracking-wide w-fit transition hover:duration-500 hover:scale-110 select-none"
+            <div class="mt-6 flex flex-wrap gap-2">
+                <TechPill
+                    label="Resume"
+                    icon="mdi:resume"
                     href="/pdfs/my_resume"
-                >
-                    <iconify-icon
-                        icon="mdi:resume"
-                        height="15"
-                        width="15"
-                        style=""></iconify-icon>
-                    Click to view my resume!
-                </a>
+                />
+                <TechPill
+                    label="GitHub"
+                    icon="mdi:github"
+                    href="https://github.com/chark1es"
+                />
             </div>
         </div>
     </div>
+
+    <p
+        class="mt-8 max-w-2xl text-base leading-relaxed text-text-muted sm:mt-10 sm:text-[1.05rem] sm:leading-relaxed"
+    >
+        I'm a fourth-year Computer Science student at UC San Diego building
+        secure, user-centered full-stack systems across IEEE UCSD, HDSI Lab 3.0,
+        and AI-powered tools that make real workflows easier.
+    </p>
 </div>
