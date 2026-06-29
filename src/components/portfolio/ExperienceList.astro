@@ -7,12 +7,13 @@ type ExperienceItem = {
     entry: Awaited<ReturnType<typeof getCollection<"experiences">>>[number];
     Content: Awaited<ReturnType<typeof render>>["Content"];
     excerpt: string;
+    isTruncated: boolean;
 };
 
 const EXCERPT_LENGTH = 165;
 
-function getExcerpt(markdown: string, maxLength = EXCERPT_LENGTH) {
-    const text = markdown
+function getPlainText(markdown: string) {
+    return markdown
         .replace(/```[\s\S]*?```/g, " ")
         .replace(/`([^`]+)`/g, "$1")
         .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
@@ -22,14 +23,21 @@ function getExcerpt(markdown: string, maxLength = EXCERPT_LENGTH) {
         .replace(/[*_~>]/g, "")
         .replace(/\s+/g, " ")
         .trim();
+}
+
+function getExcerpt(markdown: string, maxLength = EXCERPT_LENGTH) {
+    const text = getPlainText(markdown);
 
     if (text.length <= maxLength) {
-        return text;
+        return { excerpt: text, isTruncated: false };
     }
 
     const truncated = text.slice(0, maxLength);
     const lastSpace = truncated.lastIndexOf(" ");
-    return `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength)}...`;
+    return {
+        excerpt: `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength)}...`,
+        isTruncated: true,
+    };
 }
 
 const entries = (await getCollection("experiences")).sort((a, b) =>
@@ -39,7 +47,8 @@ const entries = (await getCollection("experiences")).sort((a, b) =>
 const items: ExperienceItem[] = await Promise.all(
     entries.map(async (entry) => {
         const { Content } = await render(entry);
-        return { entry, Content, excerpt: getExcerpt(entry.body ?? "") };
+        const { excerpt, isTruncated } = getExcerpt(entry.body ?? "");
+        return { entry, Content, excerpt, isTruncated };
     }),
 );
 
@@ -86,40 +95,48 @@ const groups = [...groupMap.entries()]
                                     "experience-timeline--single",
                             ]}
                         >
-                            {roles.map(({ entry, Content, excerpt }) => (
-                                <li class="experience-role">
-                                    <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                                        <p class="text-sm font-medium text-text">
-                                            {entry.data.position}
-                                        </p>
-                                        <time class="shrink-0 text-xs text-text-muted tabular-nums">
-                                            {entry.data.years}
-                                        </time>
-                                    </div>
-                                    <p class="experience-excerpt mt-1.5 text-sm leading-relaxed text-text-muted">
-                                        {excerpt}
-                                    </p>
-                                    <details class="entry-details mt-2">
-                                        <summary class="text-sm text-accent">
-                                            Read more
-                                        </summary>
-                                        <div class="markdown mt-2 text-sm text-text-muted">
-                                            <Content />
+                            {roles.map(
+                                ({ entry, Content, excerpt, isTruncated }) => (
+                                    <li class="experience-role">
+                                        <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                                            <p class="text-sm font-medium text-text">
+                                                {entry.data.position}
+                                            </p>
+                                            <time class="shrink-0 text-xs text-text-muted tabular-nums">
+                                                {entry.data.years}
+                                            </time>
                                         </div>
-                                    </details>
-                                    {entry.data.skills &&
-                                        entry.data.skills.length > 0 && (
-                                            <div class="mt-2 flex flex-wrap gap-1.5">
-                                                {entry.data.skills.map((s) => (
-                                                    <TechPill
-                                                        label={s.skill}
-                                                        icon={s.skillLogo}
-                                                    />
-                                                ))}
-                                            </div>
+                                        <p class="experience-excerpt mt-1.5 text-sm leading-relaxed text-text-muted">
+                                            {excerpt}
+                                        </p>
+                                        {isTruncated && (
+                                            <details class="entry-details mt-2">
+                                                <summary class="text-sm text-accent">
+                                                    Read more
+                                                </summary>
+                                                <div class="markdown mt-2 text-sm text-text-muted">
+                                                    <Content />
+                                                </div>
+                                            </details>
                                         )}
-                                </li>
-                            ))}
+                                        {entry.data.skills &&
+                                            entry.data.skills.length > 0 && (
+                                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                                    {entry.data.skills.map(
+                                                        (s) => (
+                                                            <TechPill
+                                                                label={s.skill}
+                                                                icon={
+                                                                    s.skillLogo
+                                                                }
+                                                            />
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
+                                    </li>
+                                ),
+                            )}
                         </ul>
                     </div>
                 </div>

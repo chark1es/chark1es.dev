@@ -10,14 +10,14 @@ const entries = (await getCollection("projects")).sort((a, b) =>
 const items = await Promise.all(
     entries.map(async (entry) => {
         const { Content } = await render(entry);
-        return { entry, Content };
+        return { entry, Content, hasDetails: Boolean(entry.body?.trim()) };
     }),
 );
 ---
 
 <ul class="divide-y divide-border">
     {
-        items.map(({ entry, Content }) => (
+        items.map(({ entry, Content, hasDetails }) => (
             <li class="py-5 first:pt-0 last:pb-0">
                 <div class="flex gap-3">
                     <Image
@@ -60,14 +60,16 @@ const items = await Promise.all(
                                 ))}
                             </div>
                         </div>
-                        <details class="entry-details mt-2">
-                            <summary class="text-sm text-accent">
-                                Read more
-                            </summary>
-                            <div class="markdown mt-2 text-sm text-text-muted">
-                                <Content />
-                            </div>
-                        </details>
+                        {hasDetails && (
+                            <details class="entry-details mt-2">
+                                <summary class="text-sm text-accent">
+                                    Read more
+                                </summary>
+                                <div class="markdown mt-2 text-sm text-text-muted">
+                                    <Content />
+                                </div>
+                            </details>
+                        )}
                         {entry.data.technologies &&
                             entry.data.technologies.length > 0 && (
                                 <div class="mt-3 flex flex-wrap gap-1.5">
