@@ -2,6 +2,7 @@
 
 @layer base {
     html {
+        color-scheme: light;
         @apply scroll-smooth antialiased;
     }
 
@@ -102,10 +103,6 @@
         black 85%,
         transparent 100%
     );
-}
-
-.dark .site-canvas--home::before {
-    opacity: 0.25;
 }
 
 .site-rail {
@@ -307,10 +304,6 @@
 }
 
 /* Expressive Code */
-html.github-light .article-body .expressive-code,
-html.github-light .markdown .expressive-code,
-html.github-dark .article-body .expressive-code,
-html.github-dark .markdown .expressive-code,
 .article-body .expressive-code,
 .markdown .expressive-code {
     --code-block-max-height: min(34rem, 68vh);
@@ -329,10 +322,6 @@ html.github-dark .markdown .expressive-code,
     max-width: 100%;
 }
 
-html.github-light .article-body .expressive-code,
-html.github-light .markdown .expressive-code,
-html.github-dark .article-body .expressive-code,
-html.github-dark .markdown .expressive-code,
 .article-body .expressive-code,
 .markdown .expressive-code {
     --ec-brdCol: var(--color-border);

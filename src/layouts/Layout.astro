@@ -30,14 +30,12 @@ const {
             rel="stylesheet"
         />
         <script is:inline>
-            const isDark =
-                localStorage.getItem("color-theme") === "dark" ||
-                (!("color-theme" in localStorage) &&
-                    window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-            document.documentElement.classList.toggle("dark", isDark);
-            document.documentElement.classList.toggle("github-dark", isDark);
-            document.documentElement.classList.toggle("github-light", !isDark);
+            document.documentElement.classList.remove(
+                "dark",
+                "github-dark",
+                "github-light",
+            );
+            localStorage.removeItem("color-theme");
         </script>
         <ClientRouter />
         <script

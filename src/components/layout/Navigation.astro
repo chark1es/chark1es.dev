@@ -1,6 +1,4 @@
 ---
-import ThemeToggle from "./ThemeToggle.astro";
-
 const path = Astro.url.pathname;
 const isHome = path === "/";
 const isBlog = path.startsWith("/blogs");
@@ -9,34 +7,31 @@ const isBlog = path.startsWith("/blogs");
 <header class="sticky top-0 z-20 border-b border-border bg-bg">
     <div class="site-grid items-center py-4">
         <nav
-            class="site-grid__main flex min-w-0 items-center justify-between gap-4"
+            class="site-grid__main flex min-w-0 items-center gap-8 text-sm"
             aria-label="Main"
         >
-            <div class="flex items-center gap-8 text-sm">
-                <a
-                    href="/"
-                    class:list={[
-                        "no-underline",
-                        isHome
-                            ? "font-semibold text-text"
-                            : "text-text-muted hover:text-text",
-                    ]}
-                >
-                    Home
-                </a>
-                <a
-                    href="/blogs"
-                    class:list={[
-                        "no-underline",
-                        isBlog
-                            ? "font-semibold text-text"
-                            : "text-text-muted hover:text-text",
-                    ]}
-                >
-                    Blog
-                </a>
-            </div>
-            <ThemeToggle />
+            <a
+                href="/"
+                class:list={[
+                    "no-underline",
+                    isHome
+                        ? "font-semibold text-text"
+                        : "text-text-muted hover:text-text",
+                ]}
+            >
+                Home
+            </a>
+            <a
+                href="/blogs"
+                class:list={[
+                    "no-underline",
+                    isBlog
+                        ? "font-semibold text-text"
+                        : "text-text-muted hover:text-text",
+                ]}
+            >
+                Blog
+            </a>
         </nav>
     </div>
 </header>

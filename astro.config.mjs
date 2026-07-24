@@ -33,8 +33,7 @@ export default defineConfig({
             imports: ["@/components/blog/Alert.astro"],
         }),
         expressiveCode({
-            themes: ["github-light", "github-dark"],
-            themeCssSelector: (theme) => `.${theme.name}`,
+            themes: ["github-light"],
             defaultProps: {
                 wrap: false,
                 showLineNumbers: true,
