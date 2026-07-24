@@ -41,7 +41,7 @@ function getExcerpt(markdown: string, maxLength = EXCERPT_LENGTH) {
 }
 
 const entries = (await getCollection("experiences")).sort((a, b) =>
-    b.id.localeCompare(a.id),
+    a.id.localeCompare(b.id),
 );
 
 const items: ExperienceItem[] = await Promise.all(
@@ -61,7 +61,7 @@ for (const item of items) {
 }
 
 for (const group of groupMap.values()) {
-    group.sort((a, b) => b.entry.id.localeCompare(a.entry.id));
+    group.sort((a, b) => a.entry.id.localeCompare(b.entry.id));
 }
 
 const groups = [...groupMap.entries()]
@@ -71,7 +71,7 @@ const groups = [...groupMap.entries()]
         sortKey: roles[0]!.entry.id,
         logo: roles[0]!.entry.data.logo,
     }))
-    .sort((a, b) => b.sortKey.localeCompare(a.sortKey));
+    .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 ---
 
 <ul class="divide-y divide-border">

@@ -1,12 +1,13 @@
 ---
 location: "Ralphs Grocery Company"
 position: "Cashier"
-years: "Dec 2024 – Present"
+years: "Dec 2024 – May 2026"
 logo: "/images/ralphs.png"
 skills:
     [
         { "skill": "Cash Handling", "skillLogo": "mdi:cash" },
         { "skill": "Customer Service", "skillLogo": "ion:person-outline" },
+        { "skill": "Point of Sale", "skillLogo": "iconamoon:scanner" },
     ]
 ---
 

@@ -1,7 +1,7 @@
 ---
 location: "Halıcıoğlu Data Science Institute, UC San Diego"
 position: "HDSI Lab 3.0 Fellow"
-years: "Nov 2025 – Present"
+years: "Nov 2025 – Jun 2026"
 logo: "/images/ucsd.png"
 skills:
     [

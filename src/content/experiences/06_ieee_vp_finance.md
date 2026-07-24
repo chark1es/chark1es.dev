@@ -1,7 +1,7 @@
 ---
 location: "IEEE Student Branch at UC San Diego"
 position: "Vice Chair Finance"
-years: "Apr 2025 – Present"
+years: "Apr 2025 – May 2026"
 logo: "/images/ieeeucsd.png"
 ---
 

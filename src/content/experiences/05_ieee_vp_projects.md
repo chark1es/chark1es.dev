@@ -1,7 +1,7 @@
 ---
 location: "IEEE Student Branch at UC San Diego"
 position: "Vice Chair Projects"
-years: "Jan 2026 – Present"
+years: "Jan 2026 – May 2026"
 logo: "/images/ieeeucsd.png"
 ---
 

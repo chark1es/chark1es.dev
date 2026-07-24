@@ -1,7 +1,7 @@
 ---
 location: "IEEE Student Branch at UC San Diego"
 position: "Webmaster"
-years: "Oct 2023 – Present"
+years: "Oct 2023 – May 2026"
 logo: "/images/ieeeucsd.png"
 skills:
     [
