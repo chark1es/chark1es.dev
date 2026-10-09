@@ -5,7 +5,7 @@ interface Props {
     href?: string;
 }
 
-const { label, icon, href } = Astro.props;
+const { label, href } = Astro.props;
 const Tag = href ? "a" : "span";
 ---
 
@@ -13,12 +13,7 @@ const Tag = href ? "a" : "span";
     href={href}
     target={href ? "_blank" : undefined}
     rel={href ? "noopener noreferrer" : undefined}
-    class="inline-flex items-center gap-1 rounded-md bg-pill px-2 py-0.5 text-xs text-pill-text no-underline transition hover:opacity-80"
+    class="skill-token"
 >
-    {
-        icon && (
-            <iconify-icon icon={icon} height="14" width="14" aria-hidden="true" />
-        )
-    }
     {label}
 </Tag>

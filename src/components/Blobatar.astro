@@ -1,0 +1,48 @@
+---
+import { blobatar } from "blobatar";
+import { sleepy, happy, sad, idle } from "blobatar/expression";
+import { INK, look, type Shape, type Tone } from "@/lib/cast";
+
+const MOODS = { idle, sleepy, happy, sad };
+
+interface Props {
+    name: string;
+    shape: Shape;
+    tone?: Tone;
+    /** Overrides the tone with a raw colour, for tone-on-tone scenery. */
+    head?: string;
+    eye?: string;
+    mood?: keyof typeof MOODS;
+    size?: number;
+    title?: string;
+    class?: string;
+}
+
+const {
+    name,
+    shape,
+    tone = "coral",
+    head,
+    eye = INK,
+    mood = "idle",
+    size,
+    title,
+    class: className,
+} = Astro.props;
+
+const base = look(shape, tone);
+const svg = blobatar(name, {
+    size,
+    background: false,
+    title,
+    traits: base.traits,
+    palette: { head: head ?? base.palette.head, eye },
+    expression: MOODS[mood],
+});
+---
+
+<span
+    class:list={["blobatar", className]}
+    aria-hidden={title ? undefined : "true"}
+    set:html={svg}
+/>

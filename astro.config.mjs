@@ -33,13 +33,13 @@ export default defineConfig({
             imports: ["@/components/blog/Alert.astro"],
         }),
         expressiveCode({
-            themes: ["github-light"],
+            themes: ["vesper"],
             defaultProps: {
                 wrap: false,
                 showLineNumbers: true,
             },
             styleOverrides: {
-                borderRadius: "0.375rem",
+                borderRadius: "0.125rem",
                 frames: {
                     shadowColor: "transparent",
                 },

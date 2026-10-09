@@ -1,16 +1,33 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import PageShell from "@/components/layout/PageShell.astro";
+import Mascot from "@/components/react/Mascot.tsx";
 ---
 
-<Layout title="404" description="Page not found">
-    <PageShell variant="content">
-        <div class="py-24 text-center">
-            <h1 class="text-2xl font-semibold text-text">404</h1>
-            <p class="mt-2 text-sm text-text-muted">This page doesn’t exist.</p>
-            <a href="/" class="mt-6 inline-block text-sm no-underline">
-                Back home
-            </a>
+<Layout title="404 · Charles Nguyen" description="Page not found">
+    <div class="container-x page">
+        <div class="lost">
+            <div class="lost__face">
+                <Mascot
+                    client:load
+                    seed="lost"
+                    shape="triangle"
+                    tone="pink"
+                    rest="sad"
+                    hover="unsure"
+                    pokes={["scared", "surprised", "sad"]}
+                    label="Poke the lost blobatar"
+                />
+            </div>
+            <h1
+                class="text-[clamp(3rem,9vw,6rem)] font-extrabold leading-none tracking-tight"
+            >
+                Nothing here.
+            </h1>
+            <p class="max-w-md text-[1.15rem] text-text-muted">
+                I looked everywhere. Either this page moved or it never existed,
+                and the blob is taking it personally.
+            </p>
+            <a href="/" class="btn mt-2"> Back home </a>
         </div>
-    </PageShell>
+    </div>
 </Layout>

@@ -1,8 +1,73 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Portfolio from "@/components/portfolio/Portfolio.astro";
+import Blobatar from "@/components/Blobatar.astro";
+import Cast from "@/components/react/Cast.tsx";
 ---
 
-<Layout title="Home" description="I am Charles Nguyen">
-    <Portfolio />
+<Layout
+    title="Charles Nguyen, Software Engineer"
+    description="Charles Nguyen is a software engineer in San Diego who ships full-stack products: ChopChop, Aulora, and the systems behind ElitAxis and IEEE UCSD."
+>
+    <div class="home">
+        <Blobatar
+            name="giant one"
+            shape="cloud"
+            head="#15303a"
+            mood="sleepy"
+            class="home__giant home__giant--a on-dark"
+        />
+        <Blobatar
+            name="giant one"
+            shape="cloud"
+            head="#f3e9d1"
+            eye="#e6dbbf"
+            mood="sleepy"
+            class="home__giant home__giant--a on-light"
+        />
+        <Blobatar
+            name="giant two"
+            shape="round"
+            head="#143039"
+            mood="sleepy"
+            class="home__giant home__giant--b on-dark"
+        />
+        <Blobatar
+            name="giant two"
+            shape="round"
+            head="#f1e6cb"
+            eye="#e6dbbf"
+            mood="sleepy"
+            class="home__giant home__giant--b on-light"
+        />
+
+        <div class="container-x home__grid">
+            <div class="home__copy">
+                <h1 class="home__title">
+                    Hi, I'm <span class="scribble">Charles</span>.
+                </h1>
+                <p class="home__lede">
+                    I'm a software engineer with a CS degree from UC San Diego.
+                    I like building whole things: the app, the backend, and the
+                    deploy script nobody asks about.
+                </p>
+                <p class="home__more">
+                    Lately that means ElitAxis, ChopChop and Aulora. The blob is
+                    me, more or less. Poke it, or wander over to one of its
+                    friends.
+                </p>
+                <div class="home__actions">
+                    <a class="btn" href="mailto:contact@chark1es.dev">Say hi</a>
+                    <a
+                        class="home__link"
+                        href="https://github.com/chark1es"
+                        target="_blank"
+                        rel="noopener noreferrer">GitHub</a
+                    >
+                    <span class="home__status">Open to new roles</span>
+                </div>
+            </div>
+
+            <Cast client:load />
+        </div>
+    </div>
 </Layout>

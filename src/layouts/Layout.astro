@@ -3,7 +3,6 @@ import "@/styles/globals.css";
 import SEO from "@/components/seo/SEO.astro";
 import Navigation from "@/components/layout/Navigation.astro";
 import Footer from "@/components/layout/Footer.astro";
-import { ClientRouter } from "astro:transitions";
 
 const {
     class: className,
@@ -25,28 +24,33 @@ const {
             url={url}
             image={image}
         />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
-            rel="stylesheet"
-        />
+        <link rel="stylesheet" href="/fonts/fonts.css" />
         <script is:inline>
-            document.documentElement.classList.remove(
-                "dark",
-                "github-dark",
-                "github-light",
-            );
-            localStorage.removeItem("color-theme");
+            // Set the theme before first paint. Dark is the default; ?theme=light previews.
+            (function () {
+                var apply = function (doc) {
+                    var t = null;
+                    try {
+                        var q = new URLSearchParams(location.search).get(
+                            "theme",
+                        );
+                        if (q === "light" || q === "dark")
+                            localStorage.setItem("theme", q);
+                        t = localStorage.getItem("theme");
+                    } catch (e) {}
+                    doc.documentElement.dataset.theme =
+                        t === "light" ? "light" : "dark";
+                };
+                apply(document);
+            })();
         </script>
-        <ClientRouter />
-        <script
-            is:inline
-            src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"
-            defer></script>
     </head>
     <body>
-        <div class="site-shell min-h-screen flex flex-col">
+        <a href="#main" class="skip-link">Skip to content</a>
+
+        <div class:list={["min-h-svh flex flex-col", className]}>
             <Navigation />
-            <div class:list={["flex-1", className]}>
+            <div id="main" class="flex-1">
                 <slot />
             </div>
             <Footer />
@@ -56,22 +60,30 @@ const {
             id="scrollToTopBtn"
             type="button"
             aria-label="Scroll to top"
-            class="fixed bottom-5 right-5 z-30 flex h-9 w-9 items-center justify-center rounded border border-border bg-surface text-text-muted opacity-0 shadow-sm transition hover:text-text pointer-events-none"
+            class="to-top"
         >
-            <iconify-icon
-                icon="fluent:arrow-up-12-filled"
-                height="18"
-                width="18"></iconify-icon>
+            <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+            >
+                <path
+                    d="M8 13V3M3.5 7.5L8 3l4.5 4.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+            </svg>
         </button>
 
         <script>
             const handleScroll = () => {
                 const btn = document.getElementById("scrollToTopBtn");
                 if (!btn) return;
-                const show = window.scrollY > 200;
-                btn.classList.toggle("opacity-0", !show);
-                btn.classList.toggle("pointer-events-none", !show);
-                btn.classList.toggle("opacity-100", show);
+                const show = window.scrollY > 240;
+                btn.classList.toggle("is-visible", show);
             };
 
             const scrollToTop = () =>
@@ -83,15 +95,37 @@ const {
                 btn.dataset.bound = "true";
                 btn.addEventListener("click", scrollToTop);
             };
+            const syncToggle = () => {
+                const light =
+                    document.documentElement.dataset.theme === "light";
+                document
+                    .querySelectorAll<HTMLElement>("[data-theme-toggle]")
+                    .forEach((btn) =>
+                        btn.setAttribute("aria-pressed", String(light)),
+                    );
+            };
+
+            document.addEventListener("click", (event) => {
+                const btn = (event.target as Element).closest(
+                    "[data-theme-toggle]",
+                );
+                if (!btn) return;
+                const next =
+                    document.documentElement.dataset.theme === "light"
+                        ? "dark"
+                        : "light";
+                document.documentElement.dataset.theme = next;
+                try {
+                    localStorage.setItem("theme", next);
+                } catch (e) {}
+                syncToggle();
+            });
 
             window.addEventListener("scroll", handleScroll, { passive: true });
             document.addEventListener("DOMContentLoaded", () => {
                 handleScroll();
                 bindScrollTop();
-            });
-            document.addEventListener("astro:after-swap", () => {
-                handleScroll();
-                bindScrollTop();
+                syncToggle();
             });
         </script>
     </body>

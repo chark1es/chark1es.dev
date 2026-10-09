@@ -1,37 +1,106 @@
 ---
+import Blobatar from "@/components/Blobatar.astro";
+
 const path = Astro.url.pathname;
 const isHome = path === "/";
-const isBlog = path.startsWith("/blogs");
+const isActive = (href: string) => path.startsWith(href);
+
+const links = [
+    { href: "/work", label: "Work", tone: "butter" },
+    { href: "/projects", label: "Projects", tone: "mint" },
+    { href: "/blogs", label: "Writing", tone: "sky" },
+];
 ---
 
-<header class="sticky top-0 z-20 border-b border-border bg-bg">
-    <div class="site-grid items-center py-4">
-        <nav
-            class="site-grid__main flex min-w-0 items-center gap-8 text-sm"
-            aria-label="Main"
-        >
-            <a
-                href="/"
-                class:list={[
-                    "no-underline",
-                    isHome
-                        ? "font-semibold text-text"
-                        : "text-text-muted hover:text-text",
-                ]}
+<header class="masthead">
+    <div class="container-x masthead__row">
+        <a href="/" class="masthead__brand" aria-label="chark1es.dev, home">
+            <Blobatar
+                name="Charles Nguyen"
+                shape="organic"
+                tone="coral"
+                class="masthead__face"
+            />
+            <span>chark1es<em>.dev</em></span>
+        </a>
+
+        <div class="masthead__right">
+            {
+                isHome ? (
+                    <a
+                        class="masthead__mail"
+                        href="mailto:contact@chark1es.dev"
+                    >
+                        contact@chark1es.dev
+                    </a>
+                ) : (
+                    <nav class="masthead__nav" aria-label="Main">
+                        {links.map((link) => (
+                            <a
+                                href={link.href}
+                                class="masthead__link"
+                                data-tone={link.tone}
+                                aria-current={
+                                    isActive(link.href) ? "page" : undefined
+                                }
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                        <a
+                            href="/pdfs/my_resume"
+                            class="masthead__link"
+                            data-tone="pink"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Résumé
+                        </a>
+                    </nav>
+                )
+            }
+
+            <button
+                type="button"
+                class="theme-toggle"
+                data-theme-toggle
+                aria-label="Light mode"
+                aria-pressed="false"
+                title="Switch between dark and light"
             >
-                Home
-            </a>
-            <a
-                href="/blogs"
-                class:list={[
-                    "no-underline",
-                    isBlog
-                        ? "font-semibold text-text"
-                        : "text-text-muted hover:text-text",
-                ]}
-            >
-                Blog
-            </a>
-        </nav>
+                <svg
+                    class="icon-moon"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"
+                    ></path>
+                </svg>
+                <svg
+                    class="icon-sun"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path
+                        d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+                    ></path>
+                </svg>
+            </button>
+        </div>
     </div>
 </header>

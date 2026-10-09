@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
-import { Image } from "astro:assets";
+import Mascot from "@/components/react/Mascot.tsx";
+import { creatureFor } from "@/lib/cast";
 import TechPill from "./TechPill.astro";
 
 type ExperienceItem = {
@@ -10,7 +11,7 @@ type ExperienceItem = {
     isTruncated: boolean;
 };
 
-const EXCERPT_LENGTH = 165;
+const EXCERPT_LENGTH = 210;
 
 function getPlainText(markdown: string) {
     return markdown
@@ -35,7 +36,7 @@ function getExcerpt(markdown: string, maxLength = EXCERPT_LENGTH) {
     const truncated = text.slice(0, maxLength);
     const lastSpace = truncated.lastIndexOf(" ");
     return {
-        excerpt: `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength)}...`,
+        excerpt: `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength)}…`,
         isTruncated: true,
     };
 }
@@ -69,59 +70,64 @@ const groups = [...groupMap.entries()]
         location,
         roles,
         sortKey: roles[0]!.entry.id,
-        logo: roles[0]!.entry.data.logo,
     }))
     .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 ---
 
-<ul class="divide-y divide-border">
+<div class="orgs">
     {
-        groups.map(({ location, roles, logo }) => (
-            <li class="py-5 first:pt-0 last:pb-0">
-                <div class="flex gap-3">
-                    <Image
-                        src={logo}
-                        alt=""
-                        width={32}
-                        height={32}
-                        class="mt-0.5 h-8 w-8 shrink-0 rounded-md bg-pill object-contain"
-                    />
-                    <div class="min-w-0 flex-1">
-                        <p class="font-medium text-text">{location}</p>
-                        <ul
-                            class:list={[
-                                "experience-timeline mt-3",
-                                roles.length === 1 &&
-                                    "experience-timeline--single",
-                            ]}
-                        >
+        groups.map(({ location, roles }) => {
+            const { shape, tone } = creatureFor(location);
+            const current = roles.some(({ entry }) =>
+                /present|now/i.test(entry.data.years),
+            );
+            return (
+                <article class="org" data-tone={tone}>
+                    <div class="org__face">
+                        <Mascot
+                            client:visible
+                            seed={location}
+                            shape={shape}
+                            tone={tone}
+                            label={`Poke the ${location} blobatar`}
+                        />
+                    </div>
+
+                    <div class="min-w-0">
+                        <h2 class="org__name">
+                            {location}
+                            {current && <span class="sticker">right now</span>}
+                        </h2>
+
+                        <div class="org__roles">
                             {roles.map(
                                 ({ entry, Content, excerpt, isTruncated }) => (
-                                    <li class="experience-role">
-                                        <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                                            <p class="text-sm font-medium text-text">
+                                    <div class="role">
+                                        <div class="role__head">
+                                            <span class="role__title">
                                                 {entry.data.position}
-                                            </p>
-                                            <time class="shrink-0 text-xs text-text-muted tabular-nums">
+                                            </span>
+                                            <span class="role__years">
                                                 {entry.data.years}
-                                            </time>
+                                            </span>
                                         </div>
-                                        <p class="experience-excerpt mt-1.5 text-sm leading-relaxed text-text-muted">
-                                            {excerpt}
-                                        </p>
+
+                                        <p class="role__summary">{excerpt}</p>
+
                                         {isTruncated && (
-                                            <details class="entry-details mt-2">
-                                                <summary class="text-sm text-accent">
-                                                    Read more
+                                            <details class="entry-details">
+                                                <summary>
+                                                    Read the long version
                                                 </summary>
-                                                <div class="markdown mt-2 text-sm text-text-muted">
+                                                <div class="markdown text-[0.97rem] text-text-muted">
                                                     <Content />
                                                 </div>
                                             </details>
                                         )}
+
                                         {entry.data.skills &&
                                             entry.data.skills.length > 0 && (
-                                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                                <div class="chips">
                                                     {entry.data.skills.map(
                                                         (s) => (
                                                             <TechPill
@@ -134,13 +140,13 @@ const groups = [...groupMap.entries()]
                                                     )}
                                                 </div>
                                             )}
-                                    </li>
+                                    </div>
                                 ),
                             )}
-                        </ul>
+                        </div>
                     </div>
-                </div>
-            </li>
-        ))
+                </article>
+            );
+        })
     }
-</ul>
+</div>
