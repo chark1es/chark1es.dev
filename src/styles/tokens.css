@@ -2,19 +2,89 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-    --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Bricolage Grotesque", "Figtree", ui-sans-serif, sans-serif;
 
-    --color-bg: oklch(0.985 0.004 90);
-    --color-surface: oklch(1 0 90);
-    --color-text: oklch(0.22 0.015 265);
-    --color-text-muted: oklch(0.48 0.015 265);
-    --color-border: oklch(0.91 0.008 90);
-    --color-accent: oklch(0.4 0.08 45);
-    --color-accent-hover: oklch(0.34 0.09 45);
-    --color-pill: oklch(0.96 0.006 90);
-    --color-pill-text: oklch(0.32 0.015 265);
-    --color-note: oklch(0.55 0.12 75);
-    --color-note-bg: oklch(0.97 0.02 85);
-    --color-note-border: oklch(0.88 0.06 75);
+    /* Night-garden ground; every colour that isn't text comes from a blobatar. */
+    --color-bg: #102127;
+    --color-bg-2: #0c1a1f;
+    --color-surface: #16303a;
+    --color-surface-2: #1d3b46;
+    --color-text: #f6f1e6;
+    --color-text-muted: #bccbc9;
+    --color-text-faint: #8fa6a6;
+    --color-border: #24424c;
+    --color-border-strong: #35596a;
+    --color-ink: #102127;
+
+    --color-coral: #ff7a59;
+    --color-butter: #ffd166;
+    --color-mint: #7fe0b5;
+    --color-sky: #9fb4ff;
+    --color-pink: #ff9fc6;
+
+    --color-accent: #ff7a59;
+    --color-accent-hover: #ff936f;
+    --color-accent-ink: #102127;
+    --color-note: #ffd166;
+    --color-note-bg: #1b2f33;
+    --color-note-border: #5b5430;
+    --color-alert: #ff7a59;
+
+    /* Pieces that need to flip with the theme. */
+    --color-shadow: #0a171b;
+    --color-bubble: #f6f1e6;
+    --color-bubble-ink: #102127;
+    --color-tag-shadow: rgba(8, 18, 22, 0.55);
+    --color-focus: #ffd166;
+    /* Decorative lines and small coloured text. Same as the pastels in dark,
+       deeper in light so they still read on cream. */
+    --color-line-coral: #ff7a59;
+    --color-line-butter: #ffd166;
+    --color-line-mint: #7fe0b5;
+    --color-line-sky: #9fb4ff;
+    --color-line-pink: #ff9fc6;
+}
+
+/* Light theme: warm cream paper, same cast. Chosen with the toggle in the
+   masthead or ?theme=light. */
+html[data-theme="light"] {
+    color-scheme: light;
+    --color-bg: #fbf5e8;
+    --color-bg-2: #f1e8d3;
+    --color-surface: #efe4cb;
+    --color-surface-2: #e7dabb;
+    --color-text: #102127;
+    --color-text-muted: #41565b;
+    --color-text-faint: #5b6f72;
+    --color-border: #e2d7bb;
+    --color-border-strong: #cdbf9d;
+    --color-ink: #102127;
+
+    --color-accent-hover: #ff6a45;
+    --color-note: #8a5a00;
+    --color-note-bg: #fbefc9;
+    --color-note-border: #e3c877;
+
+    --color-shadow: #e6d9bb;
+    --color-bubble: #102127;
+    --color-bubble-ink: #f6f1e6;
+    --color-tag-shadow: rgba(16, 33, 39, 0.22);
+    --color-focus: #102127;
+    --color-line-coral: #e2512a;
+    --color-line-butter: #e0a113;
+    --color-line-mint: #2fb383;
+    --color-line-sky: #6e86e6;
+    --color-line-pink: #e8639a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
 }

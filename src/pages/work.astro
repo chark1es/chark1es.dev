@@ -1,0 +1,38 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Mascot from "@/components/react/Mascot.tsx";
+import ExperienceList from "@/components/portfolio/ExperienceList.astro";
+import { FRIENDS } from "@/lib/cast";
+
+const me = FRIENDS.work;
+---
+
+<Layout
+    title="Work · Charles Nguyen"
+    description="Charles Nguyen's software engineering work across ElitAxis LLC, IEEE UCSD, HDSI Lab 3.0, Chadwick School, and Ralphs."
+>
+    <div class="container-x page" data-tone={me.tone}>
+        <header class="page-head">
+            <div class="page-head__text">
+                <h1>Work</h1>
+                <p>
+                    Mostly software, some teaching, and a few years behind a
+                    register. I like owning the whole thing: the code, the
+                    people who use it, and getting it out the door.
+                </p>
+            </div>
+            <div class="page-head__friend">
+                <Mascot
+                    client:load
+                    seed={me.seed}
+                    shape={me.shape}
+                    tone={me.tone}
+                    hover="wink"
+                    label="Poke the work blobatar"
+                />
+            </div>
+        </header>
+
+        <ExperienceList />
+    </div>
+</Layout>

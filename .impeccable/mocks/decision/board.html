@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Direction board — chark1es.dev</title>
+        <style>
+            :root {
+                --ink: #0c0d10;
+                --panel: #15171c;
+                --line: #262a32;
+                --txt: #eef0f3;
+                --mut: #9aa1ad;
+                --faint: #6b7280;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--ink);
+                color: var(--txt);
+                font-family:
+                    ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+                line-height: 1.5;
+                padding: 40px 28px 72px;
+            }
+            .wrap {
+                max-width: 1180px;
+                margin: 0 auto;
+            }
+            header.top {
+                border-bottom: 1px solid var(--line);
+                padding-bottom: 20px;
+                margin-bottom: 28px;
+            }
+            .kicker {
+                font-size: 11px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--mut);
+            }
+            h1 {
+                font-size: clamp(26px, 4vw, 42px);
+                line-height: 1.02;
+                letter-spacing: -0.03em;
+                margin: 10px 0 8px;
+                font-weight: 800;
+            }
+            .sub {
+                color: var(--mut);
+                max-width: 62ch;
+                font-size: 15px;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            @media (min-width: 900px) {
+                .grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            .card {
+                background: var(--panel);
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+            .preview {
+                height: 230px;
+                position: relative;
+                overflow: hidden;
+                border-bottom: 1px solid var(--line);
+            }
+            .body {
+                padding: 18px 18px 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .badge {
+                font-size: 10px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                font-weight: 700;
+                padding: 4px 8px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                color: var(--mut);
+            }
+            .badge.roll {
+                background: #ff2e92;
+                color: #0b0b0f;
+                border-color: transparent;
+            }
+            .badge.pick {
+                background: #ffd23f;
+                color: #141414;
+                border-color: transparent;
+            }
+            h2 {
+                font-size: 22px;
+                margin: 0;
+                letter-spacing: -0.02em;
+            }
+            .thesis {
+                color: var(--txt);
+                font-size: 14.5px;
+            }
+            .meta {
+                font-size: 12.5px;
+                color: var(--mut);
+            }
+            .meta b {
+                color: var(--txt);
+                font-weight: 600;
+            }
+            .chips {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            .chip {
+                width: 22px;
+                height: 22px;
+                border-radius: 6px;
+                border: 1px solid rgba(255, 255, 255, 0.14);
+            }
+            .tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .tag {
+                font-size: 11px;
+                color: var(--mut);
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                padding: 3px 9px;
+            }
+            .risk {
+                font-size: 12.5px;
+                color: #ffb4a0;
+                border-left: 2px solid #ff7a5c;
+                padding-left: 10px;
+            }
+            .verdict {
+                font-size: 11px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--faint);
+            }
+            .demoted {
+                margin-top: 30px;
+                border-top: 1px solid var(--line);
+                padding-top: 22px;
+            }
+            .demoted h3 {
+                margin: 0 0 4px;
+                font-size: 13px;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--mut);
+            }
+            .demoted p.lead {
+                margin: 0 0 14px;
+                color: var(--faint);
+                font-size: 13px;
+            }
+            .dem-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            @media (min-width: 760px) {
+                .dem-row {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            .dem {
+                display: flex;
+                gap: 10px;
+                align-items: baseline;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 12px 14px;
+                background: #101217;
+            }
+            .dem .v {
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--faint);
+                flex: 0 0 auto;
+            }
+            .dem .t {
+                font-size: 13px;
+                color: var(--mut);
+            }
+            .dem .t b {
+                color: var(--txt);
+            }
+
+            /* ---- schematic A: admiralty chart ---- */
+            .s-chart {
+                background:
+                    radial-gradient(
+                        120% 90% at 20% 0%,
+                        #123055 0%,
+                        #0a1c38 55%,
+                        #081226 100%
+                    );
+            }
+            .s-chart .neat {
+                position: absolute;
+                inset: 14px;
+                border: 1px solid rgba(233, 227, 208, 0.5);
+                outline: 1px solid rgba(233, 227, 208, 0.2);
+                outline-offset: 3px;
+            }
+            .s-chart svg {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+            }
+            .s-chart .land {
+                fill: #17262b;
+            }
+            .s-chart .coast {
+                fill: none;
+                stroke: #e9e3d0;
+                stroke-width: 1.4;
+            }
+            .s-chart .contour {
+                fill: none;
+                stroke: rgba(233, 227, 208, 0.35);
+                stroke-width: 0.9;
+            }
+            .s-chart .route {
+                fill: none;
+                stroke: #ff2e92;
+                stroke-width: 2;
+                stroke-dasharray: 1 5;
+                stroke-linecap: round;
+            }
+            .s-chart .rose {
+                fill: none;
+                stroke: rgba(233, 227, 208, 0.6);
+            }
+            .s-chart .coin {
+                fill: #ff2e92;
+            }
+            .s-chart .label {
+                font: 700 9px ui-monospace, monospace;
+                fill: #e9e3d0;
+                letter-spacing: 0.14em;
+            }
+            .s-chart .snd {
+                font: 400 7px ui-monospace, monospace;
+                fill: rgba(233, 227, 208, 0.75);
+            }
+
+            /* ---- schematic B: pit board ---- */
+            .s-pit {
+                background: #16130f;
+            }
+            .s-pit .panel {
+                position: absolute;
+                border: 1px solid #2b241c;
+                background: #1e1a15;
+                border-radius: 3px;
+            }
+            .s-pit .tape {
+                position: absolute;
+                background: rgba(255, 214, 102, 0.9);
+                color: #1a160f;
+                font: 700 11px ui-monospace, monospace;
+                padding: 3px 8px;
+                transform: rotate(-4deg);
+            }
+            .s-pit .name {
+                position: absolute;
+                left: 20px;
+                top: 26px;
+                font: 900 34px/0.9 ui-sans-serif, system-ui;
+                letter-spacing: -0.03em;
+                color: #f4efe4;
+                text-transform: uppercase;
+            }
+            .s-pit .name em {
+                color: #ff5a3c;
+                font-style: normal;
+            }
+            .s-pit .num {
+                font: 900 20px ui-monospace, monospace;
+                color: #f4efe4;
+            }
+            .s-pit .cell {
+                position: absolute;
+                border: 1px solid #33291d;
+                background: #221d16;
+                padding: 8px;
+            }
+            .s-pit .cell small {
+                display: block;
+                font: 700 8px ui-monospace, monospace;
+                letter-spacing: 0.16em;
+                color: #a9967a;
+                margin-bottom: 4px;
+            }
+
+            /* ---- schematic C: six-pack ---- */
+            .s-six {
+                background:
+                    radial-gradient(
+                        100% 100% at 50% 0%,
+                        #16181c 0%,
+                        #0a0b0d 70%
+                    );
+            }
+            .s-six .scri {
+                position: absolute;
+                inset: 0;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 1fr);
+                place-items: center;
+                padding: 22px;
+                gap: 10px;
+            }
+            .gauge {
+                width: 74px;
+                height: 74px;
+                border-radius: 50%;
+                border: 2px solid #2c3038;
+                background: #0e0f12;
+                position: relative;
+                box-shadow: inset 0 0 0 6px #101216;
+            }
+            .gauge::before {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 10px;
+                width: 1px;
+                height: 6px;
+                background: #5b6472;
+                box-shadow: 0 46px 0 #5b6472;
+            }
+            .gauge i {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 2px;
+                height: 26px;
+                background: #39ff9e;
+                transform-origin: 50% 100%;
+                margin: -26px 0 0 -1px;
+                border-radius: 2px;
+                box-shadow: 0 0 8px rgba(57, 255, 158, 0.6);
+            }
+            .gauge.amber i {
+                background: #ffb84b;
+                box-shadow: 0 0 8px rgba(255, 184, 75, 0.6);
+            }
+            .gauge.red i {
+                background: #ff5a4d;
+                box-shadow: 0 0 8px rgba(255, 90, 77, 0.6);
+            }
+            .s-six .placard {
+                position: absolute;
+                bottom: 12px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font: 700 9px ui-monospace, monospace;
+                letter-spacing: 0.22em;
+                color: #6b7280;
+            }
+
+            /* ---- schematic D: noir one-sheet ---- */
+            .s-noir {
+                background: #100d0a;
+            }
+            .s-noir .beam {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    115deg,
+                    rgba(255, 178, 61, 0.22) 0%,
+                    rgba(255, 178, 61, 0) 45%
+                );
+            }
+            .s-noir .fig {
+                position: absolute;
+                left: 30px;
+                bottom: 24px;
+                width: 16px;
+                height: 46px;
+                background: #efe6d2;
+            }
+            .s-noir .shadow {
+                position: absolute;
+                left: 44px;
+                bottom: 24px;
+                width: 150px;
+                height: 60px;
+                background: #ffb23d;
+                clip-path: polygon(0 100%, 100% 100%, 6% 0);
+                opacity: 0.92;
+            }
+            .s-noir .ttl {
+                position: absolute;
+                right: 22px;
+                top: 26px;
+                text-align: right;
+                font: 900 30px/0.84 ui-sans-serif, system-ui;
+                letter-spacing: -0.02em;
+                color: #efe6d2;
+                text-transform: uppercase;
+                font-stretch: condensed;
+            }
+            .s-noir .bill {
+                position: absolute;
+                left: 24px;
+                right: 24px;
+                bottom: 8px;
+                border-top: 1px solid #ffb23d;
+                padding-top: 5px;
+                display: flex;
+                justify-content: space-between;
+                font: 700 8px ui-monospace, monospace;
+                letter-spacing: 0.18em;
+                color: #d8cbb0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <header class="top">
+                <div class="kicker">impeccable · direction round</div>
+                <h1>Three worlds for chark1es.dev</h1>
+                <p class="sub">
+                    The seed assigned one direction from my grounded list; here
+                    it is, committed, plus the challengers that survived
+                    weighing. Pick one (or steer me). Everything is dark,
+                    playful and blobatar-bearing as the brief requires.
+                </p>
+            </header>
+
+            <div class="grid">
+                <!-- ASSIGNED -->
+                <article class="card">
+                    <div class="preview s-chart">
+                        <svg viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice">
+                            <path
+                                class="land"
+                                d="M0,0 H210 C196,38 214,64 198,96 C186,120 205,150 186,182 C172,206 150,214 128,230 H0 Z"
+                            />
+                            <path
+                                class="coast"
+                                d="M210,0 C196,38 214,64 198,96 C186,120 205,150 186,182 C172,206 150,214 128,230"
+                            />
+                            <path
+                                class="contour"
+                                d="M240,0 C232,40 252,66 236,100 C224,126 244,154 226,188"
+                            />
+                            <path
+                                class="contour"
+                                d="M292,0 C286,44 306,70 290,104 C278,130 300,158 282,192"
+                            />
+                            <path
+                                class="contour"
+                                d="M350,10 C344,52 364,78 348,110 C336,136 358,164 340,198"
+                            />
+                            <circle class="rose" cx="470" cy="70" r="30" />
+                            <path class="rose" d="M470,34 V106 M434,70 H506" />
+                            <circle class="coin" cx="470" cy="70" r="4" />
+                            <path
+                                class="route"
+                                d="M70,196 C160,168 250,120 360,150 C430,168 500,150 560,110"
+                            />
+                            <circle class="coin" cx="70" cy="196" r="4" />
+                            <circle class="coin" cx="360" cy="150" r="4" />
+                            <text class="label" x="26" y="30">CHARLES NGUYEN</text>
+                            <text class="snd" x="250" y="60">3.2</text>
+                            <text class="snd" x="300" y="120">12</text>
+                            <text class="snd" x="410" y="180">5.1</text>
+                            <text class="snd" x="520" y="60">8.4</text>
+                            <text class="snd" x="180" y="150">21</text>
+                            <text class="label" x="392" y="150">ROUTE</text>
+                        </svg>
+                    </div>
+                    <div class="body">
+                        <div class="row">
+                            <span class="badge roll">the roll</span>
+                            <span class="badge">experience · dark</span>
+                        </div>
+                        <h2>Admiralty Chart of the Approaches</h2>
+                        <p class="thesis">
+                            A night harbor chart you can actually navigate. The
+                            page is the chart: deep navy water, ivory depth
+                            contours, chart-magenta corrections. Career is a
+                            tracked route with waypoints; skills are soundings;
+                            the nav is a chart legend.
+                        </p>
+                        <div class="chips">
+                            <span class="chip" style="background:#081226"></span>
+                            <span class="chip" style="background:#123055"></span>
+                            <span class="chip" style="background:#e9e3d0"></span>
+                            <span class="chip" style="background:#ff2e92"></span>
+                            <span class="chip" style="background:#ffc24b"></span>
+                        </div>
+                        <div class="tags">
+                            <span class="tag">bathymetric contours</span>
+                            <span class="tag">Notice-to-Mariners corrections</span>
+                            <span class="tag">compass rose</span>
+                            <span class="tag">buoy light characteristics</span>
+                            <span class="tag">one continuous ruled plate</span>
+                        </div>
+                        <p class="meta">
+                            <b>First viewport:</b> full-bleed chart inside a
+                            double-rule neatline; title block top-left; name in
+                            expanded grotesque; compass rose with the blobatar
+                            at its centre; the legend is the navigation.
+                        </p>
+                        <p class="meta">
+                            <b>Signature interaction:</b> a rhumb-line route
+                            draws itself to a sonar ping; hovering a waypoint
+                            fires an annotation on a leader line.
+                        </p>
+                        <p class="meta">
+                            <b>Kept from declined worlds:</b> leader-line
+                            annotations (tensegrity) · one continuous ruled
+                            section with a time strip (daylight section) · one
+                            smash-cut transition (rebel menu).
+                        </p>
+                        <p class="risk">
+                            <b>Risk:</b> charts are dense reference material.
+                            Without ruthless hierarchy it becomes wallpaper.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- PICK -->
+                <article class="card">
+                    <div class="preview s-pit">
+                        <div
+                            class="panel"
+                            style="left:14px;top:74px;right:14px;bottom:14px"
+                        ></div>
+                        <div
+                            class="panel"
+                            style="left:26px;top:86px;width:150px;height:60px"
+                        ></div>
+                        <div
+                            class="panel"
+                            style="left:190px;top:86px;width:120px;height:60px"
+                        ></div>
+                        <div
+                            class="panel"
+                            style="left:26px;top:154px;width:150px;height:52px"
+                        ></div>
+                        <div
+                            class="panel"
+                            style="left:190px;top:154px;width:120px;height:52px"
+                        ></div>
+                        <div
+                            class="panel"
+                            style="left:326px;top:86px;right:26px;bottom:14px;background:#2a1c16"
+                        ></div>
+                        <div class="name">CHARLES<br /><em>NGUYEN</em></div>
+                        <div class="tape" style="left:300px;top:34px">
+                            PIT 07 · SHIPS
+                        </div>
+                        <div class="cell" style="left:26px;top:86px;width:150px;height:60px">
+                            <small>STATUS</small
+                            ><span class="num">READY</span>
+                        </div>
+                        <div class="cell" style="left:190px;top:86px;width:120px;height:60px">
+                            <small>TORQUE</small><span class="num">48Nm</span>
+                        </div>
+                        <div class="cell" style="left:26px;top:154px;width:150px;height:52px">
+                            <small>STACK</small
+                            ><span class="num" style="font-size:13px"
+                                >TS · ASTRO</span
+                            >
+                        </div>
+                        <div class="cell" style="left:190px;top:154px;width:120px;height:52px">
+                            <small>LAP</small
+                            ><span class="num" style="font-size:13px"
+                                >2023—NOW</span
+                            >
+                        </div>
+                    </div>
+                    <div class="body">
+                        <div class="row">
+                            <span class="badge pick">impeccable's pick</span>
+                            <span class="badge">makers</span>
+                        </div>
+                        <h2>Pit Wall</h2>
+                        <p class="thesis">
+                            The IEEE robotics pit: gaffer tape, marker
+                            annotations, numbered panels, torque specs, decals.
+                            Loud hands-on engineering, warm and human, built
+                            from the competition culture that is genuinely
+                            Charles's.
+                        </p>
+                        <div class="chips">
+                            <span class="chip" style="background:#16130f"></span>
+                            <span class="chip" style="background:#1e1a15"></span>
+                            <span class="chip" style="background:#f4efe4"></span>
+                            <span class="chip" style="background:#ff5a3c"></span>
+                            <span class="chip" style="background:#ffd666"></span>
+                        </div>
+                        <div class="tags">
+                            <span class="tag">gaffer tape</span>
+                            <span class="tag">sharpie annotation</span>
+                            <span class="tag">numbered pits</span>
+                            <span class="tag">part bins</span>
+                        </div>
+                        <p class="meta">
+                            <b>First viewport:</b> a pit wall of taped panels;
+                            the name scrawled in marker across the top; each
+                            panel a station (work, projects, writing, résumé).
+                        </p>
+                        <p class="meta">
+                            <b>Signature interaction:</b> pulling a panel off
+                            the wall (click) reveals the detail on the bench.
+                        </p>
+                        <p class="risk">
+                            <b>Risk:</b> handmade texture is easy to fake badly;
+                            it must be authored, not filtered.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- ALT: six pack -->
+                <article class="card">
+                    <div class="preview s-six">
+                        <div class="scri">
+                            <div class="gauge"><i style="transform:rotate(38deg)"></i></div>
+                            <div class="gauge amber"><i style="transform:rotate(-64deg)"></i></div>
+                            <div class="gauge"><i style="transform:rotate(12deg)"></i></div>
+                            <div class="gauge red"><i style="transform:rotate(150deg)"></i></div>
+                            <div class="gauge"><i style="transform:rotate(-20deg)"></i></div>
+                            <div class="gauge amber"><i style="transform:rotate(80deg)"></i></div>
+                        </div>
+                        <div class="placard">AIRS · ASTRO · CONVEX · TS · RN · AULORA</div>
+                    </div>
+                    <div class="body">
+                        <div class="row">
+                            <span class="badge">alternative</span>
+                            <span class="badge">instrument panel</span>
+                        </div>
+                        <h2>Night Six-Pack</h2>
+                        <p class="thesis">
+                            A cockpit instrument panel. Matte black, luminous
+                            markings, damped needle physics. Skills as gauges
+                            that show trend, projects as instrument readouts;
+                            calm, precise, quietly romantic about engineering.
+                        </p>
+                        <div class="chips">
+                            <span class="chip" style="background:#0a0b0d"></span>
+                            <span class="chip" style="background:#101216"></span>
+                            <span class="chip" style="background:#39ff9e"></span>
+                            <span class="chip" style="background:#ffb84b"></span>
+                            <span class="chip" style="background:#ff5a4d"></span>
+                        </div>
+                        <div class="tags">
+                            <span class="tag">radium glow</span>
+                            <span class="tag">tick scales</span>
+                            <span class="tag">placards</span>
+                            <span class="tag">damped motion</span>
+                        </div>
+                        <p class="meta">
+                            <b>First viewport:</b> two ranked rows of three
+                            dials; the name placarded beneath; the cross-check
+                            sweep is the reading order.
+                        </p>
+                        <p class="risk">
+                            <b>Risk:</b> reads as an engineering-romance cliché
+                            fast; six gauges risk becoming six icon cards.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- ALT: noir -->
+                <article class="card">
+                    <div class="preview s-noir">
+                        <div class="beam"></div>
+                        <div class="shadow"></div>
+                        <div class="fig"></div>
+                        <div class="ttl">CHARLES<br />NGUYEN</div>
+                        <div class="bill">
+                            <span>FULL-STACK · AI · SELF-HOST</span
+                            ><span>SAN DIEGO · 2026</span>
+                        </div>
+                    </div>
+                    <div class="body">
+                        <div class="row">
+                            <span class="badge">alternative</span>
+                            <span class="badge">print · duotone</span>
+                        </div>
+                        <h2>Noir One-Sheet</h2>
+                        <p class="thesis">
+                            A postwar crime-film one-sheet in two inks: ink
+                            black and one sour amber, all modeling done by cast
+                            shadow. A condensed title, a ruled billing block of
+                            roles. Cinematic, confident, dark by nature.
+                        </p>
+                        <div class="chips">
+                            <span class="chip" style="background:#100d0a"></span>
+                            <span class="chip" style="background:#efe6d2"></span>
+                            <span class="chip" style="background:#ffb23d"></span>
+                            <span class="chip" style="background:#ff5a4d"></span>
+                        </div>
+                        <div class="tags">
+                            <span class="tag">cast shadow</span>
+                            <span class="tag">condensed caps</span>
+                            <span class="tag">billing block</span>
+                            <span class="tag">two inks</span>
+                        </div>
+                        <p class="meta">
+                            <b>First viewport:</b> a small figure against a
+                            huge amber shadow; title in condensed caps; the
+                            billing block pinned to the foot.
+                        </p>
+                        <p class="risk">
+                            <b>Risk:</b> a film poster foregrounds attitude
+                            over evidence; the work could feel like a prop.
+                        </p>
+                    </div>
+                </article>
+            </div>
+
+            <section class="demoted">
+                <h3>Weighed and declined</h3>
+                <p class="lead">
+                    Fused, judged on audience identification and product
+                    clarity, and kept only for what the chart borrowed.
+                </p>
+                <div class="dem-row">
+                    <div class="dem">
+                        <span class="v">declined</span>
+                        <span class="t"
+                            ><b>Tensegrity column</b> — kept its leader-line
+                            annotation discipline.</span
+                        >
+                    </div>
+                    <div class="dem">
+                        <span class="v">declined</span>
+                        <span class="t"
+                            ><b>Daylight section</b> — kept one continuous ruled
+                            plate with a time strip.</span
+                        >
+                    </div>
+                    <div class="dem">
+                        <span class="v">declined</span>
+                        <span class="t"
+                            ><b>Rebel menu collage</b> — kept one smash-cut
+                            transition.</span
+                        >
+                    </div>
+                    <div class="dem">
+                        <span class="v">declined</span>
+                        <span class="t"
+                            ><b>Algorave floor</b> — kept pre-visible hover
+                            state before activation.</span
+                        >
+                    </div>
+                </div>
+            </section>
+        </div>
+    </body>
+</html>

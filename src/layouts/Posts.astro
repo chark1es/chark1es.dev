@@ -1,8 +1,9 @@
 ---
 import FormattedDate from "@/components/FormattedDate.astro";
-import PageShell from "@/components/layout/PageShell.astro";
 import Layout from "@/layouts/Layout.astro";
+import Mascot from "@/components/react/Mascot.tsx";
 import { SITE } from "@config";
+import { FRIENDS, creatureFor } from "@/lib/cast";
 import type { CollectionEntry } from "astro:content";
 import getReadingTime from "reading-time";
 
@@ -13,63 +14,78 @@ interface Props {
 }
 
 const { posts, description } = Astro.props;
+const me = FRIENDS.writing;
 
 const sorted = [...posts].sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
-<Layout
-    title={`Blog - ${SITE.title}`}
-    description={description}
->
-    <PageShell variant="content">
-        <div class="py-10">
-            <header class="mb-2 border-b border-border pb-8">
-                <p class="text-xs font-semibold uppercase tracking-widest text-text-muted">
-                    Writing
+<Layout title={`Writing · ${SITE.title}`} description={description}>
+    <div class="container-x page" data-tone={me.tone}>
+        <header class="page-head">
+            <div class="page-head__text">
+                <h1>Writing</h1>
+                <p>
+                    Notes to myself that turned out to be useful to other people
+                    too.
                 </p>
-                <h1 class="mt-2 text-2xl font-semibold tracking-tight text-text">
-                    Blog
-                </h1>
-                <p class="mt-2 max-w-2xl text-sm text-text-muted">
-                    {description}
-                </p>
-            </header>
+            </div>
+            <div class="page-head__friend">
+                <Mascot
+                    client:load
+                    seed={me.seed}
+                    shape={me.shape}
+                    tone={me.tone}
+                    hover="thinking"
+                    label="Poke the writing blobatar"
+                />
+            </div>
+        </header>
 
-            <div role="list">
-                {
-                    sorted.map((post) => (
-                        <a
-                            href={`/blogs/${post.id}`}
-                            class="blog-row"
-                            role="listitem"
-                        >
+        <div class="notes">
+            {
+                sorted.map((post) => {
+                    const { shape, tone } = creatureFor(post.data.title);
+                    return (
+                        <a href={`/blogs/${post.id}`} class="note-row">
+                            <div class="note-row__face">
+                                <Mascot
+                                    client:visible
+                                    seed={post.data.title}
+                                    shape={shape}
+                                    tone={tone}
+                                    hover="happy"
+                                    label="Poke this blobatar"
+                                />
+                            </div>
                             <div>
-                                <h2 class="blog-row-title">{post.data.title}</h2>
-                                <p class="blog-row-desc mt-1">
+                                <h2 class="note-row__title">
+                                    {post.data.title}
+                                </h2>
+                                <p class="note-row__meta">
+                                    <FormattedDate date={post.data.pubDate} />
+                                    {post.body && (
+                                        <>
+                                            {" · "}
+                                            {getReadingTime(post.body).text}
+                                        </>
+                                    )}
+                                </p>
+                                <p class="note-row__desc">
                                     {post.data.description}
                                 </p>
                             </div>
-                            <p class="blog-row-meta text-xs text-text-muted tabular-nums">
-                                <FormattedDate date={post.data.pubDate} />
-                                {post.body && (
-                                    <>
-                                        <br />
-                                        {getReadingTime(post.body).text}
-                                    </>
-                                )}
-                            </p>
                         </a>
-                    ))
-                }
-            </div>
+                    );
+                })
+            }
 
             {
                 sorted.length === 0 && (
-                    <p class="py-12 text-sm text-text-muted">No posts yet.</p>
+                    <p class="py-14 text-text-muted">Nothing here yet.</p>
                 )
             }
         </div>
-    </PageShell>
+    </div>
 </Layout>

@@ -1,0 +1,190 @@
+---
+import { getCollection, render } from "astro:content";
+import Arrow from "@/components/Arrow.astro";
+import Mascot from "@/components/react/Mascot.tsx";
+import { creatureFor, type Shape, type Tone } from "@/lib/cast";
+import TechPill from "./TechPill.astro";
+
+function getPlainText(markdown: string) {
+    return markdown
+        .replace(/```[\s\S]*?```/g, " ")
+        .replace(/`([^`]+)`/g, "$1")
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        .replace(/^#{1,6}\s+/gm, "")
+        .replace(/^[-*+]\s+/gm, "")
+        .replace(/[*_~>]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function getExcerpt(markdown: string, maxLength = 180) {
+    const text = getPlainText(markdown);
+    if (text.length <= maxLength) return text;
+    const truncated = text.slice(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(" ");
+    return `${truncated.slice(0, lastSpace > 0 ? lastSpace : maxLength)}…`;
+}
+
+const entries = await getCollection("projects");
+
+const items = await Promise.all(
+    entries.map(async (entry) => {
+        const { Content } = await render(entry);
+        return {
+            entry,
+            Content,
+            hasDetails: Boolean(entry.body?.trim()),
+            summary: entry.data.tagline ?? getExcerpt(entry.body ?? ""),
+        };
+    }),
+);
+
+items.sort((a, b) => {
+    const featured =
+        Number(b.entry.data.featured ?? false) -
+        Number(a.entry.data.featured ?? false);
+    if (featured !== 0) return featured;
+    return b.entry.id.localeCompare(a.entry.id);
+});
+
+const panelTones: Record<string, { panel: Tone; blob: Tone; shape: Shape }> = {
+    pink: { panel: "pink", blob: "sky", shape: "cloud" },
+    amber: { panel: "butter", blob: "coral", shape: "nub" },
+};
+
+const panelFor = (accent?: string) => panelTones[accent ?? ""] ?? fallbackPanel;
+
+const fallbackPanel: { panel: Tone; blob: Tone; shape: Shape } = {
+    panel: "mint",
+    blob: "coral",
+    shape: "round",
+};
+
+const featured = items.filter(({ entry }) => entry.data.featured);
+const more = items.filter(({ entry }) => !entry.data.featured);
+
+const label = (url: string) =>
+    url.includes("github.com") ? "Source" : "Visit";
+---
+
+<div class="features">
+    {
+        featured.map(({ entry, Content, summary }) => {
+            const t = panelFor(entry.data.accent);
+            return (
+                <article class="panel-wrap" data-tone={t.panel}>
+                    <div class="panel__blob">
+                        <Mascot
+                            client:visible
+                            seed={entry.data.projectName}
+                            shape={t.shape}
+                            tone={t.blob}
+                            hover="surprised"
+                            label={`Poke the ${entry.data.projectName} blobatar`}
+                        />
+                    </div>
+
+                    <div class="panel">
+                        <img
+                            src={entry.data.logo}
+                            alt=""
+                            width="60"
+                            height="60"
+                            loading="lazy"
+                            class="panel__logo"
+                        />
+                        <p class="panel__kind">
+                            {entry.data.projectCategory} · {entry.data.years}
+                        </p>
+                        <h2 class="panel__title">{entry.data.projectName}</h2>
+                        <p class="panel__tagline">{summary}</p>
+
+                        <div class="panel__body markdown">
+                            <Content />
+                        </div>
+
+                        {entry.data.technologies &&
+                            entry.data.technologies.length > 0 && (
+                                <div class="chips">
+                                    {entry.data.technologies.map((tech) => (
+                                        <TechPill
+                                            label={tech.skill}
+                                            icon={tech.skillLogo}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+
+                        {entry.data.links && entry.data.links.length > 0 && (
+                            <div class="panel__links">
+                                {entry.data.links.map((link) => (
+                                    <a
+                                        href={link.link}
+                                        class="tlink"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={`${entry.data.projectName}: ${label(link.link).toLowerCase()}`}
+                                    >
+                                        {label(link.link)}
+                                        <Arrow dir="up-right" />
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </article>
+            );
+        })
+    }
+</div>
+
+{
+    more.length > 0 && (
+        <section class="more" aria-labelledby="more-title">
+            <h2 class="more__title" id="more-title">
+                Smaller ones
+            </h2>
+            {more.map(({ entry, summary }) => {
+                const { shape, tone } = creatureFor(entry.data.projectName);
+                return (
+                    <article class="more__item" data-tone={tone}>
+                        <div class="more__face">
+                            <Mascot
+                                client:visible
+                                seed={entry.data.projectName}
+                                shape={shape}
+                                tone={tone}
+                                label={`Poke the ${entry.data.projectName} blobatar`}
+                            />
+                        </div>
+                        <div class="min-w-0">
+                            <h3>{entry.data.projectName}</h3>
+                            <p class="more__meta">
+                                {entry.data.projectRole} · {entry.data.years}
+                            </p>
+                            <p>{summary}</p>
+                            {entry.data.links &&
+                                entry.data.links.length > 0 && (
+                                    <div class="more__links">
+                                        {entry.data.links.map((link) => (
+                                            <a
+                                                href={link.link}
+                                                class="tlink"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label={`${entry.data.projectName}: ${label(link.link).toLowerCase()}`}
+                                            >
+                                                {label(link.link)}
+                                                <Arrow dir="up-right" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
+                        </div>
+                    </article>
+                );
+            })}
+        </section>
+    )
+}

@@ -1,0 +1,38 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Mascot from "@/components/react/Mascot.tsx";
+import ProjectGrid from "@/components/portfolio/ProjectGrid.astro";
+import { FRIENDS } from "@/lib/cast";
+
+const me = FRIENDS.projects;
+---
+
+<Layout
+    title="Projects · Charles Nguyen"
+    description="ChopChop, Aulora, and the products Charles Nguyen designed and shipped end to end."
+>
+    <div class="container-x page" data-tone={me.tone}>
+        <header class="page-head">
+            <div class="page-head__text">
+                <h1>Projects</h1>
+                <p>
+                    Things I built from the first commit to the release
+                    pipeline. ChopChop and Aulora are mine alone; the smaller
+                    ones are for communities I'm part of.
+                </p>
+            </div>
+            <div class="page-head__friend">
+                <Mascot
+                    client:load
+                    seed={me.seed}
+                    shape={me.shape}
+                    tone={me.tone}
+                    hover="surprised"
+                    label="Poke the projects blobatar"
+                />
+            </div>
+        </header>
+
+        <ProjectGrid />
+    </div>
+</Layout>
