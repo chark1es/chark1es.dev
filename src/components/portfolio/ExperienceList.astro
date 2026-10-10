@@ -115,14 +115,26 @@ const groups = [...groupMap.entries()]
                                         <p class="role__summary">{excerpt}</p>
 
                                         {isTruncated && (
-                                            <details class="entry-details">
-                                                <summary>
-                                                    Read the long version
-                                                </summary>
-                                                <div class="markdown text-[0.97rem] text-text-muted">
+                                            <>
+                                                <div
+                                                    class="role__full markdown"
+                                                    id={`role-${entry.id}`}
+                                                    hidden
+                                                >
                                                     <Content />
                                                 </div>
-                                            </details>
+                                                <button
+                                                    type="button"
+                                                    class="more-toggle"
+                                                    aria-expanded="false"
+                                                    aria-controls={`role-${entry.id}`}
+                                                    data-more
+                                                >
+                                                    <span data-more-label>
+                                                        Read the long version
+                                                    </span>
+                                                </button>
+                                            </>
                                         )}
 
                                         {entry.data.skills &&
@@ -150,3 +162,42 @@ const groups = [...groupMap.entries()]
         })
     }
 </div>
+
+<noscript>
+    <style>
+        .role__full[hidden] {
+            display: block;
+        }
+        .role__summary,
+        .more-toggle {
+            display: none;
+        }
+    </style>
+</noscript>
+
+<script>
+    // The button stays below the text: opening swaps the excerpt for the full
+    // entry above it, closing puts the excerpt back.
+    document.addEventListener("click", (event) => {
+        const btn = (event.target as Element).closest<HTMLButtonElement>(
+            "[data-more]",
+        );
+        if (!btn) return;
+        const role = btn.closest<HTMLElement>(".role");
+        const full = role?.querySelector<HTMLElement>(".role__full");
+        const summary = role?.querySelector<HTMLElement>(".role__summary");
+        const label = btn.querySelector<HTMLElement>("[data-more-label]");
+        if (!role || !full || !summary || !label) return;
+
+        const open = btn.getAttribute("aria-expanded") !== "true";
+        full.hidden = !open;
+        summary.hidden = open;
+        btn.setAttribute("aria-expanded", String(open));
+        label.textContent = open ? "Show less" : "Read the long version";
+
+        // Closing from the bottom of a long entry would strand the reader
+        // below the shorter section, so bring it back into view.
+        if (!open)
+            role.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+</script>
