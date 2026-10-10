@@ -884,13 +884,25 @@ html:not([data-theme="light"]) .on-light {
     text-decoration: none;
 }
 
-.entry-details summary {
+/* Expanding swaps the excerpt for the full entry and the button stays under the
+   text. Scroll anchoring is off so the page doesn't jump while it grows. */
+.role {
+    overflow-anchor: none;
+}
+
+.role__full {
+    margin-top: 0.4rem;
+    max-width: 40rem;
+    font-size: 0.97rem;
+    color: var(--color-text-muted);
+}
+
+.more-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
     margin-top: 0.7rem;
+    padding: 0;
     cursor: pointer;
-    list-style: none;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--color-text);
@@ -898,18 +910,23 @@ html:not([data-theme="light"]) .on-light {
     text-decoration-color: var(--tl, var(--color-line-coral));
     text-decoration-thickness: 3px;
     text-underline-offset: 0.3em;
+    transition:
+        text-decoration-thickness 0.18s ease,
+        text-underline-offset 0.18s ease;
 }
 
-.entry-details summary::-webkit-details-marker {
-    display: none;
+.more-toggle:hover,
+.more-toggle:focus-visible {
+    text-decoration-thickness: 5px;
+    text-underline-offset: 0.24em;
 }
 
-.entry-details[open] summary {
-    margin-bottom: 0.9rem;
+.role__full > :last-child {
+    margin-bottom: 0;
 }
 
-.role:has(.entry-details[open]) .role__summary {
-    display: none;
+.role__full:not([hidden]) + .more-toggle {
+    margin-top: 0.9rem;
 }
 
 /* ---------- Projects ---------- */
