@@ -31,10 +31,10 @@ To set up the project locally, follow these steps:
 git clone https://github.com/chark1es/chark1es.dev.git
 ```
 
-3. Install the dependencies:
+2. Install the dependencies:
 
 ```
-cd personal-website
+cd chark1es.dev
 bun i
 ```
 
@@ -44,7 +44,7 @@ bun i
 bun run dev
 ```
 
-5. Open your browser and visit `http://localhost:4321` to see the website running locally.
+4. Open your browser and visit `http://localhost:4321` to see the website running locally.
 
 ## Deployment
 
