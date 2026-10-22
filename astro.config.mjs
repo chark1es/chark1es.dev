@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import { remarkReadingTime } from "./remark-reading-time.mjs";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
@@ -13,7 +14,9 @@ export default defineConfig({
     output: "static",
 
     markdown: {
-        remarkPlugins: [remarkToc, remarkReadingTime],
+        processor: unified({
+            remarkPlugins: [remarkToc, remarkReadingTime],
+        }),
     },
 
     vite: {
