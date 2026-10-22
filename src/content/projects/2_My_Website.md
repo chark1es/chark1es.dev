@@ -8,10 +8,11 @@ years: "Sept 2023 - now"
 logo: "/images/derp.png"
 logoWidth: 100
 logoHeight: 100
-technologies: [{ "skill": "AstroJS", "skillLogo": "devicon:astro" },
-{ "skill": "HTML", "skillLogo": "vscode-icons:file-type-html" },
-{ "skill": "Markdown", "skillLogo": "skill-icons:markdown-dark" },
-{ "skill": "Tailwind CSS", "skillLogo": "vscode-icons:file-type-tailwind" }
+technologies: [
+    { "skill": "AstroJS", "skillLogo": "devicon:astro" },
+    { "skill": "HTML", "skillLogo": "vscode-icons:file-type-html" },
+    { "skill": "Markdown", "skillLogo": "skill-icons:markdown-dark" },
+    { "skill": "Tailwind CSS", "skillLogo": "vscode-icons:file-type-tailwind" },
 ]
 links: [{"link": "https://github.com/chark1es/chark1es.dev", "linkLogo": "mdi:github"}]
 ---

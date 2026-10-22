@@ -38,6 +38,7 @@ const ogImage = (text: string) => {
                     flexGrow: "1",
                     width: "100%",
                     padding: "40px",
+                    boxSizing: "border-box",
                     justifyContent: "center",
                 }}
             >
@@ -58,6 +59,7 @@ const ogImage = (text: string) => {
                     justifyContent: "space-between",
                     width: "100%",
                     padding: "40px",
+                    boxSizing: "border-box",
                     borderTop: "1px solid",
                     borderColor: "#737373",
                     fontSize: "20px",
