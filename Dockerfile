@@ -1,4 +1,4 @@
-FROM oven/bun:1 AS base
+FROM oven/bun:1.4.4 AS base
 WORKDIR /app
 
 COPY package.json ./
@@ -7,7 +7,7 @@ RUN bun install
 COPY . .
 RUN bun run build
 
-FROM oven/bun:1 AS runner
+FROM oven/bun:1.4.4 AS runner
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*

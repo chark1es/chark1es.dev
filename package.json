@@ -4,6 +4,10 @@
     "version": "2.0.0",
     "description": "A personal website for Charles Nguyen",
     "private": true,
+    "engines": {
+        "node": ">=24.22.1",
+        "bun": ">=1.4.4"
+    },
     "author": "Charles Nguyen",
     "homepage": "https://chark1es.dev",
     "scripts": {
@@ -45,11 +49,22 @@
         "astro": "^7.4.2",
         "mdast-util-to-string": "^4.0.0",
         "prettier": "3.9.10",
-        "prettier-plugin-astro": "^1.1.1",
+        "prettier-plugin-astro": "^1.1.2",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
         "tailwindcss": "^4.3.3",
         "typescript": "^6.0.3",
-        "wrangler": "^4.151.3"
+        "wrangler": "^4.152.0"
+    },
+    "overrides": {
+        "serve": {
+            "compression": "1.8.2"
+        },
+        "satori": {
+            "fflate": "0.7.5"
+        },
+        "@tailwindcss/typography": {
+            "postcss-selector-parser": "7.1.7"
+        }
     }
 }
