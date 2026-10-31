@@ -4,7 +4,7 @@ projectRole: "Creator & Full-Stack Developer"
 projectTeamSize: "Solo"
 projectCompany: "spwnd.dev"
 projectCategory: "Mobile App"
-years: "2025 – Present"
+years: "Feb 2026 – Present"
 logo: "/images/chopchop.svg"
 tagline: "Split expenses without the awkward math."
 featured: true
