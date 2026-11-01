@@ -4,7 +4,7 @@ projectRole: "Creator & Lead Developer"
 projectTeamSize: "Solo"
 projectCompany: "Independent"
 projectCategory: "Self-hosted Platform"
-years: "2025 – Present"
+years: "Apr 2026 – Present"
 logo: "/images/aulora.svg"
 tagline: "Team chat you run on your own server."
 featured: true
